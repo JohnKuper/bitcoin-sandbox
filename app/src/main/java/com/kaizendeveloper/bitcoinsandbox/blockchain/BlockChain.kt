@@ -1,18 +1,16 @@
-package com.kaizendeveloper.bitcoinsandbox
+package com.kaizendeveloper.bitcoinsandbox.blockchain
 
+import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
+import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionPool
+import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
+import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
+import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
+import com.kaizendeveloper.bitcoinsandbox.util.ByteArrayWrapper
 import java.util.LinkedList
+import java.util.Observable
 
 
-class BlockChain
-/**
- * create an empty block chain with just a genesis block. Assume `genesisBlock` is a valid block
- */
-    (
-    /**
-     * Get the maximum height block
-     */
-    var maxHeightBlock: Block
-) {
+class BlockChain(var maxHeightBlock: Block) : Observable() {
 
     /**
      * Get the transaction pool to mine a new block
@@ -29,6 +27,8 @@ class BlockChain
     val maxHeightUTXOPool: UTXOPool
         get() = blocksToUTXOPoolsMap[ByteArrayWrapper(maxHeightBlock.hash!!)]!!
 
+    val blocks: ArrayList<Block> = arrayListOf()
+
     init {
         maxHeight = 1
         head = Node(maxHeightBlock, 1)
@@ -37,6 +37,7 @@ class BlockChain
         val utxoPool = UTXOPool()
         utxoPool.addUTXO(utxo, maxHeightBlock.coinbase.outputs[0])
         blocksToUTXOPoolsMap[ByteArrayWrapper(maxHeightBlock.hash!!)] = utxoPool
+        blocks.add(maxHeightBlock)
     }
 
     /**
@@ -73,8 +74,8 @@ class BlockChain
         }
 
         val newPool = txHandler.utxoPool
-        val byteArrayWrapper = ByteArrayWrapper(block.hash!!)
-        blocksToUTXOPoolsMap[byteArrayWrapper] = newPool
+        val newBlockArrayWrapper = ByteArrayWrapper(block.hash!!)
+        blocksToUTXOPoolsMap[newBlockArrayWrapper] = newPool
 
         for (tx in correctTxs) {
             transactionPool.removeTransaction(tx.hash!!)
@@ -89,11 +90,17 @@ class BlockChain
             maxHeightBlock = block
         }
 
-        if (parentNode.getChildrenMap().get(byteArrayWrapper) == null) {
-            parentNode.getChildrenMap().put(byteArrayWrapper, Node(block, newHeight))
+        if (parentNode.getChildrenMap()[newBlockArrayWrapper] == null) {
+            parentNode.getChildrenMap()[newBlockArrayWrapper] = Node(block, newHeight)
         }
 
         return true
+    }
+
+    fun addBlockAndNotify(block: Block) {
+        blocks.add(block)
+        setChanged()
+        notifyObservers()
     }
 
     fun findParentNode(block: Block): Node? {
@@ -130,7 +137,7 @@ class BlockChain
         private val childrenMap = linkedMapOf<ByteArrayWrapper, Node>()
 
         fun addChild(block: Block) {
-            childrenMap.put(ByteArrayWrapper(block.hash!!), Node(block, height + 1))
+            childrenMap[ByteArrayWrapper(block.hash!!)] = Node(block, height + 1)
         }
 
         fun getChildrenMap(): HashMap<ByteArrayWrapper, Node> {
@@ -142,11 +149,11 @@ class BlockChain
             return current == ByteArrayWrapper(blockHash!!)
         }
 
-        override fun equals(o: Any?): Boolean {
-            if (this === o) return true
-            if (o == null || javaClass != o.javaClass) return false
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || javaClass != other.javaClass) return false
 
-            val node = o as Node?
+            val node = other as Node?
             val current = ByteArrayWrapper(block.hash!!).hashCode()
             val toCompare = ByteArrayWrapper(node!!.block.hash!!).hashCode()
 

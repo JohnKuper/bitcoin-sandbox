@@ -1,4 +1,4 @@
-package com.kaizendeveloper.bitcoinsandbox
+package com.kaizendeveloper.bitcoinsandbox.util
 
 import java.util.Arrays
 

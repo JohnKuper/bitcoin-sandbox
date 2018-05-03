@@ -1,4 +1,4 @@
-package com.kaizendeveloper.bitcoinsandbox
+package com.kaizendeveloper.bitcoinsandbox.transaction
 
 import java.nio.ByteBuffer
 import java.security.MessageDigest

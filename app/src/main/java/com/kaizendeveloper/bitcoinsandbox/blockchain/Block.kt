@@ -1,11 +1,11 @@
-package com.kaizendeveloper.bitcoinsandbox
+package com.kaizendeveloper.bitcoinsandbox.blockchain
 
+import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.PublicKey
 
-class Block
-    (val prevBlockHash: ByteArray?, address: PublicKey) {
+class Block(val prevBlockHash: ByteArray?, address: PublicKey) {
 
     var hash: ByteArray? = null
         private set

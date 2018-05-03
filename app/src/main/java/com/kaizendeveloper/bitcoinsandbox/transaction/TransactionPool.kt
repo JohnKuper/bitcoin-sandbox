@@ -1,4 +1,6 @@
-package com.kaizendeveloper.bitcoinsandbox
+package com.kaizendeveloper.bitcoinsandbox.transaction
+
+import com.kaizendeveloper.bitcoinsandbox.util.ByteArrayWrapper
 
 class TransactionPool {
 

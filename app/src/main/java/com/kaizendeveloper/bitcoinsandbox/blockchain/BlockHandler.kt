@@ -1,5 +1,7 @@
-package com.kaizendeveloper.bitcoinsandbox
+package com.kaizendeveloper.bitcoinsandbox.blockchain
 
+import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
+import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
 import java.security.PublicKey
 
 class BlockHandler

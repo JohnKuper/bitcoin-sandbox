@@ -1,5 +1,12 @@
 package com.kaizendeveloper.bitcoinsandbox;
 
+import com.kaizendeveloper.bitcoinsandbox.blockchain.Block;
+import com.kaizendeveloper.bitcoinsandbox.blockchain.BlockChain;
+import com.kaizendeveloper.bitcoinsandbox.blockchain.BlockHandler;
+import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction;
+import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO;
+import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool;
+
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,6 +27,7 @@ import java.util.Random;
 import static org.junit.Assert.assertTrue;
 
 public class Assignment3 {
+
     private class ForwardBlockNode {
         public Block b;
         public ForwardBlockNode child;

@@ -1,8 +1,11 @@
-package com.kaizendeveloper.bitcoinsandbox
+package com.kaizendeveloper.bitcoinsandbox.transaction
+
+import com.kaizendeveloper.bitcoinsandbox.util.Crypto
 
 class TxHandler(utxoPool: UTXOPool) {
 
-    val utxoPool: UTXOPool = UTXOPool(utxoPool)
+    val utxoPool: UTXOPool =
+        UTXOPool(utxoPool)
 
     /**
      * @return true if:
@@ -29,7 +32,12 @@ class TxHandler(utxoPool: UTXOPool) {
             }
 
             val output = utxoPool.getTxOutput(utxo)
-            if (!Crypto.verifySignature(output.address, tx.getRawDataToSign(index)!!, input!!.signature!!)) {
+            if (!Crypto.verifySignature(
+                    output.address,
+                    tx.getRawDataToSign(index)!!,
+                    input!!.signature!!
+                )
+            ) {
                 return false
             }
             index++
