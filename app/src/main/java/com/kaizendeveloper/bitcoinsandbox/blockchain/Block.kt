@@ -4,6 +4,7 @@ import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.PublicKey
+import java.security.interfaces.ECPublicKey
 
 class Block(val prevBlockHash: ByteArray?, address: PublicKey) {
 
@@ -31,7 +32,7 @@ class Block(val prevBlockHash: ByteArray?, address: PublicKey) {
         }
 
     init {
-        coinbase = Transaction(COINBASE, address)
+        coinbase = Transaction(COINBASE, address as ECPublicKey)
         transactions = ArrayList()
     }
 

@@ -1,116 +1,63 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
-import java.nio.ByteBuffer
-import java.security.MessageDigest
+import com.kaizendeveloper.bitcoinsandbox.util.Crypto
+import com.kaizendeveloper.bitcoinsandbox.util.toByteArray
 import java.security.PublicKey
-import java.security.interfaces.RSAPublicKey
+import java.security.interfaces.ECPublicKey
 import java.util.Arrays
 
 
 class Transaction() {
 
-    val inputs: ArrayList<Input> = arrayListOf()
-    val outputs: ArrayList<Output> = arrayListOf()
     private var coinbase: Boolean = false
 
+    val inputs: ArrayList<Input> = arrayListOf()
+    val outputs: ArrayList<Output> = arrayListOf()
     var hash: ByteArray? = null
 
     constructor(amount: Double, address: PublicKey) : this() {
         coinbase = true
         addOutput(amount, address)
-        finalize()
+        computeTxHash()
     }
 
     fun addInput(prevTxHash: ByteArray, outputIndex: Int) {
-        val input = Input(prevTxHash, outputIndex)
-        inputs.add(input)
+        inputs.add(Input(prevTxHash, outputIndex))
     }
 
     fun addOutput(value: Double, address: PublicKey) {
-        val output = Output(value, address)
-        outputs.add(output)
+        outputs.add(Output(value, address))
     }
 
     fun addSignature(signature: ByteArray, index: Int) {
-        inputs[index].addSignature(signature)
+        inputs[index].signature = signature
     }
 
-    //TODO Should be refactored because of the next method
-    fun getRawDataToSign(index: Int): ByteArray? {
-        val sigData = ArrayList<Byte>()
-        if (index > inputs.size)
-            return null
-        val `in` = inputs[index]
-        val prevTxHash = `in`.prevTxHash
-        val b = ByteBuffer.allocate(Integer.SIZE / 8)
-        b.putInt(`in`.outputIndex)
-        val outputIndex = b.array()
-        if (prevTxHash != null)
-            for (i in prevTxHash.indices)
-                sigData.add(prevTxHash[i])
-        for (i in outputIndex.indices)
-            sigData.add(outputIndex[i])
-        for (op in outputs) {
-            val bo = ByteBuffer.allocate(java.lang.Double.SIZE / 8)
-            bo.putDouble(op.amount)
-            val value = bo.array()
-            val addressExponent = (op.address as RSAPublicKey).getPublicExponent().toByteArray()
-            val addressModulus = (op.address as RSAPublicKey).getModulus().toByteArray()
-            for (i in value.indices)
-                sigData.add(value[i])
-            for (i in addressExponent.indices)
-                sigData.add(addressExponent[i])
-            for (i in addressModulus.indices)
-                sigData.add(addressModulus[i])
+    fun getRawDataToSign(index: Int): ByteArray {
+        val sigData = arrayListOf<Byte>()
+        sigData.addAll(inputs[index].serialize().asList())
+
+        outputs.forEach {
+            sigData.addAll(it.serialize().toList())
         }
-        val sigD = ByteArray(sigData.size)
-        var i = 0
-        for (sb in sigData)
-            sigD[i++] = sb
-        return sigD
+
+        return sigData.toByteArray()
     }
 
     fun getRawTx(): ByteArray {
-        val rawTx = ArrayList<Byte>()
-        for (`in` in inputs) {
-            val prevTxHash = `in`.prevTxHash
-            val b = ByteBuffer.allocate(Integer.SIZE / 8)
-            b.putInt(`in`.outputIndex)
-            val outputIndex = b.array()
-            val signature = `in`.signature
-            if (prevTxHash != null)
-                for (i in prevTxHash.indices)
-                    rawTx.add(prevTxHash[i])
-            for (i in outputIndex.indices)
-                rawTx.add(outputIndex[i])
-            if (signature != null)
-                for (i in signature.indices)
-                    rawTx.add(signature[i])
+        val rawTx = arrayListOf<Byte>()
+        inputs.forEach {
+            rawTx.addAll(it.serialize().toList())
         }
-        for (op in outputs) {
-            val b = ByteBuffer.allocate(java.lang.Double.SIZE / 8)
-            b.putDouble(op.amount)
-            val value = b.array()
-            val addressExponent = (op.address as RSAPublicKey).publicExponent.toByteArray()
-            val addressModulus = op.address.modulus.toByteArray()
-            for (i in value.indices)
-                rawTx.add(value[i])
-            for (i in addressExponent.indices)
-                rawTx.add(addressExponent[i])
-            for (i in addressModulus.indices)
-                rawTx.add(addressModulus[i])
+        outputs.forEach {
+            rawTx.addAll(it.serialize().toList())
         }
-        val tx = ByteArray(rawTx.size)
-        var i = 0
-        for (b in rawTx)
-            tx[i++] = b
-        return tx
+
+        return rawTx.toByteArray()
     }
 
-    fun finalize() {
-        val md = MessageDigest.getInstance("SHA-256")
-        md.update(getRawTx())
-        hash = md.digest()
+    fun computeTxHash() {
+        hash = Crypto.computeSha256(getRawTx())
     }
 
     override fun equals(other: Any?): Boolean {
@@ -134,20 +81,23 @@ class Transaction() {
         return result
     }
 
-    class Input(prevHash: ByteArray? = null, val outputIndex: Int) {
+    class Input(prevHash: ByteArray, val outputIndex: Int) {
 
-        val prevTxHash: ByteArray? = if (prevHash == null)
-            null
-        else
-            Arrays.copyOf(prevHash, prevHash.size)
-
+        val prevTxHash: ByteArray = Arrays.copyOf(prevHash, prevHash.size)
         var signature: ByteArray? = null
+            set(value) {
+                if (value != null) {
+                    field = Arrays.copyOf(value, value.size)
+                }
+            }
 
-        fun addSignature(sig: ByteArray?) {
-            signature = if (sig == null)
-                null
-            else
-                Arrays.copyOf(sig, sig.size)
+        fun serialize(): ByteArray {
+            val rawData = arrayListOf<Byte>()
+            prevTxHash.forEach { rawData.add(it) }
+            outputIndex.toByteArray().forEach { rawData.add(it) }
+            signature?.forEach { rawData.add(it) }
+
+            return rawData.toByteArray()
         }
 
         override fun equals(other: Any?): Boolean {
@@ -165,11 +115,25 @@ class Transaction() {
 
         override fun hashCode(): Int {
             var result = outputIndex
-            result = 31 * result + (prevTxHash?.let { Arrays.hashCode(it) } ?: 0)
+            result = 31 * result + prevTxHash.let { Arrays.hashCode(it) }
             result = 31 * result + (signature?.let { Arrays.hashCode(it) } ?: 0)
+
             return result
         }
     }
 
-    data class Output(val amount: Double, val address: PublicKey)
+    //TODO Change PublicKey to custom one and encapsulate logic for BitCoin public key inside it
+    class Output(val amount: Double, val address: PublicKey) {
+
+        fun serialize(): ByteArray {
+            val rawData = arrayListOf<Byte>()
+            amount.toByteArray().forEach { rawData.add(it) }
+            with(address as ECPublicKey) {
+                w.affineX.toByteArray().forEach { rawData.add(it) }
+                w.affineY.toByteArray().forEach { rawData.add(it) }
+            }
+
+            return rawData.toByteArray()
+        }
+    }
 }

@@ -146,7 +146,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -196,7 +196,7 @@ public class Assignment3 {
 
             spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)),
                     0);
-            spendCoinbaseTx.finalize();
+            spendCoinbaseTx.computeTxHash();
             block.addTransaction(spendCoinbaseTx);
 
             for (int j = 0; j < numOutputs; j++) {
@@ -248,7 +248,7 @@ public class Assignment3 {
                             tx.getRawDataToSign(j));
                     tx.addSignature(sig, j);
                 }
-                tx.finalize();
+                tx.computeTxHash();
                 block.addTransaction(tx);
             }
 
@@ -301,7 +301,7 @@ public class Assignment3 {
 
             spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)),
                     0);
-            spendCoinbaseTx.finalize();
+            spendCoinbaseTx.computeTxHash();
             block.addTransaction(spendCoinbaseTx);
 
             for (int j = 0; j < numOutputs; j++) {
@@ -352,7 +352,7 @@ public class Assignment3 {
                     tx.addSignature(
                             signMessage(utxoToKeyPair.get(utxoAtIndex.get(j)).getPrivate(), tx.getRawDataToSign(j)), j);
                 }
-                tx.finalize();
+                tx.computeTxHash();
                 block.addTransaction(tx);
             }
 
@@ -431,7 +431,7 @@ public class Assignment3 {
         byte[] rawData = spendCoinbaseTx.getRawDataToSign(0);
         rawData[0]++;
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), rawData), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -442,7 +442,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(1).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -453,7 +453,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE + 1, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -467,7 +467,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(hashCopy, 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -478,7 +478,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 1);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -490,7 +490,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -501,7 +501,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(-Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -534,7 +534,7 @@ public class Assignment3 {
             spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
             spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)),
                     0);
-            spendCoinbaseTx.finalize();
+            spendCoinbaseTx.computeTxHash();
             block.addTransaction(spendCoinbaseTx);
             block.finalize();
             passes = passes && blockHandler.processBlock(block);
@@ -566,7 +566,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -579,7 +579,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE - 1, people.get(2).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(1).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -610,7 +610,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -623,7 +623,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(prevBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(2).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(1).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -655,7 +655,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -669,7 +669,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(prevBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(2).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(1).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -684,7 +684,7 @@ public class Assignment3 {
         spendOldUTXOTransaction.addOutput(Block.COINBASE, people.get(2).getPublic());
         spendOldUTXOTransaction
                 .addSignature(signMessage(people.get(1).getPrivate(), spendOldUTXOTransaction.getRawDataToSign(0)), 0);
-        spendOldUTXOTransaction.finalize();
+        spendOldUTXOTransaction.computeTxHash();
         block.addTransaction(spendOldUTXOTransaction);
         block.finalize();
 
@@ -718,7 +718,7 @@ public class Assignment3 {
             spendCoinbaseTx.addInput(prevBlock.getCoinbase().getHash(), 0);
             spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
             spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-            spendCoinbaseTx.finalize();
+            spendCoinbaseTx.computeTxHash();
             block.addTransaction(spendCoinbaseTx);
             block.finalize();
             prevBlock = block;
@@ -758,7 +758,7 @@ public class Assignment3 {
             spendCoinbaseTx.addInput(prevBlock.getCoinbase().getHash(), 0);
             spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
             spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-            spendCoinbaseTx.finalize();
+            spendCoinbaseTx.computeTxHash();
             block.addTransaction(spendCoinbaseTx);
             block.finalize();
             prevBlock = block;
@@ -803,7 +803,7 @@ public class Assignment3 {
             spendCoinbaseTx.addInput(prevBlock.getCoinbase().getHash(), 0);
             spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
             spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-            spendCoinbaseTx.finalize();
+            spendCoinbaseTx.computeTxHash();
             block.addTransaction(spendCoinbaseTx);
             block.finalize();
             prevBlock = block;
@@ -862,7 +862,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         blockHandler.processTx(spendCoinbaseTx);
 
         Block createdBlock = blockHandler.createBlock(people.get(1).getPublic());
@@ -895,7 +895,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, (PublicKey) people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         blockHandler.processTx(spendCoinbaseTx);
 
         Block createdBlock = blockHandler.createBlock((PublicKey) people.get(1).getPublic());
@@ -934,7 +934,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -974,7 +974,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -984,7 +984,7 @@ public class Assignment3 {
         spendCoinbaseTx2.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx2.addOutput(Block.COINBASE - 1, people.get(1).getPublic());
         spendCoinbaseTx2.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx2.getRawDataToSign(0)), 0);
-        spendCoinbaseTx2.finalize();
+        spendCoinbaseTx2.computeTxHash();
 
         blockHandler.processTx(spendCoinbaseTx2);
         Block createdBlock = blockHandler.createBlock(people.get(1).getPublic());
@@ -1020,7 +1020,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE - 1, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         block.addTransaction(spendCoinbaseTx);
         block.finalize();
 
@@ -1030,7 +1030,7 @@ public class Assignment3 {
         spendPrevTx.addInput(block.getCoinbase().getHash(), 0);
         spendPrevTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendPrevTx.addSignature(signMessage(people.get(1).getPrivate(), spendPrevTx.getRawDataToSign(0)), 0);
-        spendPrevTx.finalize();
+        spendPrevTx.computeTxHash();
 
         blockHandler.processTx(spendPrevTx);
         Block createdBlock = blockHandler.createBlock(people.get(1).getPublic());
@@ -1060,7 +1060,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE + 2, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         blockHandler.processTx(spendCoinbaseTx);
 
         Block createdBlock = blockHandler.createBlock(people.get(1).getPublic());
@@ -1098,7 +1098,7 @@ public class Assignment3 {
             spendCoinbaseTx.addOutput(Block.COINBASE, people.get(0).getPublic());
             spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)),
                     0);
-            spendCoinbaseTx.finalize();
+            spendCoinbaseTx.computeTxHash();
             blockHandler.processTx(spendCoinbaseTx);
 
             Block createdBlock = blockHandler.createBlock(people.get(0).getPublic());
@@ -1133,7 +1133,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         blockHandler.processTx(spendCoinbaseTx);
 
         Block createdBlock = blockHandler.createBlock(people.get(1).getPublic());
@@ -1143,7 +1143,7 @@ public class Assignment3 {
         spendTx.addInput(spendCoinbaseTx.getHash(), 0);
         spendTx.addOutput(Block.COINBASE, people.get(2).getPublic());
         spendTx.addSignature(signMessage(people.get(1).getPrivate(), spendTx.getRawDataToSign(0)), 0);
-        spendTx.finalize();
+        spendTx.computeTxHash();
         newBlock.addTransaction(spendTx);
         newBlock.finalize();
 
@@ -1177,7 +1177,7 @@ public class Assignment3 {
         spendCoinbaseTx.addInput(genesisBlock.getCoinbase().getHash(), 0);
         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
         spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-        spendCoinbaseTx.finalize();
+        spendCoinbaseTx.computeTxHash();
         blockHandler.processTx(spendCoinbaseTx);
 
         Block createdBlock = blockHandler.createBlock(people.get(1).getPublic());
@@ -1187,7 +1187,7 @@ public class Assignment3 {
         spendTx.addInput(spendCoinbaseTx.getHash(), 0);
         spendTx.addOutput(Block.COINBASE, people.get(2).getPublic());
         spendTx.addSignature(signMessage(people.get(1).getPrivate(), spendTx.getRawDataToSign(0)), 0);
-        spendTx.finalize();
+        spendTx.computeTxHash();
         newBlock.addTransaction(spendTx);
         newBlock.finalize();
         boolean passes = createdBlock != null && createdBlock.getPrevBlockHash().equals(genesisBlock.getHash())
@@ -1230,7 +1230,7 @@ public class Assignment3 {
             spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
             spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)),
                     0);
-            spendCoinbaseTx.finalize();
+            spendCoinbaseTx.computeTxHash();
             block.addTransaction(spendCoinbaseTx);
             block.finalize();
             passes = passes && blockHandler.processBlock(block);
@@ -1277,7 +1277,7 @@ public class Assignment3 {
                     spendCoinbaseTx.addOutput(Block.COINBASE, people.get(0).getPublic());
                     spendCoinbaseTx
                             .addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                    spendCoinbaseTx.finalize();
+                    spendCoinbaseTx.computeTxHash();
                     blockHandler.processTx(spendCoinbaseTx);
 
                     block = blockHandler.createBlock(people.get(0).getPublic());
@@ -1290,7 +1290,7 @@ public class Assignment3 {
                     spendCoinbaseTx.addOutput(Block.COINBASE, people.get(0).getPublic());
                     spendCoinbaseTx
                             .addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                    spendCoinbaseTx.finalize();
+                    spendCoinbaseTx.computeTxHash();
                     blockHandler.processTx(spendCoinbaseTx);
 
                     block = blockHandler.createBlock(people.get(0).getPublic());
@@ -1308,7 +1308,7 @@ public class Assignment3 {
                     spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
                     spendCoinbaseTx
                             .addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                    spendCoinbaseTx.finalize();
+                    spendCoinbaseTx.computeTxHash();
                     block.addTransaction(spendCoinbaseTx);
                     block.finalize();
 
@@ -1321,7 +1321,7 @@ public class Assignment3 {
                     spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
                     spendCoinbaseTx
                             .addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                    spendCoinbaseTx.finalize();
+                    spendCoinbaseTx.computeTxHash();
                     block.addTransaction(spendCoinbaseTx);
                     block.finalize();
 
@@ -1335,7 +1335,7 @@ public class Assignment3 {
                         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
                         spendCoinbaseTx.addSignature(
                                 signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                        spendCoinbaseTx.finalize();
+                        spendCoinbaseTx.computeTxHash();
                         block.addTransaction(spendCoinbaseTx);
                         block.finalize();
 
@@ -1349,7 +1349,7 @@ public class Assignment3 {
                     spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
                     spendCoinbaseTx
                             .addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                    spendCoinbaseTx.finalize();
+                    spendCoinbaseTx.computeTxHash();
                     block.addTransaction(spendCoinbaseTx);
                     block.finalize();
 
@@ -1362,7 +1362,7 @@ public class Assignment3 {
                     spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
                     spendCoinbaseTx
                             .addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                    spendCoinbaseTx.finalize();
+                    spendCoinbaseTx.computeTxHash();
                     block.addTransaction(spendCoinbaseTx);
                     block.finalize();
 
@@ -1376,7 +1376,7 @@ public class Assignment3 {
                         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
                         spendCoinbaseTx.addSignature(
                                 signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                        spendCoinbaseTx.finalize();
+                        spendCoinbaseTx.computeTxHash();
                         block.addTransaction(spendCoinbaseTx);
                         block.finalize();
 
@@ -1427,7 +1427,7 @@ public class Assignment3 {
                     spendCoinbaseTx.addOutput(Block.COINBASE, people.get(0).getPublic());
                     spendCoinbaseTx.addSignature(
                             signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                    spendCoinbaseTx.finalize();
+                    spendCoinbaseTx.computeTxHash();
                     blockHandler.processTx(spendCoinbaseTx);
 
                     block = blockHandler.createBlock(people.get(0).getPublic());
@@ -1443,7 +1443,7 @@ public class Assignment3 {
                     spendCoinbaseTx.addOutput(Block.COINBASE, people.get(0).getPublic());
                     spendCoinbaseTx.addSignature(
                             signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                    spendCoinbaseTx.finalize();
+                    spendCoinbaseTx.computeTxHash();
                     blockHandler.processTx(spendCoinbaseTx);
 
                     block = blockHandler.createBlock(people.get(0).getPublic());
@@ -1464,7 +1464,7 @@ public class Assignment3 {
                     spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
                     spendCoinbaseTx.addSignature(
                             signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                    spendCoinbaseTx.finalize();
+                    spendCoinbaseTx.computeTxHash();
                     block.addTransaction(spendCoinbaseTx);
                     block.finalize();
 
@@ -1480,7 +1480,7 @@ public class Assignment3 {
                     spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
                     spendCoinbaseTx.addSignature(
                             signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                    spendCoinbaseTx.finalize();
+                    spendCoinbaseTx.computeTxHash();
                     block.addTransaction(spendCoinbaseTx);
                     block.finalize();
 
@@ -1497,7 +1497,7 @@ public class Assignment3 {
                         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
                         spendCoinbaseTx.addSignature(
                                 signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                        spendCoinbaseTx.finalize();
+                        spendCoinbaseTx.computeTxHash();
                         block.addTransaction(spendCoinbaseTx);
                         block.finalize();
 
@@ -1514,7 +1514,7 @@ public class Assignment3 {
                     spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
                     spendCoinbaseTx.addSignature(
                             signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                    spendCoinbaseTx.finalize();
+                    spendCoinbaseTx.computeTxHash();
                     block.addTransaction(spendCoinbaseTx);
                     block.finalize();
 
@@ -1530,7 +1530,7 @@ public class Assignment3 {
                     spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
                     spendCoinbaseTx.addSignature(
                             signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                    spendCoinbaseTx.finalize();
+                    spendCoinbaseTx.computeTxHash();
                     block.addTransaction(spendCoinbaseTx);
                     block.finalize();
 
@@ -1547,7 +1547,7 @@ public class Assignment3 {
                         spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
                         spendCoinbaseTx.addSignature(
                                 signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)), 0);
-                        spendCoinbaseTx.finalize();
+                        spendCoinbaseTx.computeTxHash();
                         block.addTransaction(spendCoinbaseTx);
                         block.finalize();
 
@@ -1587,7 +1587,7 @@ public class Assignment3 {
             spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
             spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)),
                     0);
-            spendCoinbaseTx.finalize();
+            spendCoinbaseTx.computeTxHash();
             block.addTransaction(spendCoinbaseTx);
             block.finalize();
 
@@ -1610,7 +1610,7 @@ public class Assignment3 {
             spendCoinbaseTx.addOutput(Block.COINBASE, people.get(1).getPublic());
             spendCoinbaseTx.addSignature(signMessage(people.get(0).getPrivate(), spendCoinbaseTx.getRawDataToSign(0)),
                     0);
-            spendCoinbaseTx.finalize();
+            spendCoinbaseTx.computeTxHash();
             block.addTransaction(spendCoinbaseTx);
             block.finalize();
 

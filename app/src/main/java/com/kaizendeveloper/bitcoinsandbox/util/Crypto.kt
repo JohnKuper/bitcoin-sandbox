@@ -1,6 +1,7 @@
 package com.kaizendeveloper.bitcoinsandbox.util
 
 import java.security.MessageDigest
+import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.Signature
 
@@ -14,6 +15,12 @@ object Crypto {
         sig.initVerify(pubKey)
         sig.update(message)
         return sig.verify(signature)
+    }
+
+    fun sign(input: ByteArray, privateKey: PrivateKey): ByteArray {
+        val signature = Signature.getInstance("SHA256withECDSA").apply { initSign(privateKey) }
+        signature.update(input)
+        return signature.sign()
     }
 
     fun computeSha256(input: ByteArray): ByteArray = MessageDigest.getInstance("SHA-256", "BC").digest(input)
