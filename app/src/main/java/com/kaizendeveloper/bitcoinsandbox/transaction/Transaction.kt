@@ -1,9 +1,8 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
+import com.kaizendeveloper.bitcoinsandbox.model.BitCoinPublicKey
 import com.kaizendeveloper.bitcoinsandbox.util.Crypto
 import com.kaizendeveloper.bitcoinsandbox.util.toByteArray
-import java.security.PublicKey
-import java.security.interfaces.ECPublicKey
 import java.util.Arrays
 
 
@@ -15,18 +14,18 @@ class Transaction() {
     val outputs: ArrayList<Output> = arrayListOf()
     var hash: ByteArray? = null
 
-    constructor(amount: Double, address: PublicKey) : this() {
+    constructor(amount: Double, publicKey: BitCoinPublicKey) : this() {
         coinbase = true
-        addOutput(amount, address)
-        computeTxHash()
+        addOutput(amount, publicKey)
+        build()
     }
 
     fun addInput(prevTxHash: ByteArray, outputIndex: Int) {
         inputs.add(Input(prevTxHash, outputIndex))
     }
 
-    fun addOutput(value: Double, address: PublicKey) {
-        outputs.add(Output(value, address))
+    fun addOutput(value: Double, publicKey: BitCoinPublicKey) {
+        outputs.add(Output(value, publicKey))
     }
 
     fun addSignature(signature: ByteArray, index: Int) {
@@ -35,10 +34,9 @@ class Transaction() {
 
     fun getRawDataToSign(index: Int): ByteArray {
         val sigData = arrayListOf<Byte>()
-        sigData.addAll(inputs[index].serialize().asList())
-
+        sigData.addAll(inputs[index].toByteArrayForSign().toList())
         outputs.forEach {
-            sigData.addAll(it.serialize().toList())
+            sigData.addAll(it.toByteArray().toList())
         }
 
         return sigData.toByteArray()
@@ -47,17 +45,17 @@ class Transaction() {
     fun getRawTx(): ByteArray {
         val rawTx = arrayListOf<Byte>()
         inputs.forEach {
-            rawTx.addAll(it.serialize().toList())
+            rawTx.addAll(it.toByteArray().toList())
         }
         outputs.forEach {
-            rawTx.addAll(it.serialize().toList())
+            rawTx.addAll(it.toByteArray().toList())
         }
 
         return rawTx.toByteArray()
     }
 
-    fun computeTxHash() {
-        hash = Crypto.computeSha256(getRawTx())
+    fun build() {
+        hash = Crypto.sha256(getRawTx())
     }
 
     override fun equals(other: Any?): Boolean {
@@ -91,11 +89,19 @@ class Transaction() {
                 }
             }
 
-        fun serialize(): ByteArray {
+        fun toByteArray(): ByteArray {
+            val rawData = arrayListOf<Byte>().apply {
+                addAll(toByteArrayForSign().toList())
+            }
+            signature?.forEach { rawData.add(it) }
+
+            return rawData.toByteArray()
+        }
+
+        fun toByteArrayForSign(): ByteArray {
             val rawData = arrayListOf<Byte>()
             prevTxHash.forEach { rawData.add(it) }
             outputIndex.toByteArray().forEach { rawData.add(it) }
-            signature?.forEach { rawData.add(it) }
 
             return rawData.toByteArray()
         }
@@ -122,16 +128,12 @@ class Transaction() {
         }
     }
 
-    //TODO Change PublicKey to custom one and encapsulate logic for BitCoin public key inside it
-    class Output(val amount: Double, val address: PublicKey) {
+    class Output(val amount: Double, val bitCoinPublicKey: BitCoinPublicKey) {
 
-        fun serialize(): ByteArray {
+        fun toByteArray(): ByteArray {
             val rawData = arrayListOf<Byte>()
             amount.toByteArray().forEach { rawData.add(it) }
-            with(address as ECPublicKey) {
-                w.affineX.toByteArray().forEach { rawData.add(it) }
-                w.affineY.toByteArray().forEach { rawData.add(it) }
-            }
+            bitCoinPublicKey.address.toByteArray().forEach { rawData.add(it) }
 
             return rawData.toByteArray()
         }

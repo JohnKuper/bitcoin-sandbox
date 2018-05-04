@@ -8,7 +8,7 @@ class BlockHandler
 /**
  * assume blockChain has the genesis block
  */
-    (private val blockChain: BlockChain) {
+    (private val blockChain: BlockChain2) {
 
     /**
      * add `block` to the block chain if it is valid.
@@ -25,10 +25,10 @@ class BlockHandler
     fun createBlock(myAddress: PublicKey): Block? {
         val parent = blockChain.maxHeightBlock
         val parentHash = parent.hash
-        val newBlock = Block(parentHash, myAddress)
+        val newBlock = Block(parentHash)
         val uPool = blockChain.maxHeightUTXOPool
         val txPool = blockChain.transactionPool
-        val handler = TxHandler(uPool)
+        val handler = TxHandler()
         val txs = txPool.transactions.toTypedArray()
         val correctTxs = handler.handleTxs(txs)
 
@@ -36,7 +36,7 @@ class BlockHandler
             newBlock.addTransaction(correctTx)
         }
 
-        newBlock.finalize()
+        newBlock.build()
         return if (blockChain.addBlock(newBlock))
             newBlock
         else

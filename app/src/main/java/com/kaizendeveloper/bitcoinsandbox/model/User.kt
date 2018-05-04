@@ -1,10 +1,9 @@
 package com.kaizendeveloper.bitcoinsandbox.model
 
 import java.security.PrivateKey
-import java.security.PublicKey
 
-class Identity(
-    val publicKey: PublicKey,
+class User(
+    val publicKey: BitCoinPublicKey,
     val privateKey: PrivateKey,
-    val pseudonym: String
+    val name: String
 )

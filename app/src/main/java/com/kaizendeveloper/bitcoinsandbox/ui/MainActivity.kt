@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Block
-import com.kaizendeveloper.bitcoinsandbox.blockchain.BlockChain
-import com.kaizendeveloper.bitcoinsandbox.model.IdentityFactory
+import com.kaizendeveloper.bitcoinsandbox.blockchain.BlockChain2
+import com.kaizendeveloper.bitcoinsandbox.util.Crypto
 import kotlinx.android.synthetic.main.activity_main.button
 import kotlinx.android.synthetic.main.activity_main.recycler
 
@@ -20,10 +20,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val keyPair = IdentityFactory.generateECKeyPair()
-        val genesisBlock = Block(null, keyPair.public)
-        genesisBlock.finalize()
-        val blockChain = BlockChain(genesisBlock)
+        val keyPair = Crypto.generateECKeyPair()
+        val genesisBlock = Block(null)
+        genesisBlock.build()
+        val blockChain = BlockChain2(genesisBlock)
 
         blockChain.addObserver { _, _ ->
             recycler.adapter.notifyDataSetChanged()
@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity() {
         recycler.adapter = BlockChainAdapter(blockChain.blocks)
 
         button.setOnClickListener {
-            val secondBlock = Block(genesisBlock.hash, keyPair.public)
-            secondBlock.finalize()
+            val secondBlock = Block(genesisBlock.hash)
+            secondBlock.build()
             blockChain.addBlockAndNotify(secondBlock)
         }
     }
