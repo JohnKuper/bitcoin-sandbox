@@ -8,7 +8,7 @@ import java.security.PublicKey
 import java.security.Signature
 import java.security.spec.ECGenParameterSpec
 
-object Crypto {
+object Cipher {
 
     private const val BOUNCY_CASTLE = "BC"
 

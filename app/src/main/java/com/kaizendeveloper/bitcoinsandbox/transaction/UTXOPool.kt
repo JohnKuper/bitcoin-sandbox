@@ -41,6 +41,8 @@ object UTXOPool {
         unspentOutputMap.clear()
     }
 
+    fun size() = unspentOutputMap.size
+
     /**
      * @return true if UTXO [utxo] is in the pool and false otherwise
      */

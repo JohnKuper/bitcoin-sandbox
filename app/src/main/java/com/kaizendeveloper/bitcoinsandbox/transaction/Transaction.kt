@@ -1,14 +1,14 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
 import com.kaizendeveloper.bitcoinsandbox.model.BitCoinPublicKey
-import com.kaizendeveloper.bitcoinsandbox.util.Crypto
+import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import com.kaizendeveloper.bitcoinsandbox.util.toByteArray
 import java.util.Arrays
 
 
 class Transaction() {
 
-    private var coinbase: Boolean = false
+    var coinbase: Boolean = false
 
     val inputs: ArrayList<Input> = arrayListOf()
     val outputs: ArrayList<Output> = arrayListOf()
@@ -55,7 +55,7 @@ class Transaction() {
     }
 
     fun build() {
-        hash = Crypto.sha256(getRawTx())
+        hash = Cipher.sha256(getRawTx())
     }
 
     override fun equals(other: Any?): Boolean {

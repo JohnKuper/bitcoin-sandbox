@@ -1,6 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
-import com.kaizendeveloper.bitcoinsandbox.util.Crypto
+import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 
 class TxHandler {
 
@@ -13,6 +13,7 @@ class TxHandler {
      * (5) the sum of [tx]s input values is greater than or equal to the sum of its output values; and false otherwise.
      */
     fun isValidTx(tx: Transaction): Boolean {
+        if (tx.coinbase) return true
 
         val utxoHashSet = hashSetOf<UTXO>()
         var inputSum = 0
@@ -27,7 +28,7 @@ class TxHandler {
             val txOutput = UTXOPool.get(utxo)
             if (txOutput == null
                 || input.signature == null
-                || !Crypto.verifySignature(
+                || !Cipher.verifySignature(
                     txOutput.bitCoinPublicKey.publicKey,
                     tx.getRawDataToSign(index),
                     input.signature!!

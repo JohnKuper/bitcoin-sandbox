@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Block
 import com.kaizendeveloper.bitcoinsandbox.blockchain.BlockChain2
-import com.kaizendeveloper.bitcoinsandbox.util.Crypto
+import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import kotlinx.android.synthetic.main.activity_main.button
 import kotlinx.android.synthetic.main.activity_main.recycler
 
@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val keyPair = Crypto.generateECKeyPair()
+        val keyPair = Cipher.generateECKeyPair()
         val genesisBlock = Block(null)
         genesisBlock.build()
         val blockChain = BlockChain2(genesisBlock)

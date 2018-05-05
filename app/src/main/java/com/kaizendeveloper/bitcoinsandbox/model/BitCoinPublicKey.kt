@@ -1,7 +1,7 @@
 package com.kaizendeveloper.bitcoinsandbox.model
 
 import com.kaizendeveloper.bitcoinsandbox.util.Base58
-import com.kaizendeveloper.bitcoinsandbox.util.Crypto
+import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import com.kaizendeveloper.bitcoinsandbox.util.toHex
 import org.bouncycastle.jce.interfaces.ECPublicKey
 
@@ -16,17 +16,17 @@ class BitCoinPublicKey(val publicKey: ECPublicKey) {
         val pkWithPrefix = encodedWith04Prefix()
         println("public key with prefix (HEX): $pkWithPrefix")
 
-        val pkSha256 = Crypto.sha256(pkWithPrefix.toByteArray())
+        val pkSha256 = Cipher.sha256(pkWithPrefix.toByteArray())
         println("public key SHA-256 (HEX): ${pkSha256.toHex()}")
 
-        val rmd160 = Crypto.ripeMD160(pkSha256)
+        val rmd160 = Cipher.ripeMD160(pkSha256)
         println("public key RIPEMD160 (HEX): ${rmd160.toHex()}")
 
         val rmd160WithVersion = ByteArray(rmd160.size + 1).apply { this[0] = 0x00 }
         System.arraycopy(rmd160, 0, rmd160WithVersion, 1, rmd160.size)
         println("public key RIPEMD160 with version prefix (HEX) ${rmd160WithVersion.toHex()}")
 
-        val rmdWithVersionShaTwice = Crypto.sha256Twice(rmd160WithVersion)
+        val rmdWithVersionShaTwice = Cipher.sha256Twice(rmd160WithVersion)
         val rmdWithCheckSum = ByteArray(rmd160WithVersion.size + BASE58_CHECKSUM_SIZE)
         System.arraycopy(rmd160WithVersion, 0, rmdWithCheckSum, 0, rmd160WithVersion.size)
         System.arraycopy(rmdWithVersionShaTwice, 0, rmdWithCheckSum, rmd160WithVersion.size, BASE58_CHECKSUM_SIZE)

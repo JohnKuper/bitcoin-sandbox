@@ -5,7 +5,7 @@ import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction;
 import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler;
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO;
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool;
-import com.kaizendeveloper.bitcoinsandbox.util.Crypto;
+import com.kaizendeveloper.bitcoinsandbox.util.Cipher;
 
 import org.bouncycastle.jce.interfaces.ECPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -41,7 +41,7 @@ public class TxHandlerHardTest {
         sigInstance.update((plaintext).getBytes());
         byte[] signature = sigInstance.sign();
 
-        assertTrue(Crypto.verifySignature(k.getPublic(), plaintext.getBytes(), signature));
+        assertTrue(Cipher.verifySignature(k.getPublic(), plaintext.getBytes(), signature));
     }
 
     private static void createPoolWithGenesisBlock() throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
@@ -53,11 +53,11 @@ public class TxHandlerHardTest {
         transaction.addInput(genesisPrevBlockHash, 0);
 
         byte[] rawToSign = transaction.getRawDataToSign(0);
-        transaction.addSignature(Crypto.sign(rawToSign, pk), 0);
+        transaction.addSignature(Cipher.sign(rawToSign, pk), 0);
         transaction.build();
 
         byte[] signature = transaction.getInputs().get(0).getSignature();
-        assert (Crypto.verifySignature(validPublicKeys.get(0).getPublicKey(), rawToSign, signature));
+        assert (Cipher.verifySignature(validPublicKeys.get(0).getPublicKey(), rawToSign, signature));
 
         UTXO utxo = new UTXO(transaction.getHash(), 0);
         UTXOPool.add(utxo, transaction.getOutputs().get(0));
@@ -65,7 +65,7 @@ public class TxHandlerHardTest {
 
     private static void createTestKeys() throws Exception {
         for (int i = 0; i < 5; i++) {
-            KeyPair k = Crypto.INSTANCE.generateECKeyPair();
+            KeyPair k = Cipher.INSTANCE.generateECKeyPair();
             BitCoinPublicKey coinPublicKey = new BitCoinPublicKey((ECPublicKey) k.getPublic());
             validKeyPairs.put(coinPublicKey, k.getPrivate());
             validPublicKeys.add(coinPublicKey);

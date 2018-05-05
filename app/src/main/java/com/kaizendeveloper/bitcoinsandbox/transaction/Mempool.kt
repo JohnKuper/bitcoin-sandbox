@@ -2,7 +2,7 @@ package com.kaizendeveloper.bitcoinsandbox.transaction
 
 import com.kaizendeveloper.bitcoinsandbox.util.ByteArrayWrapper
 
-class TransactionPool {
+class Mempool {
 
     private var hashToTransactionMap: HashMap<ByteArrayWrapper, Transaction>? = null
 
@@ -17,7 +17,7 @@ class TransactionPool {
         hashToTransactionMap = HashMap()
     }
 
-    constructor(txPool: TransactionPool) {
+    constructor(txPool: Mempool) {
         hashToTransactionMap = HashMap(txPool.hashToTransactionMap)
     }
 

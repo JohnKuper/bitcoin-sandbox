@@ -1,7 +1,7 @@
 package com.kaizendeveloper.bitcoinsandbox.blockchain
 
+import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
-import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionPool
 import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
 import com.kaizendeveloper.bitcoinsandbox.util.ByteArrayWrapper
@@ -14,7 +14,7 @@ class BlockChain2(var maxHeightBlock: Block) : Observable() {
     /**
      * Get the transaction pool to mine a new block
      */
-    var transactionPool = TransactionPool()
+    var transactionPool = Mempool()
     var blocksToUTXOPoolsMap: HashMap<ByteArrayWrapper, UTXOPool> = HashMap()
     var head: Node
 

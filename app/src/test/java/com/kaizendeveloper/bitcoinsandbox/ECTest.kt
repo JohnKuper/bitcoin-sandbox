@@ -1,10 +1,14 @@
 package com.kaizendeveloper.bitcoinsandbox
 
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Block
+import com.kaizendeveloper.bitcoinsandbox.blockchain.BlockChain
 import com.kaizendeveloper.bitcoinsandbox.model.BitCoinPublicKey
 import com.kaizendeveloper.bitcoinsandbox.model.UserFactory
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
-import com.kaizendeveloper.bitcoinsandbox.util.Crypto
+import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
+import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
+import com.kaizendeveloper.bitcoinsandbox.util.Cipher
+import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertTrue
 import org.bouncycastle.jce.interfaces.ECPublicKey
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -16,22 +20,22 @@ class ECTest {
 
     @Test
     fun generateTestAddress() {
-        val keyPair = Crypto.generateECKeyPair()
+        val keyPair = Cipher.generateECKeyPair()
         val pubKey = BitCoinPublicKey(keyPair.public as ECPublicKey)
         pubKey.address
     }
 
     @Test
     fun signatureShouldBeValid() {
-        val keyPair = Crypto.generateECKeyPair()
+        val keyPair = Cipher.generateECKeyPair()
         val toSign = "BitCoin".toByteArray()
 
-        assertTrue(Crypto.verifySignature(keyPair.public, toSign, Crypto.sign(toSign, keyPair.private)))
+        assertTrue(Cipher.verifySignature(keyPair.public, toSign, Cipher.sign(toSign, keyPair.private)))
     }
 
     @Test
     fun testRawDataToSign() {
-        val keyPair = Crypto.generateECKeyPair()
+        val keyPair = Cipher.generateECKeyPair()
         val bitCoinPubKey = BitCoinPublicKey(keyPair.public as ECPublicKey)
         val transaction = Transaction()
         transaction.addInput("prevTxHash".toByteArray(), 0)
@@ -42,7 +46,7 @@ class ECTest {
 
     @Test
     fun testRawTx() {
-        val keyPair = Crypto.generateECKeyPair()
+        val keyPair = Cipher.generateECKeyPair()
         val bitCoinPubKey = BitCoinPublicKey(keyPair.public as ECPublicKey)
         val transaction = Transaction()
         transaction.addInput("prevTxHash".toByteArray(), 0)
@@ -52,8 +56,8 @@ class ECTest {
 
         val firstRawToSign = transaction.getRawDataToSign(0)
         val secondRawToSign = transaction.getRawDataToSign(1)
-        transaction.addSignature(Crypto.sign(firstRawToSign, keyPair.private), 0)
-        transaction.addSignature(Crypto.sign(secondRawToSign, keyPair.private), 1)
+        transaction.addSignature(Cipher.sign(firstRawToSign, keyPair.private), 0)
+        transaction.addSignature(Cipher.sign(secondRawToSign, keyPair.private), 1)
 
         val block = Block("prevBlockHash".toByteArray())
         block.addTransaction(transaction)
@@ -61,11 +65,30 @@ class ECTest {
 
     @Test
     fun genesisTransaction() {
-        val user = UserFactory.createUser("Satoshi")
-        val tx = Transaction(25.00, user.publicKey)
+        val satoshi = UserFactory.createUser("Satoshi")
+        val tx = Transaction(25.00, satoshi.publicKey)
         val genesisBlock = Block().apply { addTransaction(tx) }
+        BlockChain.addBlock(genesisBlock)
 
+        assertTrue(UTXOPool.size() == 1)
+        assertNotNull(UTXOPool.get(UTXO(tx.hash!!, 0)))
 
+        val alice = UserFactory.createUser("Alice")
+        val toAliceTx = Transaction()
+        toAliceTx.addInput(tx.hash!!, 0)
+        toAliceTx.addOutput(12.00, alice.publicKey)
+        toAliceTx.addOutput(13.00, satoshi.publicKey)
+
+        val sig = Cipher.sign(toAliceTx.getRawDataToSign(0), satoshi.privateKey)
+        toAliceTx.addSignature(sig, 0)
+        toAliceTx.build()
+        BlockChain.addBlock(Block().apply {
+            addTransaction(toAliceTx)
+        })
+
+        assertTrue(UTXOPool.size() == 2)
+        assertNotNull(UTXOPool.get(UTXO(toAliceTx.hash!!, 0)))
+        assertNotNull(UTXOPool.get(UTXO(toAliceTx.hash!!, 1)))
     }
 
     companion object {

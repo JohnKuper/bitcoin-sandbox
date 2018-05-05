@@ -1,7 +1,7 @@
 package com.kaizendeveloper.bitcoinsandbox.blockchain
 
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
-import com.kaizendeveloper.bitcoinsandbox.util.Crypto
+import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 
 class Block(val prevBlockHash: ByteArray? = null) {
 
@@ -27,6 +27,6 @@ class Block(val prevBlockHash: ByteArray? = null) {
     }
 
     fun build() {
-        hash = Crypto.sha256(toByteArray())
+        hash = Cipher.sha256(toByteArray())
     }
 }
