@@ -2,14 +2,18 @@ package com.kaizendeveloper.bitcoinsandbox.blockchain
 
 import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
 import java.util.LinkedList
+import java.util.Observable
 
-object BlockChain {
+object BlockChain : Observable() {
 
-    private val blockChain = LinkedList<Block>()
+    val blocks = LinkedList<Block>()
     private val txHandler = TxHandler()
 
     fun addBlock(block: Block) {
         txHandler.handleTxs(block.transactions.toTypedArray())
-        blockChain.add(block)
+        blocks.add(block)
+
+        setChanged()
+        notifyObservers()
     }
 }

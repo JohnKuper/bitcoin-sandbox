@@ -3,7 +3,7 @@ package com.kaizendeveloper.bitcoinsandbox.model
 import com.kaizendeveloper.bitcoinsandbox.util.Base58
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import com.kaizendeveloper.bitcoinsandbox.util.toHex
-import org.bouncycastle.jce.interfaces.ECPublicKey
+import java.security.interfaces.ECPublicKey
 
 class BitCoinPublicKey(val publicKey: ECPublicKey) {
 
@@ -11,7 +11,7 @@ class BitCoinPublicKey(val publicKey: ECPublicKey) {
     val encoded = encodedWith04Prefix()
 
     private fun toAddress(): String {
-        println("public key: x=${publicKey.q.affineXCoord}, y=${publicKey.q.affineYCoord}")
+        println("public key: x=${publicKey.w.affineX}, y=${publicKey.w.affineY}")
 
         val pkWithPrefix = encodedWith04Prefix()
         println("public key with prefix (HEX): $pkWithPrefix")
@@ -40,8 +40,8 @@ class BitCoinPublicKey(val publicKey: ECPublicKey) {
 
     private fun encodedWith04Prefix(): String {
         return with(publicKey) {
-            val stringX = q.affineXCoord.toBigInteger().toString(16)
-            val stringY = q.affineYCoord.toBigInteger().toString(16)
+            val stringX = w.affineX.toString(16)
+            val stringY = w.affineY.toString(16)
             "$UNCOMPRESSED_PUBLIC_KEY_PREFIX$stringX$stringY".toUpperCase()
         }
     }

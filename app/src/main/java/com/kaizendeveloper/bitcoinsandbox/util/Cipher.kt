@@ -1,5 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.util
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.MessageDigest
@@ -13,9 +14,9 @@ object Cipher {
     private const val BOUNCY_CASTLE = "BC"
 
     fun generateECKeyPair(): KeyPair {
-        val keyGen = KeyPairGenerator.getInstance("EC", BOUNCY_CASTLE)
         val ecParamSpec = ECGenParameterSpec("secp256k1")
-        keyGen.initialize(ecParamSpec)
+        val keyGen = KeyPairGenerator.getInstance("EC", BOUNCY_CASTLE).apply { initialize(ecParamSpec) }
+
         return keyGen.genKeyPair()
     }
 
@@ -40,7 +41,8 @@ object Cipher {
 
     fun sha256Twice(input: ByteArray) = sha256(sha256(input))
 
-    fun ripeMD160(input: ByteArray): ByteArray = MessageDigest.getInstance("RipeMD160", BOUNCY_CASTLE).digest(input)
+    fun ripeMD160(input: ByteArray): ByteArray =
+        MessageDigest.getInstance("RipeMD160", BouncyCastleProvider()).digest(input)
 
     private fun getECSignature() = Signature.getInstance("SHA256withECDSA")
 }
