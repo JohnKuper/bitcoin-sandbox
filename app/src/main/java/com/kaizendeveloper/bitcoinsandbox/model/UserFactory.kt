@@ -13,6 +13,7 @@ object UserFactory {
         val bitCoinPublicKey = BitCoinPublicKey(keyPair.public as ECPublicKey)
         val user = User(bitCoinPublicKey, keyPair.private, name)
         users.add(user)
+
         return user
     }
 }
