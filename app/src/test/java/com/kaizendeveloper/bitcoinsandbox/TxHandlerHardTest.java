@@ -7,7 +7,6 @@ import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO;
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool;
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher;
 
-import org.bouncycastle.jce.interfaces.ECPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.After;
 import org.junit.Before;
@@ -21,6 +20,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.interfaces.ECPublicKey;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

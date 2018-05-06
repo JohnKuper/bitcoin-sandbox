@@ -3,6 +3,7 @@ package com.kaizendeveloper.bitcoinsandbox.transaction
 import com.kaizendeveloper.bitcoinsandbox.model.BitCoinPublicKey
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import com.kaizendeveloper.bitcoinsandbox.util.toByteArray
+import java.io.ByteArrayOutputStream
 import java.util.Arrays
 
 
@@ -33,25 +34,23 @@ class Transaction() {
     }
 
     fun getRawDataToSign(index: Int): ByteArray {
-        val sigData = arrayListOf<Byte>()
-        sigData.addAll(inputs[index].toByteArrayForSign().toList())
-        outputs.forEach {
-            sigData.addAll(it.toByteArray().toList())
-        }
-
-        return sigData.toByteArray()
+        return ByteArrayOutputStream().apply {
+            write(inputs[index].toByteArray())
+            outputs.forEach {
+                write(it.toByteArray())
+            }
+        }.toByteArray()
     }
 
     fun getRawTx(): ByteArray {
-        val rawTx = arrayListOf<Byte>()
-        inputs.forEach {
-            rawTx.addAll(it.toByteArray().toList())
-        }
-        outputs.forEach {
-            rawTx.addAll(it.toByteArray().toList())
-        }
-
-        return rawTx.toByteArray()
+        return ByteArrayOutputStream().apply {
+            inputs.forEach {
+                write(it.toByteArray())
+            }
+            outputs.forEach {
+                write(it.toByteArray())
+            }
+        }.toByteArray()
     }
 
     fun build() {
@@ -90,20 +89,12 @@ class Transaction() {
             }
 
         fun toByteArray(): ByteArray {
-            val rawData = arrayListOf<Byte>().apply {
-                addAll(toByteArrayForSign().toList())
-            }
-            signature?.forEach { rawData.add(it) }
-
-            return rawData.toByteArray()
-        }
-
-        fun toByteArrayForSign(): ByteArray {
-            val rawData = arrayListOf<Byte>()
-            prevTxHash.forEach { rawData.add(it) }
-            outputIndex.toByteArray().forEach { rawData.add(it) }
-
-            return rawData.toByteArray()
+            return ByteArrayOutputStream().apply {
+                write(prevTxHash)
+                write(outputIndex.toByteArray())
+                //TODO Fix signature serializing
+//                write(signature)
+            }.toByteArray()
         }
 
         override fun equals(other: Any?): Boolean {
@@ -131,11 +122,10 @@ class Transaction() {
     class Output(val amount: Double, val bitCoinPublicKey: BitCoinPublicKey) {
 
         fun toByteArray(): ByteArray {
-            val rawData = arrayListOf<Byte>()
-            amount.toByteArray().forEach { rawData.add(it) }
-            bitCoinPublicKey.address.toByteArray().forEach { rawData.add(it) }
-
-            return rawData.toByteArray()
+            return ByteArrayOutputStream().apply {
+                write(amount.toByteArray())
+                write(bitCoinPublicKey.address.toByteArray())
+            }.toByteArray()
         }
     }
 }

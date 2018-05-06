@@ -25,6 +25,8 @@ class App : Application() {
 
         val tx = Transaction(25.00, satoshi.publicKey)
         val genesisBlock = Block().apply { addTransaction(tx) }
+        genesisBlock.build()
+
         BlockChain.addBlock(genesisBlock)
     }
 }

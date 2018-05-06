@@ -15,6 +15,7 @@ import com.kaizendeveloper.bitcoinsandbox.blockchain.BlockChain
 import com.kaizendeveloper.bitcoinsandbox.model.UserFactory
 import kotlinx.android.synthetic.main.activity_main.button
 import kotlinx.android.synthetic.main.activity_main.recycler
+import kotlinx.android.synthetic.main.activity_main.send
 import java.util.LinkedList
 
 class MainActivity : AppCompatActivity() {
@@ -36,6 +37,14 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener {
             showUsersDialog()
         }
+
+        send.setOnClickListener {
+
+        }
+    }
+
+    private fun sendShowDialog() {
+
     }
 
     private fun showUsersDialog() {

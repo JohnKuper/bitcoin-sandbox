@@ -10,11 +10,12 @@ import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertTrue
-import org.bouncycastle.jce.interfaces.ECPublicKey
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.junit.BeforeClass
 import org.junit.Test
 import java.security.Security
+import java.security.interfaces.ECPublicKey
+import java.util.Arrays
 
 class ECTest {
 
@@ -61,6 +62,19 @@ class ECTest {
 
         val block = Block("prevBlockHash".toByteArray())
         block.addTransaction(transaction)
+    }
+
+    @Test
+    fun testByteArrayOutputStream() {
+        val keyPair = Cipher.generateECKeyPair()
+        val bitCoinPubKey = BitCoinPublicKey(keyPair.public as ECPublicKey)
+        val transaction = Transaction()
+        transaction.addInput("prevTxHash".toByteArray(), 0)
+        transaction.addOutput(10.00, bitCoinPubKey)
+        val rawToSign = transaction.getRawDataToSign(0)
+        transaction.addSignature(Cipher.sign(rawToSign, keyPair.private), 0)
+
+        assertTrue(Arrays.equals(transaction.getRawTx(), transaction.getRawTx2()))
     }
 
     @Test
