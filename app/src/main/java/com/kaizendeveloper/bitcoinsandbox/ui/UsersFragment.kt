@@ -1,5 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
@@ -11,8 +12,10 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.TextView
 import com.kaizendeveloper.bitcoinsandbox.R
-import com.kaizendeveloper.bitcoinsandbox.model.User
+import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
+import com.kaizendeveloper.bitcoinsandbox.db.User
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
+import com.kaizendeveloper.bitcoinsandbox.model.UsersViewModel
 import kotlinx.android.synthetic.main.dialog_create_user.view.userName
 import kotlinx.android.synthetic.main.fragment_users.fab
 import kotlinx.android.synthetic.main.fragment_users.usersList
@@ -20,18 +23,36 @@ import kotlinx.android.synthetic.main.fragment_users.usersList
 
 class UsersFragment : Fragment() {
 
+    private val usersViewModel = UsersViewModel(SandboxApplication.application)
+    private val usersAdapter = UsersAdapter(mutableListOf())
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_users, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         updateTitle()
+        setupRecycler()
+        observeViewModel()
+
+        fab.setOnClickListener { showUserCreationDialog() }
+    }
+
+    private fun setupRecycler() {
+        usersViewModel.allUsers.value?.also {
+            usersAdapter.setUsers(it)
+        }
 
         usersList.layoutManager = LinearLayoutManager(context).apply {
             orientation = LinearLayoutManager.VERTICAL
         }
-        usersList.adapter = UsersAdapter(UserManager.users)
-        fab.setOnClickListener { showUserCreationDialog() }
+        usersList.adapter = usersAdapter
+    }
+
+    private fun observeViewModel() {
+        usersViewModel.allUsers.observe(this, Observer { users ->
+            users?.also { usersAdapter.setUsers(it) }
+        })
     }
 
     private fun updateTitle() {
@@ -55,9 +76,10 @@ class UsersFragment : Fragment() {
         }.create().show()
     }
 
-    inner class UsersAdapter(private val users: List<User>) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
+    inner class UsersAdapter(private val users: MutableList<User>) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
 
-        private var activeUserPosition = users.indexOf(UserManager.activeUser)
+        //TODO Fix it
+        private var activeUserPosition = 0
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val inflater = LayoutInflater.from(parent.context)
@@ -69,17 +91,25 @@ class UsersFragment : Fragment() {
             with(users[position]) {
                 holder.name.text = this.name
                 if (position == activeUserPosition) {
-                    UserManager.activeUser = users[position]
+//                    UserManager.activeUser = users[position]
                     holder.isActive.isChecked = true
+                    updateTitle()
                 } else {
                     holder.isActive.isChecked = false
                 }
             }
-            updateTitle()
         }
 
         override fun getItemCount(): Int {
             return users.size
+        }
+
+        fun setUsers(newUsers: List<User>) {
+            with(users) {
+                clear()
+                addAll(newUsers)
+                notifyDataSetChanged()
+            }
         }
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

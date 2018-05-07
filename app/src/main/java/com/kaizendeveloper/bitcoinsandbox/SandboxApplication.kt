@@ -8,7 +8,11 @@ import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
 
-class App : Application() {
+class SandboxApplication : Application() {
+
+    init {
+        application = this
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -23,10 +27,14 @@ class App : Application() {
 
         UserManager.activeUser = satoshi
 
-        val tx = Transaction(25.00, satoshi.publicKey)
+        val tx = Transaction(25.00, satoshi.publicKey!!)
         val genesisBlock = Block().apply { addTransaction(tx) }
         genesisBlock.build()
 
         BlockChain.addBlock(genesisBlock)
+    }
+
+    companion object {
+        lateinit var application: SandboxApplication
     }
 }
