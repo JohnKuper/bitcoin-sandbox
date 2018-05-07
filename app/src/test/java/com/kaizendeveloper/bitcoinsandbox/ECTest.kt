@@ -20,14 +20,14 @@ class ECTest {
 
     @Test
     fun generateTestAddress() {
-        val keyPair = Cipher.generateECKeyPair()
+        val keyPair = Cipher.generateECKeyPair2()
         val pubKey = BitCoinPublicKey(keyPair.public as ECPublicKey)
         pubKey.address
     }
 
     @Test
     fun signatureShouldBeValid() {
-        val keyPair = Cipher.generateECKeyPair()
+        val keyPair = Cipher.generateECKeyPair2()
         val toSign = "BitCoin".toByteArray()
 
         assertTrue(Cipher.verifySignature(keyPair.public, toSign, Cipher.sign(toSign, keyPair.private)))
@@ -35,7 +35,7 @@ class ECTest {
 
     @Test
     fun testRawDataToSign() {
-        val keyPair = Cipher.generateECKeyPair()
+        val keyPair = Cipher.generateECKeyPair2()
         val bitCoinPubKey = BitCoinPublicKey(keyPair.public as ECPublicKey)
         val transaction = Transaction()
         transaction.addInput("prevTxHash".toByteArray(), 0)
@@ -46,7 +46,7 @@ class ECTest {
 
     @Test
     fun testRawTx() {
-        val keyPair = Cipher.generateECKeyPair()
+        val keyPair = Cipher.generateECKeyPair2()
         val bitCoinPubKey = BitCoinPublicKey(keyPair.public as ECPublicKey)
         val transaction = Transaction()
         transaction.addInput("prevTxHash".toByteArray(), 0)
@@ -65,7 +65,7 @@ class ECTest {
 
     @Test
     fun testByteArrayOutputStream() {
-        val keyPair = Cipher.generateECKeyPair()
+        val keyPair = Cipher.generateECKeyPair2()
         val bitCoinPubKey = BitCoinPublicKey(keyPair.public as ECPublicKey)
         val transaction = Transaction()
         transaction.addInput("prevTxHash".toByteArray(), 0)
@@ -77,7 +77,7 @@ class ECTest {
     @Test
     fun genesisTransaction() {
         val satoshi = UserManager.createUser("Satoshi")
-        val tx = Transaction(25.00, satoshi.publicKey)
+        val tx = Transaction(25.00, satoshi.publicKey!!)
         val genesisBlock = Block().apply { addTransaction(tx) }
         BlockChain.addBlock(genesisBlock)
 
@@ -87,10 +87,10 @@ class ECTest {
         val alice = UserManager.createUser("Alice")
         val toAliceTx = Transaction()
         toAliceTx.addInput(tx.hash!!, 0)
-        toAliceTx.addOutput(12.00, alice.publicKey)
-        toAliceTx.addOutput(13.00, satoshi.publicKey)
+        toAliceTx.addOutput(12.00, alice.publicKey!!)
+        toAliceTx.addOutput(13.00, satoshi.publicKey!!)
 
-        val sig = Cipher.sign(toAliceTx.getRawDataToSign(0), satoshi.privateKey)
+        val sig = Cipher.sign(toAliceTx.getRawDataToSign(0), satoshi.privateKey!!)
         toAliceTx.addSignature(sig, 0)
         toAliceTx.build()
         BlockChain.addBlock(Block().apply {
@@ -103,7 +103,7 @@ class ECTest {
 
         //Testing user balance
         val satoshiBalance = UTXOPool.getAllTxOutputs().fold(0.0) { balance, output ->
-            if (output.bitCoinPublicKey.address == satoshi.publicKey.address) {
+            if (output.bitCoinPublicKey.address == satoshi.publicKey!!.address) {
                 balance + output.amount
             } else {
                 balance

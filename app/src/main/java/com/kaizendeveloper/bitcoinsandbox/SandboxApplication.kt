@@ -22,8 +22,8 @@ class SandboxApplication : Application() {
 
     private fun bootstrap() {
         val satoshi = UserManager.createUser("Satoshi")
-        UserManager.createUser("Alice")
-        UserManager.createUser("Bob")
+//        UserManager.createUser("Alice")
+//        UserManager.createUser("Bob")
 
         UserManager.activeUser = satoshi
 
