@@ -3,7 +3,7 @@ package com.kaizendeveloper.bitcoinsandbox
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Block
 import com.kaizendeveloper.bitcoinsandbox.blockchain.BlockChain
 import com.kaizendeveloper.bitcoinsandbox.model.BitCoinPublicKey
-import com.kaizendeveloper.bitcoinsandbox.model.UserFactory
+import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
@@ -15,7 +15,6 @@ import org.junit.BeforeClass
 import org.junit.Test
 import java.security.Security
 import java.security.interfaces.ECPublicKey
-import java.util.Arrays
 
 class ECTest {
 
@@ -73,13 +72,11 @@ class ECTest {
         transaction.addOutput(10.00, bitCoinPubKey)
         val rawToSign = transaction.getRawDataToSign(0)
         transaction.addSignature(Cipher.sign(rawToSign, keyPair.private), 0)
-
-        assertTrue(Arrays.equals(transaction.getRawTx(), transaction.getRawTx2()))
     }
 
     @Test
     fun genesisTransaction() {
-        val satoshi = UserFactory.createUser("Satoshi")
+        val satoshi = UserManager.createUser("Satoshi")
         val tx = Transaction(25.00, satoshi.publicKey)
         val genesisBlock = Block().apply { addTransaction(tx) }
         BlockChain.addBlock(genesisBlock)
@@ -87,7 +84,7 @@ class ECTest {
         assertTrue(UTXOPool.size() == 1)
         assertNotNull(UTXOPool.get(UTXO(tx.hash!!, 0)))
 
-        val alice = UserFactory.createUser("Alice")
+        val alice = UserManager.createUser("Alice")
         val toAliceTx = Transaction()
         toAliceTx.addInput(tx.hash!!, 0)
         toAliceTx.addOutput(12.00, alice.publicKey)
@@ -103,6 +100,16 @@ class ECTest {
         assertTrue(UTXOPool.size() == 2)
         assertNotNull(UTXOPool.get(UTXO(toAliceTx.hash!!, 0)))
         assertNotNull(UTXOPool.get(UTXO(toAliceTx.hash!!, 1)))
+
+        //Testing user balance
+        val satoshiBalance = UTXOPool.getAllTxOutputs().fold(0.0) { balance, output ->
+            if (output.bitCoinPublicKey.address == satoshi.publicKey.address) {
+                balance + output.amount
+            } else {
+                balance
+            }
+        }
+        assertTrue(satoshiBalance == 13.00)
     }
 
     companion object {

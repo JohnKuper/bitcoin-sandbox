@@ -12,7 +12,7 @@ import android.widget.RadioButton
 import android.widget.TextView
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.model.User
-import com.kaizendeveloper.bitcoinsandbox.model.UserFactory
+import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 import kotlinx.android.synthetic.main.dialog_create_user.view.userName
 import kotlinx.android.synthetic.main.fragment_users.fab
 import kotlinx.android.synthetic.main.fragment_users.usersList
@@ -25,11 +25,18 @@ class UsersFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        updateTitle()
+
         usersList.layoutManager = LinearLayoutManager(context).apply {
             orientation = LinearLayoutManager.VERTICAL
         }
-        usersList.adapter = UsersAdapter(UserFactory.users)
+        usersList.adapter = UsersAdapter(UserManager.users)
         fab.setOnClickListener { showUserCreationDialog() }
+    }
+
+    private fun updateTitle() {
+        val name = UserManager.activeUser.name
+        activity?.title = "$name - ${UserManager.getUserBalance()}$"
     }
 
     private fun showUserCreationDialog() {
@@ -42,15 +49,15 @@ class UsersFragment : Fragment() {
             setPositiveButton(android.R.string.ok) { _, _ ->
                 val userName = dialogView.userName.text.toString()
                 if (userName.isNotBlank()) {
-                    UserFactory.createUser(userName)
+                    UserManager.createUser(userName)
                 }
             }
         }.create().show()
     }
 
-    class UsersAdapter(private val users: List<User>) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
+    inner class UsersAdapter(private val users: List<User>) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
 
-        private var activeUserPosition = users.indexOf(UserFactory.activeUser)
+        private var activeUserPosition = users.indexOf(UserManager.activeUser)
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val inflater = LayoutInflater.from(parent.context)
@@ -60,15 +67,15 @@ class UsersFragment : Fragment() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             with(users[position]) {
-                holder.name.text = name
-                holder.userBalance.text = "- 100$"
+                holder.name.text = this.name
                 if (position == activeUserPosition) {
-                    UserFactory.activeUser = users[position]
+                    UserManager.activeUser = users[position]
                     holder.isActive.isChecked = true
                 } else {
                     holder.isActive.isChecked = false
                 }
             }
+            updateTitle()
         }
 
         override fun getItemCount(): Int {
@@ -77,7 +84,6 @@ class UsersFragment : Fragment() {
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val name: TextView = view.findViewById(R.id.userName)
-            val userBalance: TextView = view.findViewById(R.id.balance)
             val isActive: RadioButton = view.findViewById(R.id.radioBtn)
 
             init {

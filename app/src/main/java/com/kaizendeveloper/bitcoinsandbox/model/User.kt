@@ -7,3 +7,5 @@ data class User(
     val privateKey: PrivateKey,
     val name: String
 )
+
+

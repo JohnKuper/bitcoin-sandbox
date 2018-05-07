@@ -36,6 +36,8 @@ object UTXOPool {
     @JvmStatic
     fun getAllUTXO() = unspentOutputMap.keys.toList()
 
+    fun getAllTxOutputs() = unspentOutputMap.values.toList()
+
     @JvmStatic
     fun reset() {
         unspentOutputMap.clear()
