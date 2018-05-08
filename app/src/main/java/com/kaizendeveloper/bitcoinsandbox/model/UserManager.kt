@@ -14,9 +14,9 @@ object UserManager {
     lateinit var activeUser: User
 
     fun createUser(name: String): User {
-        val keyPair = Cipher.generateECKeyPair()
+        val keyPair = Cipher.generateECKeyPair(name)
         val bitCoinPublicKey = BitCoinPublicKey(keyPair.public as ECPublicKey)
-        val user = User(bitCoinPublicKey, keyPair.private, 0, name)
+        val user = User(name, bitCoinPublicKey.address)
 
         usersRepo.insert(user)
         return user
@@ -24,7 +24,7 @@ object UserManager {
 
     fun getUserBalance(): Double {
         return UTXOPool.getAllTxOutputs().fold(0.0) { balance, output ->
-            if (output.bitCoinPublicKey.address == activeUser.publicKey!!.address) {
+            if (output.address == activeUser.address) {
                 balance + output.amount
             } else {
                 balance

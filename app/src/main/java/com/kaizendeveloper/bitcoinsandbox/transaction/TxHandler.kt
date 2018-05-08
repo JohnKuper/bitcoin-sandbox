@@ -26,13 +26,10 @@ class TxHandler {
             }
 
             val txOutput = UTXOPool.get(utxo)
+            val scriptSig = input.scriptSig
             if (txOutput == null
-                || input.signature == null
-                || !Cipher.verifySignature(
-                    txOutput.bitCoinPublicKey.publicKey,
-                    tx.getRawDataToSign(index),
-                    input.signature!!
-                )
+                || scriptSig == null
+                || !Cipher.verifySignature(scriptSig.publicKey, tx.getRawDataToSign(index), scriptSig.signature)
             ) {
                 return false
             }
@@ -49,7 +46,7 @@ class TxHandler {
         return verifyAmounts(inputSum, tx.outputs)
     }
 
-    private fun verifyAmounts(inputSum: Int, outputs: List<Transaction.Output>): Boolean {
+    private fun verifyAmounts(inputSum: Int, outputs: List<TransactionOutput>): Boolean {
         var outputSum = 0
         outputs.forEach {
             if (it.amount < 0) {

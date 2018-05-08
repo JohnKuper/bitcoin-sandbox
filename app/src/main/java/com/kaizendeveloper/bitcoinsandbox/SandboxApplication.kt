@@ -27,7 +27,7 @@ class SandboxApplication : Application() {
 
         UserManager.activeUser = satoshi
 
-        val tx = Transaction(25.00, satoshi.publicKey!!)
+        val tx = Transaction(25.00, satoshi.address)
         val genesisBlock = Block().apply { addTransaction(tx) }
         genesisBlock.build()
 

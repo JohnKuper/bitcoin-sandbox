@@ -7,13 +7,13 @@ object UTXOPool {
     /**
      * The current collection of UTXOs, with each one mapped to its corresponding transaction output
      */
-    private var unspentOutputMap: HashMap<UTXO, Transaction.Output> = HashMap()
+    private var unspentOutputMap: HashMap<UTXO, TransactionOutput> = HashMap()
 
     /**
      * Adds a mapping from UTXO [utxo] to transaction output [txOutput] to the pool
      */
     @JvmStatic
-    fun add(utxo: UTXO, txOutput: Transaction.Output) {
+    fun add(utxo: UTXO, txOutput: TransactionOutput) {
         unspentOutputMap[utxo] = txOutput
     }
 
@@ -29,7 +29,7 @@ object UTXOPool {
      * @return the transaction output corresponding to UTXO [utxo], or null if it's not in the pool.
      */
     @JvmStatic
-    fun get(utxo: UTXO): Transaction.Output? {
+    fun get(utxo: UTXO): TransactionOutput? {
         return unspentOutputMap[utxo]
     }
 

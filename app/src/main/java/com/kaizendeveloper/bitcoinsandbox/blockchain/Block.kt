@@ -14,7 +14,7 @@ class Block(val prevBlockHash: ByteArray? = null) {
         val rawBlock = arrayListOf<Byte>()
         prevBlockHash?.forEach { rawBlock.add(it) }
         transactions.forEach {
-            rawBlock.addAll(it.getRawTx().toList())
+            rawBlock.addAll(it.getRawData().toList())
         }
 
         return rawBlock.toByteArray()
