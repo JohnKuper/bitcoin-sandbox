@@ -1,6 +1,7 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
@@ -11,11 +12,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.TextView
+import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
-import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.db.User
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 import com.kaizendeveloper.bitcoinsandbox.model.UsersViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.dialog_create_user.view.userName
 import kotlinx.android.synthetic.main.fragment_users.fab
 import kotlinx.android.synthetic.main.fragment_users.usersList
@@ -23,11 +26,14 @@ import kotlinx.android.synthetic.main.fragment_users.usersList
 
 class UsersFragment : Fragment() {
 
-    private val usersViewModel = UsersViewModel(SandboxApplication.application)
     private val usersAdapter = UsersAdapter(mutableListOf())
 
+    private lateinit var usersViewModel: UsersViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.fragment_users, container, false)
+        val view = inflater.inflate(R.layout.fragment_users, container, false)
+        usersViewModel = ViewModelProviders.of(this).get(UsersViewModel::class.java)
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,11 +44,12 @@ class UsersFragment : Fragment() {
         fab.setOnClickListener { showUserCreationDialog() }
     }
 
-    private fun setupRecycler() {
-        usersViewModel.allUsers.value?.also {
-            usersAdapter.setUsers(it)
-        }
+    private fun updateTitle() {
+        val name = UserManager.activeUser.name
+        activity?.title = "$name - ${UserManager.getUserBalance()}$"
+    }
 
+    private fun setupRecycler() {
         usersList.layoutManager = LinearLayoutManager(context).apply {
             orientation = LinearLayoutManager.VERTICAL
         }
@@ -55,11 +62,6 @@ class UsersFragment : Fragment() {
         })
     }
 
-    private fun updateTitle() {
-        val name = UserManager.activeUser.name
-        activity?.title = "$name - ${UserManager.getUserBalance()}$"
-    }
-
     private fun showUserCreationDialog() {
         AlertDialog.Builder(context!!).apply {
             val dialogView = layoutInflater.inflate(R.layout.dialog_create_user, null, false)
@@ -70,13 +72,23 @@ class UsersFragment : Fragment() {
             setPositiveButton(android.R.string.ok) { _, _ ->
                 val userName = dialogView.userName.text.toString()
                 if (userName.isNotBlank()) {
-                    UserManager.createUser(userName)
+                    createIfAbsent(userName)
                 }
             }
         }.create().show()
     }
 
-    inner class UsersAdapter(private val users: MutableList<User>) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
+    private fun createIfAbsent(name: String) {
+        UserManager.getByName(name)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { Toast.makeText(context, "User is already exists", Toast.LENGTH_SHORT).show() }
+            .doOnComplete { UserManager.createUser(name) }
+            .subscribe()
+    }
+
+    inner class UsersAdapter(private val users: MutableList<User>) :
+        RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
 
         //TODO Fix it
         private var activeUserPosition = 0

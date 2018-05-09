@@ -22,13 +22,15 @@ object UserManager {
         return user
     }
 
-    fun getUserBalance(): Double {
+    fun getUserBalance(user: User = activeUser): Double {
         return UTXOPool.getAllTxOutputs().fold(0.0) { balance, output ->
-            if (output.address == activeUser.address) {
+            if (output.address == user.address) {
                 balance + output.amount
             } else {
                 balance
             }
         }
     }
+
+    fun getByName(name: String) = usersRepo.getByName(name)
 }
