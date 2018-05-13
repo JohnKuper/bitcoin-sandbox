@@ -1,5 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -32,11 +33,12 @@ class UsersFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_users, container, false)
-        usersViewModel = ViewModelProviders.of(activity!!).get(UsersViewModel::class.java)
+        usersViewModel = ViewModelProviders.of(requireActivity()).get(UsersViewModel::class.java)
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         setupRecycler()
         observeViewModel()
 
@@ -51,15 +53,14 @@ class UsersFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        with(usersViewModel) {
-            observableUsers.observe(this@UsersFragment, Observer<List<User>> {
-                it?.also { usersAdapter.setUsers(it) }
-            })
-        }
+        usersViewModel.observableUsers.observe(this, Observer<List<User>> {
+            it?.also { usersAdapter.setUsers(it) }
+        })
     }
 
+    @SuppressLint("InflateParams")
     private fun showUserCreationDialog() {
-        AlertDialog.Builder(context!!).apply {
+        AlertDialog.Builder(requireContext()).apply {
             val dialogView = layoutInflater.inflate(R.layout.dialog_create_user, null, false)
             setView(dialogView)
 

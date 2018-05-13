@@ -25,14 +25,15 @@ class TransferFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_transfer, container, false)
-        usersViewModel = ViewModelProviders.of(activity!!).get(UsersViewModel::class.java)
+        usersViewModel = ViewModelProviders.of(requireActivity()).get(UsersViewModel::class.java)
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         observeViewModel()
 
-        spinnerAdapter = UsersSpinnerAdapter(activity!!)
+        spinnerAdapter = UsersSpinnerAdapter(requireActivity())
         spinnerRecipient.adapter = spinnerAdapter
     }
 
