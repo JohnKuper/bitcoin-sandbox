@@ -11,18 +11,19 @@ abstract class SandboxDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 
     companion object {
+
+        private const val DATABASE_NAME = "bitcoin.db"
+
+        @Volatile
         private var INSTANCE: SandboxDatabase? = null
 
         fun getInstance(context: Context): SandboxDatabase {
-            if (INSTANCE == null) {
-                synchronized(SandboxDatabase::class) {
-                    INSTANCE = Room.databaseBuilder(
-                        context.applicationContext,
-                        SandboxDatabase::class.java, "bitcoin.db"
-                    ).build()
-                }
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: Room.databaseBuilder(
+                    context.applicationContext,
+                    SandboxDatabase::class.java, DATABASE_NAME
+                ).build().also { INSTANCE = it }
             }
-            return INSTANCE!!
         }
     }
 }

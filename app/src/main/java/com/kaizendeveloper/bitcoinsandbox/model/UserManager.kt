@@ -11,18 +11,16 @@ object UserManager {
 
     private val usersRepo = SandboxRepository(SandboxApplication.application)
 
-    lateinit var activeUser: User
-
-    fun createUser(name: String): User {
+    fun createUser(name: String, isCurrent: Boolean = false): User {
         val keyPair = Cipher.generateECKeyPair(name)
         val bitCoinPublicKey = BitCoinPublicKey(keyPair.public as ECPublicKey)
-        val user = User(name, bitCoinPublicKey.address)
+        val user = User(name, bitCoinPublicKey.address, isCurrent)
 
         usersRepo.insert(user)
         return user
     }
 
-    fun getUserBalance(user: User = activeUser): Double {
+    fun getUserBalance(user: User): Double {
         return UTXOPool.getAllTxOutputs().fold(0.0) { balance, output ->
             if (output.address == user.address) {
                 balance + output.amount

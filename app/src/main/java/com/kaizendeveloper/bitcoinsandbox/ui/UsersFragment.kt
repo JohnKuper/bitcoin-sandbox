@@ -32,21 +32,15 @@ class UsersFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_users, container, false)
-        usersViewModel = ViewModelProviders.of(this).get(UsersViewModel::class.java)
+        usersViewModel = ViewModelProviders.of(activity!!).get(UsersViewModel::class.java)
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        updateTitle()
         setupRecycler()
         observeViewModel()
 
         fab.setOnClickListener { showUserCreationDialog() }
-    }
-
-    private fun updateTitle() {
-        val name = UserManager.activeUser.name
-        activity?.title = "$name - ${UserManager.getUserBalance()}$"
     }
 
     private fun setupRecycler() {
@@ -57,9 +51,11 @@ class UsersFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        usersViewModel.allUsers.observe(this, Observer { users ->
-            users?.also { usersAdapter.setUsers(it) }
-        })
+        with(usersViewModel) {
+            observableUsers.observe(this@UsersFragment, Observer<List<User>> {
+                it?.also { usersAdapter.setUsers(it) }
+            })
+        }
     }
 
     private fun showUserCreationDialog() {
@@ -83,32 +79,22 @@ class UsersFragment : Fragment() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess { Toast.makeText(context, "User is already exists", Toast.LENGTH_SHORT).show() }
-            .doOnComplete { UserManager.createUser(name) }
+            .doOnComplete { UserManager.createUser(name, false) }
             .subscribe()
     }
 
-    inner class UsersAdapter(private val users: MutableList<User>) :
-        RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
-
-        //TODO Fix it
-        private var activeUserPosition = 0
+    inner class UsersAdapter(private val users: MutableList<User>) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val view = inflater.inflate(R.layout.item_user, parent, false)
-            return ViewHolder(view)
+            return ViewHolder(view) { usersViewModel.updateCurrentUserIfNeeded(users[it]) }
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             with(users[position]) {
                 holder.name.text = this.name
-                if (position == activeUserPosition) {
-//                    UserManager.activeUser = users[position]
-                    holder.isActive.isChecked = true
-                    updateTitle()
-                } else {
-                    holder.isActive.isChecked = false
-                }
+                holder.isActive.isChecked = this.isCurrent
             }
         }
 
@@ -124,14 +110,13 @@ class UsersFragment : Fragment() {
             }
         }
 
-        inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        inner class ViewHolder(view: View, onPositionClicked: (Int) -> Unit) : RecyclerView.ViewHolder(view) {
             val name: TextView = view.findViewById(R.id.userName)
             val isActive: RadioButton = view.findViewById(R.id.radioBtn)
 
             init {
                 itemView.setOnClickListener {
-                    activeUserPosition = adapterPosition
-                    notifyDataSetChanged()
+                    onPositionClicked(adapterPosition)
                 }
             }
         }

@@ -10,5 +10,21 @@ import com.kaizendeveloper.bitcoinsandbox.db.User
 class UsersViewModel(app: Application) : AndroidViewModel(app) {
 
     private val repository: SandboxRepository = SandboxRepository(app)
-    val allUsers: LiveData<List<User>> = repository.allUsers
+
+    val observableUsers: LiveData<List<User>> = repository.observableUsers
+    val observableCurrentUser: LiveData<User> = repository.observableCurrentUser
+
+    lateinit var currentUser: User
+
+    init {
+        observableCurrentUser.observeForever {
+            it?.also { currentUser = it }
+        }
+    }
+
+    fun updateCurrentUserIfNeeded(newCurrent: User) {
+        if (newCurrent != currentUser) {
+            repository.updateCurrentUser(currentUser, newCurrent)
+        }
+    }
 }

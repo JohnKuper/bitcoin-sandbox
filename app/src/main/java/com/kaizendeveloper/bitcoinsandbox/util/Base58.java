@@ -2,6 +2,7 @@ package com.kaizendeveloper.bitcoinsandbox.util;
 
 import java.util.Arrays;
 
+//TODO Rewrite on Kotlin
 public class Base58 {
 
     private static final char[] ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".toCharArray();

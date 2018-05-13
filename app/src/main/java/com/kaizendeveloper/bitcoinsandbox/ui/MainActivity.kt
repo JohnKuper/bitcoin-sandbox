@@ -1,22 +1,39 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.AppCompatActivity
 import com.kaizendeveloper.bitcoinsandbox.R
+import com.kaizendeveloper.bitcoinsandbox.db.User
+import com.kaizendeveloper.bitcoinsandbox.model.UserManager
+import com.kaizendeveloper.bitcoinsandbox.model.UsersViewModel
 import kotlinx.android.synthetic.main.activity_main.tabLayout
 import kotlinx.android.synthetic.main.activity_main.viewPager
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var usersViewModel: UsersViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        usersViewModel = ViewModelProviders.of(this).get(UsersViewModel::class.java)
+        usersViewModel.observableCurrentUser.observe(this, Observer<User> {
+            it?.also { updateTitle(it) }
+        })
+
         viewPager.adapter = BitCoinPagerAdapter(supportFragmentManager)
+        viewPager.offscreenPageLimit = 4
         tabLayout.setupWithViewPager(viewPager)
+    }
+
+    private fun updateTitle(user: User) {
+        title = "${user.name} - ${UserManager.getUserBalance(user)}$"
     }
 
     class BitCoinPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
