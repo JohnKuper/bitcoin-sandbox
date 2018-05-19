@@ -22,7 +22,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.dialog_create_user.view.userName
 import kotlinx.android.synthetic.main.fragment_users.fab
-import kotlinx.android.synthetic.main.fragment_users.usersList
+import kotlinx.android.synthetic.main.fragment_users.users_list as userList
 
 
 class UsersFragment : Fragment() {
@@ -46,10 +46,10 @@ class UsersFragment : Fragment() {
     }
 
     private fun setupRecycler() {
-        usersList.layoutManager = LinearLayoutManager(context).apply {
+        userList.layoutManager = LinearLayoutManager(context).apply {
             orientation = LinearLayoutManager.VERTICAL
         }
-        usersList.adapter = usersAdapter
+        userList.adapter = usersAdapter
     }
 
     private fun observeViewModel() {

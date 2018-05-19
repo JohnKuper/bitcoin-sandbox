@@ -11,17 +11,32 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.User
 import com.kaizendeveloper.bitcoinsandbox.model.UsersViewModel
+import com.kaizendeveloper.bitcoinsandbox.transaction.TransferManager
+import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.fragment_transfer.amount
+import kotlinx.android.synthetic.main.fragment_transfer.fab
 import kotlinx.android.synthetic.main.fragment_transfer.sender
-import kotlinx.android.synthetic.main.fragment_transfer.spinnerRecipient
+import kotlinx.android.synthetic.main.fragment_transfer.spinner_recipient as spinnerRecipient
 
 
 class TransferFragment : Fragment() {
 
     private lateinit var spinnerAdapter: ArrayAdapter<User>
     private lateinit var usersViewModel: UsersViewModel
+
+    private val transferManager = TransferManager()
+
+    private val transferAmount: Double
+        get() {
+            return amount.text.takeIf { it.isNotEmpty() }?.toString()?.toDouble() ?: 0.0
+        }
+
+    private val recipient: User
+        get() = spinnerRecipient.selectedItem as User
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_transfer, container, false)
@@ -35,6 +50,22 @@ class TransferFragment : Fragment() {
 
         spinnerAdapter = UsersSpinnerAdapter(requireActivity())
         spinnerRecipient.adapter = spinnerAdapter
+
+        fab.setOnClickListener {
+            sendCoins()
+        }
+    }
+
+    private fun sendCoins() {
+        if (transferAmount > 0) {
+            transferManager.sendCoins(transferAmount, usersViewModel.currentUser, recipient)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ showSuccessTransfer() }, { amount.error = "Not enough coins!" })
+        }
+    }
+
+    private fun showSuccessTransfer() {
+        Toast.makeText(context, "Coins has been sent", Toast.LENGTH_SHORT).show()
     }
 
     private fun observeViewModel() {

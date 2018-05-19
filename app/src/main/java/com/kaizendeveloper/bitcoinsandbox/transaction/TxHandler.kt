@@ -16,7 +16,7 @@ class TxHandler {
         if (tx.coinbase) return true
 
         val utxoHashSet = hashSetOf<UTXO>()
-        var inputSum = 0
+        var inputSum = 0.0
 
         for ((index, input) in tx.inputs.withIndex()) {
 
@@ -40,19 +40,19 @@ class TxHandler {
                 utxoHashSet.add(utxo)
             }
 
-            inputSum += txOutput.amount.toInt()
+            inputSum += txOutput.amount
         }
 
         return verifyAmounts(inputSum, tx.outputs)
     }
 
-    private fun verifyAmounts(inputSum: Int, outputs: List<TransactionOutput>): Boolean {
-        var outputSum = 0
+    private fun verifyAmounts(inputSum: Double, outputs: List<TransactionOutput>): Boolean {
+        var outputSum = 0.0
         outputs.forEach {
-            if (it.amount < 0) {
+            if (it.amount < 0.0) {
                 return false
             }
-            outputSum += it.amount.toInt()
+            outputSum += it.amount
         }
         return inputSum >= outputSum
     }

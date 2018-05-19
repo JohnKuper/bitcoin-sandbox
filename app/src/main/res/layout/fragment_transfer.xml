@@ -1,65 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:focusableInTouchMode="true"
-    android:orientation="vertical">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        android:paddingLeft="16dp"
-        android:paddingTop="12dp"
-        android:text="From"
-        android:textSize="16sp"/>
-
-    <TextView
-        android:id="@+id/sender"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingBottom="12dp"
-        android:paddingLeft="16dp"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        tools:text="Satoshi"/>
-
-    <View style="@style/Divider"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingBottom="12dp"
-        android:paddingLeft="16dp"
-        android:paddingTop="12dp"
-        android:text="To"
-        android:textSize="16sp"/>
-
-    <Spinner
-        android:id="@+id/spinnerRecipient"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:paddingLeft="8dp"/>
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
 
-    <View style="@style/Divider"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="12dp"
+            android:text="From"
+            android:textSize="16sp"/>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp">
+        <TextView
+            android:id="@+id/sender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:paddingLeft="16dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:text="Satoshi"/>
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/amount"
+        <View style="@style/Divider"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="12dp"
+            android:text="To"
+            android:textSize="16sp"/>
+
+        <Spinner
+            android:id="@+id/spinner_recipient"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter the amount"
-            android:inputType="numberDecimal"
-            android:maxLength="8"
-            android:paddingLeft="16dp"/>
+            android:layout_marginBottom="12dp"
+            android:paddingLeft="8dp"/>
 
-    </android.support.design.widget.TextInputLayout>
+        <View style="@style/Divider"/>
 
-</LinearLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter the amount"
+                android:inputType="numberDecimal"
+                android:maxLength="8"
+                android:paddingLeft="16dp"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/screen_horizontal_padding"
+        android:src="@drawable/ic_send"/>
+
+</FrameLayout>

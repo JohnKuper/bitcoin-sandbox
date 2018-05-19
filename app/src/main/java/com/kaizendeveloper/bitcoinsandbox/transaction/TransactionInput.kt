@@ -24,6 +24,9 @@ class TransactionInput(prevTxHash: ByteArray, val outputIndex: Int) {
         }
     }
 
+    /**
+     * Simple version of the real scriptSig for validating [TransactionInput]
+     */
     class ScriptSig(signature: ByteArray, val publicKey: PublicKey) {
 
         val signature = Arrays.copyOf(signature, signature.size)

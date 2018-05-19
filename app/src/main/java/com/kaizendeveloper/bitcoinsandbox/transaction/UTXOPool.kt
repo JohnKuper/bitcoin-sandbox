@@ -7,7 +7,7 @@ object UTXOPool {
     /**
      * The current collection of UTXOs, with each one mapped to its corresponding transaction output
      */
-    private var unspentOutputMap: HashMap<UTXO, TransactionOutput> = HashMap()
+    var unspentOutputMap: HashMap<UTXO, TransactionOutput> = HashMap()
 
     /**
      * Adds a mapping from UTXO [utxo] to transaction output [txOutput] to the pool

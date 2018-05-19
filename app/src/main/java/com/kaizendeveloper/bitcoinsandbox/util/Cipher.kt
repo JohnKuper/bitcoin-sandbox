@@ -4,9 +4,11 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.security.keystore.KeyProperties.PURPOSE_SIGN
 import android.security.keystore.KeyProperties.PURPOSE_VERIFY
+import com.kaizendeveloper.bitcoinsandbox.db.User
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.KeyPair
 import java.security.KeyPairGenerator
+import java.security.KeyStore
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -30,24 +32,18 @@ object Cipher {
         return keyGen.genKeyPair()
     }
 
-    //TODO Create keys directly in tests
-    fun generateECKeyPair2(): KeyPair {
-        val ecParamSpec = ECGenParameterSpec("secp256k1")
-        val keyGen = KeyPairGenerator.getInstance("EC", "BC").apply { initialize(ecParamSpec) }
-
-        return keyGen.generateKeyPair()
-    }
-
-    @JvmStatic
     fun verifySignature(pubKey: PublicKey, message: ByteArray, signature: ByteArray): Boolean {
-        val sig = getECSignature().apply { initVerify(pubKey) }
+        val sig = getECSignature().apply {
+            initVerify(pubKey)
+        }
         sig.update(message)
         return sig.verify(signature)
     }
 
-    @JvmStatic
     fun sign(input: ByteArray, privateKey: PrivateKey): ByteArray {
-        val signature = getECSignature().apply { initSign(privateKey) }
+        val signature = getECSignature().apply {
+            initSign(privateKey)
+        }
         signature.update(input)
         return signature.sign()
     }
@@ -58,6 +54,17 @@ object Cipher {
 
     fun ripeMD160(input: ByteArray): ByteArray =
         MessageDigest.getInstance("RipeMD160", BouncyCastleProvider()).digest(input)
+
+    fun retrieveKeyPair(user: User): KeyPair {
+        val ks = KeyStore.getInstance(ANDROID_KEY_STORE).apply {
+            load(null)
+        }
+        val entry = ks.getEntry(user.name, null)
+        val privateKey = (entry as KeyStore.PrivateKeyEntry).privateKey
+        val publicKey = ks.getCertificate(user.name).publicKey
+
+        return KeyPair(publicKey, privateKey)
+    }
 
     private fun getECSignature() = Signature.getInstance("SHA256withECDSA")
 }
