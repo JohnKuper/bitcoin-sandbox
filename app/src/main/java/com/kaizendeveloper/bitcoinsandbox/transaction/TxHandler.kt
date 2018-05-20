@@ -74,6 +74,7 @@ class TxHandler {
                     val newUtxo = UTXO(it.hash!!, index)
                     UTXOPool.add(newUtxo, output)
                 }
+                Mempool.add(it)
             }.toList().toTypedArray()
     }
 }

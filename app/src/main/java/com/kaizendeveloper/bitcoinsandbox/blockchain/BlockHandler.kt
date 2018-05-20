@@ -1,5 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.blockchain
 
+import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
 import java.security.PublicKey
@@ -27,9 +28,8 @@ class BlockHandler
         val parentHash = parent.hash
         val newBlock = Block(parentHash)
         val uPool = blockChain.maxHeightUTXOPool
-        val txPool = blockChain.transactionPool
         val handler = TxHandler()
-        val txs = txPool.transactions.toTypedArray()
+        val txs = Mempool.getAll().toTypedArray()
         val correctTxs = handler.handleTxs(txs)
 
         for (correctTx in correctTxs) {

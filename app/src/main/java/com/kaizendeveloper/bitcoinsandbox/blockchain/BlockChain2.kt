@@ -14,7 +14,6 @@ class BlockChain2(var maxHeightBlock: Block) : Observable() {
     /**
      * Get the transaction pool to mine a new block
      */
-    var transactionPool = Mempool()
     var blocksToUTXOPoolsMap: HashMap<ByteArrayWrapper, UTXOPool> = HashMap()
     var head: Node
 
@@ -76,9 +75,9 @@ class BlockChain2(var maxHeightBlock: Block) : Observable() {
         val newBlockArrayWrapper = ByteArrayWrapper(block.hash!!)
         blocksToUTXOPoolsMap[newBlockArrayWrapper] = newPool
 
-        for (tx in correctTxs) {
-            transactionPool.removeTransaction(tx.hash!!)
-        }
+//        for (tx in correctTxs) {
+//            transactionPool.removeTransaction(tx.hash!!)
+//        }
 
 //        val utxo = UTXO(block.coinbase.hash!!, 0)
 //        newPool.add(utxo, block.coinbase.outputs[0])
@@ -128,7 +127,7 @@ class BlockChain2(var maxHeightBlock: Block) : Observable() {
      * Add a transaction to the transaction pool
      */
     fun addTransaction(tx: Transaction) {
-        transactionPool.addTransaction(tx)
+        Mempool.add(tx)
     }
 
     inner class Node(val block: Block, val height: Int) {

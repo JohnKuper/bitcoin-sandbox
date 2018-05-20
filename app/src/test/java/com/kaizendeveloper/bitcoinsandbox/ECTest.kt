@@ -44,7 +44,7 @@ class ECTest {
 //        transaction.addSignature(Cipher.sign(secondRawToSign, keyPair.private), 1)
 //
 //        val block = Block("prevBlockHash".toByteArray())
-//        block.addTransaction(transaction)
+//        block.add(transaction)
 //    }
 //
 //    @Test
@@ -62,7 +62,7 @@ class ECTest {
 //    fun genesisTransaction() {
 //        val satoshi = UserManager.createUser("Satoshi")
 //        val tx = Transaction(25.00, "some_address")
-//        val genesisBlock = Block().apply { addTransaction(tx) }
+//        val genesisBlock = Block().apply { add(tx) }
 //        BlockChain.addBlock(genesisBlock)
 //
 //        assertTrue(UTXOPool.size() == 1)
@@ -78,7 +78,7 @@ class ECTest {
 ////        toAliceTx.addSignature(sig, 0)
 //        toAliceTx.build()
 //        BlockChain.addBlock(Block().apply {
-//            addTransaction(toAliceTx)
+//            add(toAliceTx)
 //        })
 //
 //        assertTrue(UTXOPool.size() == 2)

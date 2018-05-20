@@ -1,38 +1,25 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
-import com.kaizendeveloper.bitcoinsandbox.util.ByteArrayWrapper
+import android.arch.lifecycle.MutableLiveData
 
-class Mempool {
+object Mempool {
 
-    private var hashToTransactionMap: HashMap<ByteArrayWrapper, Transaction>? = null
+    private val transactions = arrayListOf<Transaction>()
+    val observableTransactions = MutableLiveData<List<Transaction>>()
 
-    val transactions: ArrayList<Transaction>
-        get() {
-            val transactions = arrayListOf<Transaction>()
-            transactions.addAll(hashToTransactionMap!!.values)
-            return transactions
-        }
-
-    constructor() {
-        hashToTransactionMap = HashMap()
+    fun add(tx: Transaction) {
+        transactions.add(tx)
+        updateLiveData()
     }
 
-    constructor(txPool: Mempool) {
-        hashToTransactionMap = HashMap(txPool.hashToTransactionMap)
+    fun reset() {
+        transactions.clear()
+        updateLiveData()
     }
 
-    fun addTransaction(tx: Transaction) {
-        val hash = ByteArrayWrapper(tx.hash!!)
-        hashToTransactionMap!![hash] = tx
-    }
+    fun getAll() = transactions
 
-    fun removeTransaction(txHash: ByteArray) {
-        val hash = ByteArrayWrapper(txHash)
-        hashToTransactionMap!!.remove(hash)
-    }
-
-    fun getTransaction(txHash: ByteArray): Transaction? {
-        val hash = ByteArrayWrapper(txHash)
-        return hashToTransactionMap!!.get(hash)
+    private fun updateLiveData() {
+        observableTransactions.postValue(transactions)
     }
 }

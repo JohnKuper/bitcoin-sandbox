@@ -20,7 +20,7 @@ import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 import com.kaizendeveloper.bitcoinsandbox.model.UsersViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.dialog_create_user.view.userName
+import kotlinx.android.synthetic.main.dialog_new_user.view.userName
 import kotlinx.android.synthetic.main.fragment_users.fab
 import kotlinx.android.synthetic.main.fragment_users.users_list as userList
 
@@ -61,7 +61,7 @@ class UsersFragment : Fragment() {
     @SuppressLint("InflateParams")
     private fun showUserCreationDialog() {
         AlertDialog.Builder(requireContext()).apply {
-            val dialogView = layoutInflater.inflate(R.layout.dialog_create_user, null, false)
+            val dialogView = layoutInflater.inflate(R.layout.dialog_new_user, null, false)
             setView(dialogView)
 
             setTitle("Create new user:")

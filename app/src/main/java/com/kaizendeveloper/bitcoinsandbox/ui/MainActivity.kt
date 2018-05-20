@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         override fun getItem(position: Int): Fragment {
             return when (position) {
                 0 -> BlockChainFragment()
-                1 -> TransactionsFragment()
+                1 -> MempoolFragment()
                 2 -> TransferFragment()
                 3 -> UsersFragment()
                 else -> throw IllegalStateException("Illegal pager position")
