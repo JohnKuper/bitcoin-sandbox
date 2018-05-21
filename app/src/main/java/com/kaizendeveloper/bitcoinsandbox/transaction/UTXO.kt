@@ -5,7 +5,7 @@ import java.util.Arrays
 /**
  * Creates a new UTXO corresponding to the output with index [index] in the transaction whose hash is [txHash]
  */
-data class UTXO(val txHash: ByteArray, val index: Int) {
+class UTXO(val txHash: ByteArray, val index: Int) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
