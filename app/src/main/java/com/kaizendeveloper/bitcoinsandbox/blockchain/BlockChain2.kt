@@ -2,7 +2,6 @@ package com.kaizendeveloper.bitcoinsandbox.blockchain
 
 import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
-import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
 import com.kaizendeveloper.bitcoinsandbox.util.ByteArrayWrapper
 import java.util.LinkedList
@@ -53,44 +52,44 @@ class BlockChain2(var maxHeightBlock: Block) : Observable() {
      * @return true if block is successfully added
      */
     fun addBlock(block: Block): Boolean {
-        if (block.prevBlockHash == null) {
-            return false
-        }
-
-        val parentNode = findParentNode(block)
-        if (parentNode == null || parentNode.height < maxHeight - CUT_OFF_AGE) {
-            return false
-        }
-
-        val parentPool = blocksToUTXOPoolsMap[ByteArrayWrapper(block.prevBlockHash)] ?: return false
-
-        val txHandler = TxHandler()
-        val initialTxs = block.transactions.toTypedArray()
-        val correctTxs = txHandler.handleTxs(initialTxs)
-        if (initialTxs.size != correctTxs.size) {
-            return false
-        }
-
-        val newPool = UTXOPool
-        val newBlockArrayWrapper = ByteArrayWrapper(block.hash!!)
-        blocksToUTXOPoolsMap[newBlockArrayWrapper] = newPool
-
-//        for (tx in correctTxs) {
-//            transactionPool.removeTransaction(tx.hash!!)
+//        if (block.prevBlockHash == null) {
+//            return false
 //        }
-
-//        val utxo = UTXO(block.coinbase.hash!!, 0)
-//        newPool.add(utxo, block.coinbase.outputs[0])
-
-        val newHeight = parentNode.height + 1
-        if (newHeight > maxHeight) {
-            maxHeight = newHeight
-            maxHeightBlock = block
-        }
-
-        if (parentNode.getChildrenMap()[newBlockArrayWrapper] == null) {
-            parentNode.getChildrenMap()[newBlockArrayWrapper] = Node(block, newHeight)
-        }
+//
+//        val parentNode = findParentNode(block)
+//        if (parentNode == null || parentNode.height < maxHeight - CUT_OFF_AGE) {
+//            return false
+//        }
+//
+//        val parentPool = blocksToUTXOPoolsMap[ByteArrayWrapper(block.prevBlockHash)] ?: return false
+//
+//        val txHandler = TxHandler()
+//        val initialTxs = block.transactions.toTypedArray()
+//        val correctTxs = txHandler.handleTxs(initialTxs)
+//        if (initialTxs.size != correctTxs.size) {
+//            return false
+//        }
+//
+//        val newPool = UTXOPool
+//        val newBlockArrayWrapper = ByteArrayWrapper(block.hash!!)
+//        blocksToUTXOPoolsMap[newBlockArrayWrapper] = newPool
+//
+////        for (tx in correctTxs) {
+////            transactionPool.removeTransaction(tx.hash!!)
+////        }
+//
+////        val utxo = UTXO(block.coinbase.hash!!, 0)
+////        newPool.add(utxo, block.coinbase.outputs[0])
+//
+//        val newHeight = parentNode.height + 1
+//        if (newHeight > maxHeight) {
+//            maxHeight = newHeight
+//            maxHeightBlock = block
+//        }
+//
+//        if (parentNode.getChildrenMap()[newBlockArrayWrapper] == null) {
+//            parentNode.getChildrenMap()[newBlockArrayWrapper] = Node(block, newHeight)
+//        }
 
         return true
     }

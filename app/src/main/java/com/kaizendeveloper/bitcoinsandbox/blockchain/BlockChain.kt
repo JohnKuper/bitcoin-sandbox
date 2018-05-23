@@ -10,7 +10,6 @@ object BlockChain : Observable() {
     private val txHandler = TxHandler()
 
     fun addBlock(block: Block) {
-        txHandler.handleTxs(block.transactions.toTypedArray())
         blocks.add(block)
 
         setChanged()

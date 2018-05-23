@@ -9,10 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
+import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
 import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
-import com.kaizendeveloper.bitcoinsandbox.util.toHex
+import com.kaizendeveloper.bitcoinsandbox.util.toHexString
+import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.fragment_mempool.fab
 import kotlinx.android.synthetic.main.fragment_mempool.mempool_list as mempoolList
 
 
@@ -30,6 +34,12 @@ class MempoolFragment : Fragment() {
             adapter = txsAdapter
             layoutManager = LinearLayoutManager(context)
         }
+
+        fab.setOnClickListener {
+            Miner.mine().observeOn(AndroidSchedulers.mainThread()).subscribe(
+                { Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show() },
+                { Toast.makeText(context, "Some went wrong", Toast.LENGTH_SHORT).show() })
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -39,9 +49,8 @@ class MempoolFragment : Fragment() {
         })
     }
 
-    inner class TransactionsAdapter(
-        private val txs: MutableList<Transaction>
-    ) : RecyclerView.Adapter<TransactionsAdapter.ViewHolder>() {
+    inner class TransactionsAdapter(private val txs: MutableList<Transaction>) :
+        RecyclerView.Adapter<TransactionsAdapter.ViewHolder>() {
 
         private val inflater = LayoutInflater.from(context)
 
@@ -52,7 +61,7 @@ class MempoolFragment : Fragment() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             with(txs[position]) {
-                holder.txInfo.text = hash!!.toHex()
+                holder.txInfo.text = hash!!.toHexString()
             }
         }
 

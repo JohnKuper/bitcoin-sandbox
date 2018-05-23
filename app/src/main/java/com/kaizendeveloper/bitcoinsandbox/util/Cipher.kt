@@ -19,7 +19,7 @@ object Cipher {
 
     private const val ANDROID_KEY_STORE = "AndroidKeyStore"
 
-    val zeroHash = ByteArray(32, { 0.toByte() })
+    val zeroHash = ByteArray(32)
 
     fun generateECKeyPair(alias: String): KeyPair {
         val keyGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, ANDROID_KEY_STORE).apply {

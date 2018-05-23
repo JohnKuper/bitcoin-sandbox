@@ -1,8 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.blockchain
 
-import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
-import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
 import java.security.PublicKey
 
 class BlockHandler
@@ -24,23 +22,24 @@ class BlockHandler
      * create a new `block` over the max height `block`
      */
     fun createBlock(myAddress: PublicKey): Block? {
-        val parent = blockChain.maxHeightBlock
-        val parentHash = parent.hash
-        val newBlock = Block(parentHash)
-        val uPool = blockChain.maxHeightUTXOPool
-        val handler = TxHandler()
-        val txs = Mempool.getAll().toTypedArray()
-        val correctTxs = handler.handleTxs(txs)
-
-        for (correctTx in correctTxs) {
-            newBlock.addTransaction(correctTx)
-        }
-
-        newBlock.build()
-        return if (blockChain.addBlock(newBlock))
-            newBlock
-        else
-            null
+//        val parent = blockChain.maxHeightBlock
+//        val parentHash = parent.hash
+//        val newBlock = Block(parentHash)
+//        val uPool = blockChain.maxHeightUTXOPool
+//        val handler = TxHandler()
+//        val txs = Mempool.getAll().toTypedArray()
+//        val correctTxs = handler.handleTxs(txs)
+//
+//        for (correctTx in correctTxs) {
+//            newBlock.addTransaction(correctTx)
+//        }
+//
+//        newBlock.build()
+//        return if (blockChain.addBlock(newBlock))
+//            newBlock
+//        else
+//            null
+        return null
     }
 
     /**
