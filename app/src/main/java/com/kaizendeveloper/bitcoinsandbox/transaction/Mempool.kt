@@ -12,6 +12,11 @@ object Mempool {
         updateLiveData()
     }
 
+    fun addCoinbase(tx: Transaction) {
+        transactions.add(0, tx)
+        updateLiveData()
+    }
+
     fun reset() {
         transactions.clear()
         updateLiveData()

@@ -1,8 +1,8 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -12,7 +12,6 @@ import android.widget.TextView
 import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
-import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.util.toHexString
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,31 +19,38 @@ import kotlinx.android.synthetic.main.fragment_mempool.fab
 import kotlinx.android.synthetic.main.fragment_mempool.mempool_list as mempoolList
 
 
-class MempoolFragment : Fragment() {
+class MempoolFragment : UsersViewModelFragment() {
 
-    private lateinit var txsAdapter: TransactionsAdapter
+    private var txsAdapter: TransactionsAdapter = TransactionsAdapter(mutableListOf())
+    private lateinit var transactionsViewModel: TransactionsViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_mempool, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        txsAdapter = TransactionsAdapter(mutableListOf())
+        setupRecycler()
+
+        fab.setOnClickListener {
+            Miner.mine(usersViewModel.currentUser)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show() },
+                    { Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show() })
+        }
+    }
+
+    private fun setupRecycler() {
         mempoolList.apply {
             adapter = txsAdapter
             layoutManager = LinearLayoutManager(context)
-        }
-
-        fab.setOnClickListener {
-            Miner.mine().observeOn(AndroidSchedulers.mainThread()).subscribe(
-                { Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show() },
-                { Toast.makeText(context, "Some went wrong", Toast.LENGTH_SHORT).show() })
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Mempool.observableTransactions.observe(this, Observer { txs ->
+        transactionsViewModel = ViewModelProviders.of(this).get(TransactionsViewModel::class.java)
+        transactionsViewModel.observableTransactions.observe(this, Observer { txs ->
             txs?.also { txsAdapter.setTransactions(it) }
         })
     }
@@ -52,9 +58,8 @@ class MempoolFragment : Fragment() {
     inner class TransactionsAdapter(private val txs: MutableList<Transaction>) :
         RecyclerView.Adapter<TransactionsAdapter.ViewHolder>() {
 
-        private val inflater = LayoutInflater.from(context)
-
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val inflater = LayoutInflater.from(parent.context)
             val view = inflater.inflate(R.layout.item_transaction, parent, false)
             return ViewHolder(view)
         }

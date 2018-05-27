@@ -1,13 +1,16 @@
 package com.kaizendeveloper.bitcoinsandbox
 
 import android.app.Application
+import android.util.Log
 import com.facebook.stetho.Stetho
+import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
-import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
-import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
 import com.kaizendeveloper.bitcoinsandbox.util.SharedPreferencesHelper
+import io.reactivex.android.schedulers.AndroidSchedulers
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
+
+const val SANDBOX_TAG = "BitcoinSandbox"
 
 class SandboxApplication : Application() {
 
@@ -21,19 +24,18 @@ class SandboxApplication : Application() {
 
         if (!prefHelper.isBootstrapped()) {
             bootstrapBlockChain()
-            prefHelper.setBootstrapped()
         }
     }
 
     private fun bootstrapBlockChain() {
         val satoshi = UserManager.createUser("Satoshi", true)
+        UserManager.createUser("Alice", false)
+        UserManager.createUser("Bob", false)
+        Miner.mine(satoshi)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ Log.d(SANDBOX_TAG, "Genesis block has been created") })
 
-        val tx = Transaction(25.00, satoshi.address)
-        TxHandler().handleTxs(arrayOf(tx))
-//        val genesisBlock = Block().apply { addTransaction(tx) }
-//        genesisBlock.build()
-//
-//        BlockChain.addBlock(genesisBlock)
+        prefHelper.setBootstrapped()
     }
 
     companion object {

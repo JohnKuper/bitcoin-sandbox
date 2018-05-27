@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.User
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
-import com.kaizendeveloper.bitcoinsandbox.model.UsersViewModel
 import kotlinx.android.synthetic.main.activity_main.tabLayout
 import kotlinx.android.synthetic.main.activity_main.viewPager
 

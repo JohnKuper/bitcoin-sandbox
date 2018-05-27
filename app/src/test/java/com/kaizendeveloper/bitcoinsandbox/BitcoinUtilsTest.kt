@@ -1,6 +1,7 @@
 package com.kaizendeveloper.bitcoinsandbox
 
 import com.kaizendeveloper.bitcoinsandbox.util.decodeBits
+import com.kaizendeveloper.bitcoinsandbox.util.toHexString
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 import java.math.BigInteger
@@ -17,5 +18,8 @@ class BitcoinUtilsTest {
             BigInteger(decodeBits(0x207FFFFFL).toString()) /
                     BigInteger(decodeBits(0x2007c0eFL).toString())
         )
+
+        println(BigInteger(ByteArray(32, { 0xFF.toByte() }).toHexString(), 16))
+        println(BigInteger(ByteArray(32, { 0xEF.toByte() }).toHexString(), 16))
     }
 }

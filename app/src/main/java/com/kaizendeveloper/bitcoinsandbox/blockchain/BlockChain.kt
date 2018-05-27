@@ -1,18 +1,28 @@
 package com.kaizendeveloper.bitcoinsandbox.blockchain
 
-import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
+import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
+import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import java.util.LinkedList
-import java.util.Observable
 
-object BlockChain : Observable() {
+object BlockChain {
 
-    val blocks = LinkedList<Block>()
-    private val txHandler = TxHandler()
+    private val blocks = LinkedList<Block>()
 
-    fun addBlock(block: Block) {
+    //TODO add necessary checks for correct block
+    fun processBlock(block: Block) {
+        addBlock(block)
+        Mempool.reset()
+    }
+
+    fun getLastHash(): ByteArray {
+        return if (blocks.isNotEmpty()) {
+            blocks.last.hash
+        } else {
+            Cipher.zeroHash
+        }
+    }
+
+    private fun addBlock(block: Block) {
         blocks.add(block)
-
-        setChanged()
-        notifyObservers()
     }
 }

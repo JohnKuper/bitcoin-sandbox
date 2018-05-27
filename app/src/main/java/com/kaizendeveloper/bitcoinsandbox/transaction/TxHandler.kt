@@ -12,7 +12,7 @@ class TxHandler {
      * (4) all of [tx]s output values are non-negative, and
      * (5) the sum of [tx]s input values is greater than or equal to the sum of its output values; and false otherwise.
      */
-    fun isValidTx(tx: Transaction): Boolean {
+    private fun isValidTx(tx: Transaction): Boolean {
         if (tx.coinbase) return true
 
         val utxoHashSet = hashSetOf<UTXO>()
@@ -74,7 +74,15 @@ class TxHandler {
                     val newUtxo = UTXO(it.hash!!, index)
                     UTXOPool.add(newUtxo, output)
                 }
-                Mempool.add(it)
+                addToMempool(it)
             }.toList().toTypedArray()
+    }
+
+    private fun addToMempool(tx: Transaction) {
+        if (tx.coinbase) {
+            Mempool.addCoinbase(tx)
+        } else {
+            Mempool.add(tx)
+        }
     }
 }

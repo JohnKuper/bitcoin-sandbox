@@ -14,7 +14,6 @@ import android.widget.TextView
 import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.User
-import com.kaizendeveloper.bitcoinsandbox.model.UsersViewModel
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransferManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_transfer.amount

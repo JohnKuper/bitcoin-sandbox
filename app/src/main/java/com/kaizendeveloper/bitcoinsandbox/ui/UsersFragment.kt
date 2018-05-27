@@ -2,9 +2,7 @@ package com.kaizendeveloper.bitcoinsandbox.ui
 
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -17,7 +15,6 @@ import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.User
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
-import com.kaizendeveloper.bitcoinsandbox.model.UsersViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.dialog_new_user.view.userName
@@ -25,16 +22,12 @@ import kotlinx.android.synthetic.main.fragment_users.fab
 import kotlinx.android.synthetic.main.fragment_users.users_list as userList
 
 
-class UsersFragment : Fragment() {
+class UsersFragment : UsersViewModelFragment() {
 
     private val usersAdapter = UsersAdapter(mutableListOf())
 
-    private lateinit var usersViewModel: UsersViewModel
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val view = inflater.inflate(R.layout.fragment_users, container, false)
-        usersViewModel = ViewModelProviders.of(requireActivity()).get(UsersViewModel::class.java)
-        return view
+        return inflater.inflate(R.layout.fragment_users, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -46,10 +39,10 @@ class UsersFragment : Fragment() {
     }
 
     private fun setupRecycler() {
-        userList.layoutManager = LinearLayoutManager(context).apply {
-            orientation = LinearLayoutManager.VERTICAL
+        userList.apply {
+            adapter = usersAdapter
+            layoutManager = LinearLayoutManager(context)
         }
-        userList.adapter = usersAdapter
     }
 
     private fun observeViewModel() {
@@ -75,6 +68,7 @@ class UsersFragment : Fragment() {
         }.create().show()
     }
 
+    //TODO Move getByName to UsersViewModel
     private fun createIfAbsent(name: String) {
         UserManager.getByName(name)
             .subscribeOn(Schedulers.io())
