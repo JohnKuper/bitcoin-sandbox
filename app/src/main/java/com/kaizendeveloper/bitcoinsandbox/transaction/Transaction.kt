@@ -2,6 +2,7 @@ package com.kaizendeveloper.bitcoinsandbox.transaction
 
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import java.io.ByteArrayOutputStream
+import java.util.UUID
 
 class Transaction() {
 
@@ -9,10 +10,11 @@ class Transaction() {
     val outputs: ArrayList<TransactionOutput> = arrayListOf()
 
     var hash: ByteArray? = null
-    var coinbase: Boolean = false
+
+    var isCoinbase: Boolean = false
 
     constructor(amount: Double, address: String) : this() {
-        coinbase = true
+        isCoinbase = true
         addOutput(amount, address)
         build()
     }
@@ -36,10 +38,11 @@ class Transaction() {
         }.toByteArray()
     }
 
-    fun getRawData(): ByteArray {
+    private fun getRawData(): ByteArray {
         return ByteArrayOutputStream().apply {
             inputs.forEach { it.serialize(this) }
             outputs.forEach { it.serialize(this) }
+            write(UUID.randomUUID().toString().toByteArray())
         }.toByteArray()
     }
 

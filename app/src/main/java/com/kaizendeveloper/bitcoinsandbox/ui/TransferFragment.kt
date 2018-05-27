@@ -1,11 +1,9 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.LayoutRes
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,10 +20,9 @@ import kotlinx.android.synthetic.main.fragment_transfer.sender
 import kotlinx.android.synthetic.main.fragment_transfer.spinner_recipient as spinnerRecipient
 
 
-class TransferFragment : Fragment() {
+class TransferFragment : UsersViewModelFragment() {
 
     private lateinit var spinnerAdapter: ArrayAdapter<User>
-    private lateinit var usersViewModel: UsersViewModel
 
     private val transferManager = TransferManager()
 
@@ -38,9 +35,7 @@ class TransferFragment : Fragment() {
         get() = spinnerRecipient.selectedItem as User
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val view = inflater.inflate(R.layout.fragment_transfer, container, false)
-        usersViewModel = ViewModelProviders.of(requireActivity()).get(UsersViewModel::class.java)
-        return view
+        return inflater.inflate(R.layout.fragment_transfer, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -64,6 +59,7 @@ class TransferFragment : Fragment() {
     }
 
     private fun showSuccessTransfer() {
+        usersViewModel.notifyUserDataChanged()
         Toast.makeText(context, "Coins has been sent", Toast.LENGTH_SHORT).show()
     }
 

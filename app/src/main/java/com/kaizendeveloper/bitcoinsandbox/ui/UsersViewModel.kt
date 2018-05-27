@@ -38,4 +38,8 @@ class UsersViewModel(app: Application) : AndroidViewModel(app) {
             currentUser = newCurrent
         }
     }
+
+    fun notifyUserDataChanged() {
+        mutableCurrentUser.value = currentUser
+    }
 }

@@ -32,7 +32,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateTitle(user: User) {
-        title = "${user.name} - ${UserManager.getUserBalance(user)}$"
+        val balance = String.format("%.2f", UserManager.getUserBalance(user))
+        title = "${user.name} - $balance$"
     }
 
     class BitCoinPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {

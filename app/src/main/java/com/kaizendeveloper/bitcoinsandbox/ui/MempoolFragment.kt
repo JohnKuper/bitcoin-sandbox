@@ -35,15 +35,13 @@ class MempoolFragment : UsersViewModelFragment() {
             Miner.mine(usersViewModel.currentUser)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show() },
-                    { Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show() })
-        }
-    }
-
-    private fun setupRecycler() {
-        mempoolList.apply {
-            adapter = txsAdapter
-            layoutManager = LinearLayoutManager(context)
+                    {
+                        Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show()
+                        usersViewModel.notifyUserDataChanged()
+                    },
+                    {
+                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    })
         }
     }
 
@@ -53,6 +51,13 @@ class MempoolFragment : UsersViewModelFragment() {
         transactionsViewModel.observableTransactions.observe(this, Observer { txs ->
             txs?.also { txsAdapter.setTransactions(it) }
         })
+    }
+
+    private fun setupRecycler() {
+        mempoolList.apply {
+            adapter = txsAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
     }
 
     inner class TransactionsAdapter(private val txs: MutableList<Transaction>) :

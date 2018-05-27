@@ -59,8 +59,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Enter the amount"
-                android:inputType="numberDecimal"
-                android:maxLength="8"
+                android:inputType="number"
+                android:maxLength="3"
                 android:paddingLeft="16dp"/>
 
         </android.support.design.widget.TextInputLayout>

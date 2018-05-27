@@ -46,13 +46,13 @@ object Miner {
                 BlockChain.processBlock(newBlock)
             }.subscribeOn(Schedulers.computation())
         } else {
-            throw IllegalStateException("Block chain is already bootstrapped and mempool is empty")
+            Completable.error(IllegalStateException("Block chain is already bootstrapped and mempool is empty"))
         }
     }
 
     private fun addCoinBaseTx(recipient: User) {
-        val coinbase = Transaction(MINER_REWARD, recipient.address)
-        txHandler.handleTxs(arrayOf(coinbase))
+        val coinbaseTx = Transaction(MINER_REWARD, recipient.address)
+        txHandler.handleTxs(arrayOf(coinbaseTx))
     }
 
     private fun prepareImmutableRawMiningData(

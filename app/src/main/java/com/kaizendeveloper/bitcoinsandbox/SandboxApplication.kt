@@ -31,6 +31,7 @@ class SandboxApplication : Application() {
         val satoshi = UserManager.createUser("Satoshi", true)
         UserManager.createUser("Alice", false)
         UserManager.createUser("Bob", false)
+
         Miner.mine(satoshi)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ Log.d(SANDBOX_TAG, "Genesis block has been created") })

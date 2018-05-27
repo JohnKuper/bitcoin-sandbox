@@ -13,7 +13,7 @@ class TxHandler {
      * (5) the sum of [tx]s input values is greater than or equal to the sum of its output values; and false otherwise.
      */
     private fun isValidTx(tx: Transaction): Boolean {
-        if (tx.coinbase) return true
+        if (tx.isCoinbase) return true
 
         val utxoHashSet = hashSetOf<UTXO>()
         var inputSum = 0.0
@@ -79,7 +79,7 @@ class TxHandler {
     }
 
     private fun addToMempool(tx: Transaction) {
-        if (tx.coinbase) {
+        if (tx.isCoinbase) {
             Mempool.addCoinbase(tx)
         } else {
             Mempool.add(tx)

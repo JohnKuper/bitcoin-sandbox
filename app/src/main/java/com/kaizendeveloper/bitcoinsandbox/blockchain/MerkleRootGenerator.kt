@@ -1,5 +1,7 @@
 package com.kaizendeveloper.bitcoinsandbox.blockchain
 
+import android.util.Log
+import com.kaizendeveloper.bitcoinsandbox.SANDBOX_TAG
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 
 
@@ -16,7 +18,7 @@ class MerkleRootGenerator {
             return if (size == 1) {
                 hashes[0]
             } else {
-                println("Level size = $size")
+                Log.d(SANDBOX_TAG, "Level size = $size")
                 val levelHashes = arrayListOf<ByteArray>()
                 for (i in 0 until size step 2) {
                     val combinedHashes = hashes[i] + hashes[i + 1]
