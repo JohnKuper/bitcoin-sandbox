@@ -3,9 +3,9 @@ package com.kaizendeveloper.bitcoinsandbox.transaction
 import java.util.Arrays
 
 /**
- * Creates a new UTXO corresponding to the output with index [index] in the transaction whose hash is [txHash]
+ * Creates a new UTXO corresponding to the output with outputIndex [outputIndex] in the transaction whose hash is [txHash]
  */
-class UTXO(val txHash: ByteArray, val index: Int) {
+class UTXO(val txHash: ByteArray, val outputIndex: Int) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -13,14 +13,14 @@ class UTXO(val txHash: ByteArray, val index: Int) {
 
         other as UTXO
 
-        if (index != other.index) return false
+        if (outputIndex != other.outputIndex) return false
         if (!Arrays.equals(txHash, other.txHash)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = index
+        var result = outputIndex
         result = 31 * result + Arrays.hashCode(txHash)
         return result
     }

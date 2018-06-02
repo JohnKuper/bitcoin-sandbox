@@ -39,6 +39,7 @@ class UsersViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    //TODO Maybe it's not good to invoke that from views. In that case they are too smart.
     fun notifyUserDataChanged() {
         mutableCurrentUser.value = currentUser
     }

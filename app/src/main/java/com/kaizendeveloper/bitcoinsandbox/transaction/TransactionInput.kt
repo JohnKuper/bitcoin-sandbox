@@ -3,11 +3,10 @@ package com.kaizendeveloper.bitcoinsandbox.transaction
 import com.kaizendeveloper.bitcoinsandbox.util.toByteArray
 import java.io.OutputStream
 import java.security.PublicKey
-import java.util.Arrays
 
 class TransactionInput(prevTxHash: ByteArray, val outputIndex: Int) {
 
-    val prevTxHash: ByteArray = Arrays.copyOf(prevTxHash, prevTxHash.size)
+    val prevTxHash: ByteArray = prevTxHash.copyOf()
     var scriptSig: ScriptSig? = null
 
     fun serializeToSign(outputStream: OutputStream) {
@@ -29,7 +28,7 @@ class TransactionInput(prevTxHash: ByteArray, val outputIndex: Int) {
      */
     class ScriptSig(signature: ByteArray, val publicKey: PublicKey) {
 
-        val signature = Arrays.copyOf(signature, signature.size)
+        val signature = signature.copyOf()
 
         fun serialize(outputStream: OutputStream) {
             with(outputStream) {

@@ -60,6 +60,7 @@ class TransferFragment : UsersViewModelFragment() {
 
     private fun showSuccessTransfer() {
         usersViewModel.notifyUserDataChanged()
+        amount.error = null
         Toast.makeText(context, "Coins has been sent", Toast.LENGTH_SHORT).show()
     }
 

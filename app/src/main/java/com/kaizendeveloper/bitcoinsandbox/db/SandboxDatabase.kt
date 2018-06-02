@@ -5,10 +5,15 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 
-@Database(entities = [(User::class)], version = 1, exportSchema = false)
+@Database(
+    entities = [User::class, UTXOWithTxOutput::class],
+    version = 1,
+    exportSchema = false
+)
 abstract class SandboxDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
+    abstract fun utxoPoolDao(): UTXOPoolDao
 
     companion object {
 
