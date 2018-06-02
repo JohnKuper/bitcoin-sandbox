@@ -1,9 +1,8 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
 import android.app.Application
-import android.arch.lifecycle.Observer
-import com.kaizendeveloper.bitcoinsandbox.db.entity.UTXOWithTxOutput
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
+import com.kaizendeveloper.bitcoinsandbox.util.observeOnce
 import java.util.HashMap
 
 class UTXOPool(app: Application) {
@@ -15,14 +14,10 @@ class UTXOPool(app: Application) {
      */
     val unspentOutputMap: HashMap<UTXO, TransactionOutput> = HashMap()
 
-    //TODO Implement OneTimeObserver which removes itself after hitting once
     init {
-        utxoPoolRepository.observableUTXOPool.observeForever(object : Observer<List<UTXOWithTxOutput>> {
-            override fun onChanged(utxoPool: List<UTXOWithTxOutput>?) {
-                utxoPool?.associateTo(unspentOutputMap) { it.utxo to it.txOutput }
-                utxoPoolRepository.observableUTXOPool.removeObserver(this)
-            }
-        })
+        utxoPoolRepository.observableUTXOPool.observeOnce { utxoPool ->
+            utxoPool?.associateTo(unspentOutputMap) { it.utxo to it.txOutput }
+        }
     }
 
     /**
