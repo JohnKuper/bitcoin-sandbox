@@ -1,5 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
+import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
@@ -47,7 +48,7 @@ class TransferManager {
     private fun prepareTransferParams(amount: Double, sender: User): Pair<Double, List<UTXO>> {
         var accumulatedAmount = 0.0
 
-        val outputsToSpend = UTXOPool.unspentOutputMap
+        val outputsToSpend = SandboxApplication.utxoPool.unspentOutputMap
             .asSequence()
             .filter { it.value.address == sender.address }
             .sortedBy { it.value }

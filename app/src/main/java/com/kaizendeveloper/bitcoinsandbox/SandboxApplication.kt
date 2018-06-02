@@ -5,6 +5,7 @@ import android.util.Log
 import com.facebook.stetho.Stetho
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
+import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
 import com.kaizendeveloper.bitcoinsandbox.util.SharedPreferencesHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -21,6 +22,7 @@ class SandboxApplication : Application() {
 
         application = this
         prefHelper = SharedPreferencesHelper.getInstance(this)
+        utxoPool = UTXOPool(this)
 
         if (!prefHelper.isBootstrapped()) {
             bootstrapBlockChain()
@@ -42,5 +44,6 @@ class SandboxApplication : Application() {
     companion object {
         lateinit var application: SandboxApplication
         lateinit var prefHelper: SharedPreferencesHelper
+        lateinit var utxoPool: UTXOPool
     }
 }

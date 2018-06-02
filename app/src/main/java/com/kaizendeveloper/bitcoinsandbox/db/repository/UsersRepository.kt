@@ -20,7 +20,7 @@ class UsersRepository(app: Application) {
 
     fun getByName(name: String): Maybe<User> = userDao.getByName(name)
 
-    fun updateCurrentUser(old: User, new: User) {
+    fun updateCurrent(old: User, new: User) {
         doAsync {
             db.runInTransaction {
                 userDao.update(old.apply { isCurrent = false })

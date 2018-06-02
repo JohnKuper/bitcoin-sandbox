@@ -9,9 +9,11 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.AppCompatActivity
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
-import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
 import kotlinx.android.synthetic.main.activity_main.tabLayout
 import kotlinx.android.synthetic.main.activity_main.viewPager
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,35 +21,37 @@ class MainActivity : AppCompatActivity() {
 
     private var currentUser: User? = null
 
+    private val balanceFormat = DecimalFormat("0.00", DecimalFormatSymbols(Locale.UK))
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        UTXOPool.addInitListener(object : UTXOPool.OnInitListener {
-            override fun onInitializationCompleted() {
-                updateTitle()
-            }
-        })
+        observeViewModel()
+        setupViewPager()
+    }
 
-        usersViewModel = ViewModelProviders.of(this).get(UsersViewModel::class.java)
-        usersViewModel.observableUsers.observe(this, Observer { users ->
-            users?.first {
-                it.isCurrent
-            }.also {
-                currentUser = it
-                updateTitle()
-            }
-        })
-
+    private fun setupViewPager() {
         viewPager.adapter = BitCoinPagerAdapter(supportFragmentManager)
         viewPager.offscreenPageLimit = 4
         tabLayout.setupWithViewPager(viewPager)
     }
 
+    private fun observeViewModel() {
+        usersViewModel = ViewModelProviders.of(this).get(UsersViewModel::class.java)
+        usersViewModel.observableUsers.observe(this, Observer { users ->
+            users?.first { it.isCurrent }.also {
+                currentUser = it
+                updateTitle()
+            }
+        })
+        usersViewModel.observableUTXOPool.observe(this, Observer { updateTitle() })
+    }
+
     private fun updateTitle() {
         currentUser?.also {
-            val balance = String.format("%.2f", usersViewModel.getUserBalance(it))
-            title = "${it.name} - $balance"
+            val balance = balanceFormat.format(usersViewModel.getUserBalance(it))
+            title = "${it.name} - $balance$"
         }
     }
 
