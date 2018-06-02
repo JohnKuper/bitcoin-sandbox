@@ -1,13 +1,37 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
+import android.arch.lifecycle.Observer
+import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
+import com.kaizendeveloper.bitcoinsandbox.db.entity.UTXOWithTxOutput
+import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
 import java.util.HashMap
 
 object UTXOPool {
 
+    private val utxoPoolRepository: UTXOPoolRepository = UTXOPoolRepository(SandboxApplication.application)
+
+    private val initListeners = arrayListOf<OnInitListener>()
+
     /**
      * The current collection of UTXOs, with each one mapped to its corresponding transaction output
      */
-    var unspentOutputMap: HashMap<UTXO, TransactionOutput> = HashMap()
+    val unspentOutputMap: HashMap<UTXO, TransactionOutput> = HashMap()
+
+    //TODO Implement OneTimeObserver which removes itself after hitting once
+    init {
+        utxoPoolRepository.observableUTXOPool.observeForever(object : Observer<List<UTXOWithTxOutput>> {
+            override fun onChanged(utxoPool: List<UTXOWithTxOutput>?) {
+                utxoPool?.associateTo(unspentOutputMap) { it.utxo to it.txOutput }
+                utxoPoolRepository.observableUTXOPool.removeObserver(this)
+
+                initListeners.forEach { it.onInitializationCompleted() }
+            }
+        })
+    }
+
+    fun addInitListener(listener: OnInitListener) {
+        initListeners.add(listener)
+    }
 
     /**
      * Adds a mapping from UTXO [utxo] to transaction output [txOutput] to the pool
@@ -15,6 +39,7 @@ object UTXOPool {
     @JvmStatic
     fun add(utxo: UTXO, txOutput: TransactionOutput) {
         unspentOutputMap[utxo] = txOutput
+        utxoPoolRepository.insert(utxo, txOutput)
     }
 
     /**
@@ -23,6 +48,7 @@ object UTXOPool {
     @JvmStatic
     fun remove(utxo: UTXO) {
         unspentOutputMap.remove(utxo)
+        utxoPoolRepository.delete(utxo)
     }
 
     /**
@@ -49,4 +75,8 @@ object UTXOPool {
      * @return true if UTXO [utxo] is in the pool and false otherwise
      */
     operator fun contains(utxo: UTXO) = unspentOutputMap.containsKey(utxo)
+
+    interface OnInitListener {
+        fun onInitializationCompleted()
+    }
 }

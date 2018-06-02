@@ -16,8 +16,7 @@ import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.util.toHexString
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_mempool.fab
-import kotlinx.android.synthetic.main.fragment_mempool.mempool_list as mempoolList
-
+import kotlinx.android.synthetic.main.fragment_mempool.mempoolList
 
 class MempoolFragment : UsersViewModelFragment() {
 
@@ -32,12 +31,11 @@ class MempoolFragment : UsersViewModelFragment() {
         setupRecycler()
 
         fab.setOnClickListener {
-            Miner.mine(usersViewModel.currentUser)
+            Miner.mine(currentUser)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
                         Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show()
-                        usersViewModel.notifyUserDataChanged()
                     },
                     {
                         Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()

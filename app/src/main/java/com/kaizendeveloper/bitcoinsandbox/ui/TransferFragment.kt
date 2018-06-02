@@ -1,6 +1,5 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.LayoutRes
@@ -11,7 +10,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
-import com.kaizendeveloper.bitcoinsandbox.db.User
+import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransferManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_transfer.amount
@@ -27,9 +26,7 @@ class TransferFragment : UsersViewModelFragment() {
     private val transferManager = TransferManager()
 
     private val transferAmount: Double
-        get() {
-            return amount.text.takeIf { it.isNotEmpty() }?.toString()?.toDouble() ?: 0.0
-        }
+        get() = amount.text.takeIf { it.isNotEmpty() }?.toString()?.toDouble() ?: 0.0
 
     private val recipient: User
         get() = spinnerRecipient.selectedItem as User
@@ -40,7 +37,6 @@ class TransferFragment : UsersViewModelFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        observeViewModel()
 
         spinnerAdapter = UsersSpinnerAdapter(requireActivity())
         spinnerRecipient.adapter = spinnerAdapter
@@ -52,32 +48,25 @@ class TransferFragment : UsersViewModelFragment() {
 
     private fun sendCoins() {
         if (transferAmount > 0) {
-            transferManager.sendCoins(transferAmount, usersViewModel.currentUser, recipient)
+            transferManager.sendCoins(transferAmount, currentUser, recipient)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ showSuccessTransfer() }, { amount.error = "Not enough coins!" })
         }
     }
 
     private fun showSuccessTransfer() {
-        usersViewModel.notifyUserDataChanged()
         amount.error = null
         Toast.makeText(context, "Coins has been sent", Toast.LENGTH_SHORT).show()
     }
 
-    private fun observeViewModel() {
-        usersViewModel.observableCurrentUser.observe(this, Observer {
-            sender.text = it?.name
-        })
-        usersViewModel.observableUsers.observe(this, Observer {
-            it?.also { updateSpinner(it) }
-        })
+    override fun onUsersChanged(users: List<User>) {
+        sender.text = currentUser.name
+        updateSpinner(users)
     }
 
     private fun updateSpinner(users: List<User>) {
         spinnerAdapter.clear()
-        spinnerAdapter.addAll(users.toMutableList().apply {
-            remove(usersViewModel.currentUser)
-        })
+        spinnerAdapter.addAll(users.filter { !it.isCurrent })
         spinnerAdapter.notifyDataSetChanged()
     }
 

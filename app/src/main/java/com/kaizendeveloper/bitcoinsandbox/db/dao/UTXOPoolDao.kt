@@ -1,8 +1,10 @@
-package com.kaizendeveloper.bitcoinsandbox.db
+package com.kaizendeveloper.bitcoinsandbox.db.dao
 
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
+import com.kaizendeveloper.bitcoinsandbox.db.entity.UTXOWithTxOutput
 
 @Dao
 interface UTXOPoolDao {
@@ -13,5 +15,5 @@ interface UTXOPoolDao {
     fun delete(txHash: ByteArray, outputIndex: Int)
 
     @Query("SELECT * from utxo_pool")
-    fun getAll(): List<UTXOWithTxOutput>
+    fun getAll(): LiveData<List<UTXOWithTxOutput>>
 }

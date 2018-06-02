@@ -8,8 +8,8 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.AppCompatActivity
 import com.kaizendeveloper.bitcoinsandbox.R
-import com.kaizendeveloper.bitcoinsandbox.db.User
-import com.kaizendeveloper.bitcoinsandbox.model.UserManager
+import com.kaizendeveloper.bitcoinsandbox.db.entity.User
+import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
 import kotlinx.android.synthetic.main.activity_main.tabLayout
 import kotlinx.android.synthetic.main.activity_main.viewPager
 
@@ -17,13 +17,26 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var usersViewModel: UsersViewModel
 
+    private var currentUser: User? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        UTXOPool.addInitListener(object : UTXOPool.OnInitListener {
+            override fun onInitializationCompleted() {
+                updateTitle()
+            }
+        })
+
         usersViewModel = ViewModelProviders.of(this).get(UsersViewModel::class.java)
-        usersViewModel.observableCurrentUser.observe(this, Observer<User> {
-            it?.also { updateTitle(it) }
+        usersViewModel.observableUsers.observe(this, Observer { users ->
+            users?.first {
+                it.isCurrent
+            }.also {
+                currentUser = it
+                updateTitle()
+            }
         })
 
         viewPager.adapter = BitCoinPagerAdapter(supportFragmentManager)
@@ -31,9 +44,11 @@ class MainActivity : AppCompatActivity() {
         tabLayout.setupWithViewPager(viewPager)
     }
 
-    private fun updateTitle(user: User) {
-        val balance = String.format("%.2f", UserManager.getUserBalance(user))
-        title = "${user.name} - $balance$"
+    private fun updateTitle() {
+        currentUser?.also {
+            val balance = String.format("%.2f", usersViewModel.getUserBalance(it))
+            title = "${it.name} - $balance"
+        }
     }
 
     class BitCoinPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {

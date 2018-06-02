@@ -1,6 +1,7 @@
 package com.kaizendeveloper.bitcoinsandbox.db
 
 import android.support.test.runner.AndroidJUnit4
+import com.kaizendeveloper.bitcoinsandbox.db.entity.UTXOWithTxOutput
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
 import junit.framework.Assert.assertTrue

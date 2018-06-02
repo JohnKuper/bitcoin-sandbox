@@ -3,7 +3,7 @@ package com.kaizendeveloper.bitcoinsandbox.blockchain
 import android.util.Log
 import com.kaizendeveloper.bitcoinsandbox.SANDBOX_TAG
 import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
-import com.kaizendeveloper.bitcoinsandbox.db.User
+import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler

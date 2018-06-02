@@ -1,6 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
-import com.kaizendeveloper.bitcoinsandbox.db.User
+import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import io.reactivex.Completable

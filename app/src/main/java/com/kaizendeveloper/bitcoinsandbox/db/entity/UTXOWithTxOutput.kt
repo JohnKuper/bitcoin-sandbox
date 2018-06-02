@@ -1,4 +1,4 @@
-package com.kaizendeveloper.bitcoinsandbox.db
+package com.kaizendeveloper.bitcoinsandbox.db.entity
 
 import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Entity

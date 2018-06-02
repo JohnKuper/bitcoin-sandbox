@@ -3,44 +3,26 @@ package com.kaizendeveloper.bitcoinsandbox.ui
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
-import com.kaizendeveloper.bitcoinsandbox.db.SandboxRepository
-import com.kaizendeveloper.bitcoinsandbox.db.User
+import com.kaizendeveloper.bitcoinsandbox.db.entity.User
+import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
+import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepository
+import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 
 
 class UsersViewModel(app: Application) : AndroidViewModel(app) {
 
-    private val repository: SandboxRepository = SandboxRepository(app)
+    private val usersRepository: UsersRepository = UsersRepository(app)
+    private val utxoPoolRepository: UTXOPoolRepository = UTXOPoolRepository(app)
 
-    private val mutableCurrentUser: MutableLiveData<User> = MutableLiveData()
-    val observableCurrentUser: LiveData<User>
-        get() = mutableCurrentUser
+    private val observableUTXOPool = utxoPoolRepository.observableUTXOPool
 
-    val observableUsers: LiveData<List<User>> = repository.observableUsers
+    val observableUsers: LiveData<List<User>> = usersRepository.observableUsers
 
-    lateinit var currentUser: User
-
-    init {
-        observableUsers.observeForever(object : Observer<List<User>> {
-            override fun onChanged(users: List<User>?) {
-                currentUser = users?.first { it.isCurrent }!!
-                mutableCurrentUser.value = currentUser
-                observableUsers.removeObserver(this)
-            }
-        })
-    }
-
-    fun updateCurrentUserIfNeeded(newCurrent: User) {
-        if (newCurrent != currentUser) {
-            repository.updateCurrentUser(currentUser, newCurrent)
-            mutableCurrentUser.value = newCurrent
-            currentUser = newCurrent
+    fun updateCurrentUserIfNeeded(old: User, new: User) {
+        if (new != old) {
+            usersRepository.updateCurrentUser(old, new)
         }
     }
 
-    //TODO Maybe it's not good to invoke that from views. In that case they are too smart.
-    fun notifyUserDataChanged() {
-        mutableCurrentUser.value = currentUser
-    }
+    fun getUserBalance(user: User) = UserManager.getUserBalance(user)
 }
