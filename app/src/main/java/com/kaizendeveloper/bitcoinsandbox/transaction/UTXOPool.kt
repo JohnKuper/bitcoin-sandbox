@@ -15,7 +15,7 @@ class UTXOPool(app: Application) {
     val unspentOutputMap: HashMap<UTXO, TransactionOutput> = HashMap()
 
     init {
-        utxoPoolRepository.observableUTXOPool.observeOnce { utxoPool ->
+        utxoPoolRepository.utxoPool.observeOnce { utxoPool ->
             utxoPool?.associateTo(unspentOutputMap) { it.utxo to it.txOutput }
         }
     }

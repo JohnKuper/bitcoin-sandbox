@@ -31,15 +31,17 @@ class MempoolFragment : UsersViewModelFragment() {
         setupRecycler()
 
         fab.setOnClickListener {
-            Miner.mine(currentUser)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
-                        Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show()
-                    },
-                    {
-                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                    })
+            withCurrentUser { user ->
+                Miner.mine(user)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        {
+                            Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show()
+                        },
+                        {
+                            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                        })
+            }
         }
     }
 
@@ -58,6 +60,7 @@ class MempoolFragment : UsersViewModelFragment() {
         }
     }
 
+    //TODO Use ListAdapter for proper UI updates and calculated diffs
     inner class TransactionsAdapter(private val txs: MutableList<Transaction>) :
         RecyclerView.Adapter<TransactionsAdapter.ViewHolder>() {
 

@@ -17,7 +17,7 @@ class TransferManager {
     }
 
     private fun sendCoinsInner(amount: Double, sender: User, recipient: User) {
-        val balance = UserManager.getUserBalance(sender)
+        val balance = UserManager.calculateBalance(sender)
         if (balance < amount) {
             throw IllegalStateException("Not enough coins!")
         }

@@ -19,8 +19,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var usersViewModel: UsersViewModel
 
-    private var currentUser: User? = null
-
     private val balanceFormat = DecimalFormat("0.00", DecimalFormatSymbols(Locale.UK))
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,18 +37,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         usersViewModel = ViewModelProviders.of(this).get(UsersViewModel::class.java)
-        usersViewModel.observableUsers.observe(this, Observer { users ->
-            users?.first { it.isCurrent }.also {
-                currentUser = it
-                updateTitle()
-            }
+        usersViewModel.currentUser.observe(this, Observer { user ->
+            user?.also { updateTitle(it) }
         })
-        usersViewModel.observableUTXOPool.observe(this, Observer { updateTitle() })
     }
 
-    private fun updateTitle() {
-        currentUser?.also {
-            val balance = balanceFormat.format(usersViewModel.getUserBalance(it))
+    private fun updateTitle(user: User) {
+        user.also {
+            val balance = balanceFormat.format(user.balance)
             title = "${it.name} - $balance$"
         }
     }

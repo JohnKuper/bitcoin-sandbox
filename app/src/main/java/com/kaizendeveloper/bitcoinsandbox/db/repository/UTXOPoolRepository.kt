@@ -13,7 +13,7 @@ class UTXOPoolRepository(app: Application) {
     private val db = SandboxDatabase.getInstance(app)
     private val utxoPoolDao = db.utxoPoolDao()
 
-    val observableUTXOPool = utxoPoolDao.getAll()
+    val utxoPool = utxoPoolDao.getAll()
 
     fun insert(utxo: UTXO, txOutput: TransactionOutput) {
         doAsync { utxoPoolDao.insert(UTXOWithTxOutput(utxo, txOutput)) }

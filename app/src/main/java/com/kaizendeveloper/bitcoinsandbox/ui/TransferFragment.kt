@@ -47,10 +47,12 @@ class TransferFragment : UsersViewModelFragment() {
     }
 
     private fun sendCoins() {
-        if (transferAmount > 0) {
-            transferManager.sendCoins(transferAmount, currentUser, recipient)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ showSuccessTransfer() }, { amount.error = "Not enough coins!" })
+        withCurrentUser { user ->
+            if (transferAmount > 0) {
+                transferManager.sendCoins(transferAmount, user, recipient)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ showSuccessTransfer() }, { amount.error = "Not enough coins!" })
+            }
         }
     }
 
@@ -59,8 +61,11 @@ class TransferFragment : UsersViewModelFragment() {
         Toast.makeText(context, "Coins has been sent", Toast.LENGTH_SHORT).show()
     }
 
+    override fun onCurrentUserChanged(user: User) {
+        sender.text = user.name
+    }
+
     override fun onUsersChanged(users: List<User>) {
-        sender.text = currentUser.name
         updateSpinner(users)
     }
 

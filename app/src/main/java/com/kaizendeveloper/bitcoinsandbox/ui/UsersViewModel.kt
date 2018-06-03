@@ -3,6 +3,7 @@ package com.kaizendeveloper.bitcoinsandbox.ui
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MediatorLiveData
 import com.kaizendeveloper.bitcoinsandbox.db.entity.UTXOWithTxOutput
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
@@ -15,14 +16,38 @@ class UsersViewModel(app: Application) : AndroidViewModel(app) {
     private val usersRepository: UsersRepository = UsersRepository(app)
     private val utxoPoolRepository: UTXOPoolRepository = UTXOPoolRepository(app)
 
-    val observableUTXOPool: LiveData<List<UTXOWithTxOutput>> = utxoPoolRepository.observableUTXOPool
-    val observableUsers: LiveData<List<User>> = usersRepository.observableUsers
+    val users: LiveData<List<User>> = usersRepository.users
+    val currentUser: LiveData<User> = object : MediatorLiveData<User>() {
 
-    fun updateCurrentUserIfNeeded(old: User, new: User) {
-        if (new != old) {
-            usersRepository.updateCurrent(old, new)
+        private var lastUser: User? = null
+        private var lastUTXOPool: List<UTXOWithTxOutput>? = null
+
+        init {
+            addSource(usersRepository.currentUser, {
+                lastUser = it
+                considerNotify()
+            })
+            addSource(utxoPoolRepository.utxoPool, {
+                lastUTXOPool = it
+                considerNotify()
+            })
+        }
+
+        private fun considerNotify() {
+            val user = lastUser
+            val utxoPool = lastUTXOPool
+            if (user != null && utxoPool != null) {
+                value = user.copy().apply {
+                    balance = UserManager.calculateBalance(user, utxoPool.map { it.txOutput })
+                }
+            }
         }
     }
 
-    fun getUserBalance(user: User) = UserManager.getUserBalance(user)
+    fun updateCurrentUserIfNeeded(newCurrent: User) {
+        val oldUser = currentUser.value
+        if (oldUser != null && oldUser != newCurrent) {
+            usersRepository.updateCurrent(oldUser, newCurrent)
+        }
+    }
 }

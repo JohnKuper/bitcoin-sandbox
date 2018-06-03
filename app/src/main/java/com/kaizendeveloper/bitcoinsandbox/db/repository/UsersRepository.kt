@@ -12,7 +12,8 @@ class UsersRepository(app: Application) {
     private val db = SandboxDatabase.getInstance(app)
     private val userDao = db.userDao()
 
-    val observableUsers = userDao.getAll()
+    val users = userDao.getAll()
+    val currentUser = userDao.getCurrent()
 
     fun insert(user: User) {
         doAsync { userDao.insert(user) }

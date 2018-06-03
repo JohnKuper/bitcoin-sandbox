@@ -46,7 +46,7 @@ class UsersFragment : UsersViewModelFragment() {
     }
 
     private fun observeViewModel() {
-        usersViewModel.observableUsers.observe(this, Observer<List<User>> {
+        usersViewModel.users.observe(this, Observer<List<User>> {
             it?.also { usersAdapter.setUsers(it) }
         })
     }
@@ -83,7 +83,7 @@ class UsersFragment : UsersViewModelFragment() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val view = inflater.inflate(R.layout.item_user, parent, false)
-            return ViewHolder(view) { usersViewModel.updateCurrentUserIfNeeded(currentUser, users[it]) }
+            return ViewHolder(view) { usersViewModel.updateCurrentUserIfNeeded(users[it]) }
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
