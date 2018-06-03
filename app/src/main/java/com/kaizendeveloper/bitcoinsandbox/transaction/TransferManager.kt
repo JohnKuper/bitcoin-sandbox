@@ -16,6 +16,7 @@ class TransferManager {
         }.subscribeOn(Schedulers.computation())
     }
 
+    //TODO Very heavy operation when amount of inputs is huge. Consider to add progress and block UI.
     private fun sendCoinsInner(amount: Double, sender: User, recipient: User) {
         val balance = UserManager.calculateBalance(sender)
         if (balance < amount) {
