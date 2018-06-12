@@ -43,8 +43,6 @@ class UTXOPool(context: Context) {
         return unspentOutputMap[utxo]
     }
 
-    fun getAllUTXO() = unspentOutputMap.keys.toList()
-
     fun getAllTxOutputs() = unspentOutputMap.values.toList()
 
     fun reset() {

@@ -2,7 +2,6 @@ package com.kaizendeveloper.bitcoinsandbox.blockchain
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import java.util.LinkedList
 
@@ -16,7 +15,7 @@ object BlockChain {
     //TODO add necessary checks for correct block
     fun processBlock(block: Block) {
         addBlock(block)
-        Mempool.reset()
+//        Mempool.reset()
     }
 
     fun getLastHash(): ByteArray {

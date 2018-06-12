@@ -4,8 +4,7 @@ import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Relation
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 
-
-class TxEntityWithRelationData(
+class TxWithRelationData(
     @Embedded
     var txEntity: TxEntity
 ) {

@@ -4,7 +4,6 @@ import android.util.Log
 import com.kaizendeveloper.bitcoinsandbox.SANDBOX_TAG
 import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
-import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
@@ -20,14 +19,15 @@ import java.util.Calendar
 
 object Miner {
 
+    private val mempool = SandboxApplication.mempool
     private val txHandler = TxHandler()
 
     fun mine(recipient: User): Completable {
-        return if (!SandboxApplication.prefHelper.isBootstrapped() || Mempool.getAll().isNotEmpty()) {
+        return if (!SandboxApplication.prefHelper.isBootstrapped() || mempool.getAll().isNotEmpty()) {
             addCoinBaseTx(recipient)
 
             val prevBlockHash = BlockChain.getLastHash()
-            val merkleRoot = MerkleRootGenerator.generate(Mempool.getAll().map { it.hash!! })
+            val merkleRoot = MerkleRootGenerator.generate(mempool.getAll().map { it.hash!! })
             val timeStamp = Calendar.getInstance().timeInMillis
 
             val immutableMiningData = prepareImmutableRawMiningData(prevBlockHash, merkleRoot, timeStamp)

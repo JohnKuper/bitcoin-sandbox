@@ -19,7 +19,7 @@ class MempoolDaoTest : DbTest() {
 
     @Before
     fun setup() {
-        mempoolRepo = MempoolRepository(InstrumentationRegistry.getContext(), db, db.mempoolDao())
+        mempoolRepo = MempoolRepository(InstrumentationRegistry.getContext(), db)
     }
 
     @Test

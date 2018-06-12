@@ -4,7 +4,9 @@ import android.app.Application
 import android.util.Log
 import com.facebook.stetho.Stetho
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
+import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
+import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
 import com.kaizendeveloper.bitcoinsandbox.util.SharedPreferencesHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -23,6 +25,8 @@ class SandboxApplication : Application() {
         application = this
         prefHelper = SharedPreferencesHelper.getInstance(this)
         utxoPool = UTXOPool(this)
+        mempoolRepo = MempoolRepository(this)
+        mempool = Mempool(mempoolRepo)
 
         if (!prefHelper.isBootstrapped()) {
             bootstrapBlockChain()
@@ -45,5 +49,7 @@ class SandboxApplication : Application() {
         lateinit var application: SandboxApplication
         lateinit var prefHelper: SharedPreferencesHelper
         lateinit var utxoPool: UTXOPool
+        lateinit var mempool: Mempool
+        lateinit var mempoolRepo: MempoolRepository
     }
 }

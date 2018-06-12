@@ -1,6 +1,5 @@
 package com.kaizendeveloper.bitcoinsandbox.blockchain
 
-import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
 import com.kaizendeveloper.bitcoinsandbox.util.ByteArrayWrapper
@@ -126,7 +125,7 @@ class BlockChain2(var maxHeightBlock: Block) : Observable() {
      * Add a transaction to the transaction pool
      */
     fun addTransaction(tx: Transaction) {
-        Mempool.add(tx)
+//        Mempool.add(tx)
     }
 
     inner class Node(val block: Block, val height: Int) {

@@ -48,7 +48,7 @@ class MempoolFragment : UsersViewModelFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         transactionsViewModel = ViewModelProviders.of(this).get(TransactionsViewModel::class.java)
-        transactionsViewModel.observableTransactions.observe(this, Observer { txs ->
+        transactionsViewModel.transactions.observe(this, Observer { txs ->
             txs?.also { txsAdapter.setTransactions(it) }
         })
     }

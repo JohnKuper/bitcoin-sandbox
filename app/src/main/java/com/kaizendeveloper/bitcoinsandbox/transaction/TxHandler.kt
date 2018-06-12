@@ -6,6 +6,8 @@ import com.kaizendeveloper.bitcoinsandbox.util.wrap
 
 class TxHandler {
 
+    private val mempool: Mempool = SandboxApplication.mempool
+
     /**
      * @return true if:
      * (1) all outputs claimed by [tx] are in the current [UTXOPool],
@@ -82,9 +84,9 @@ class TxHandler {
 
     private fun addToMempool(tx: Transaction) {
         if (tx.isCoinbase) {
-            Mempool.addCoinbase(tx)
+            mempool.addCoinbase(tx)
         } else {
-            Mempool.add(tx)
+            mempool.add(tx)
         }
     }
 }

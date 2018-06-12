@@ -1,30 +1,29 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
-import android.arch.lifecycle.MutableLiveData
+import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
+import com.kaizendeveloper.bitcoinsandbox.util.observeOnce
 
-object Mempool {
+class Mempool(private val mempoolRepository: MempoolRepository) {
 
     private val transactions = arrayListOf<Transaction>()
-    val observableTransactions = MutableLiveData<List<Transaction>>()
+
+    init {
+        mempoolRepository.transactions.observeOnce {
+            it?.also {
+                transactions.addAll(it)
+            }
+        }
+    }
 
     fun add(tx: Transaction) {
         transactions.add(tx)
-        updateLiveData()
+        mempoolRepository.insert(tx)
     }
 
     fun addCoinbase(tx: Transaction) {
         transactions.add(0, tx)
-        updateLiveData()
-    }
-
-    fun reset() {
-        transactions.clear()
-        updateLiveData()
+        mempoolRepository.insert(tx)
     }
 
     fun getAll() = transactions
-
-    private fun updateLiveData() {
-        observableTransactions.postValue(transactions)
-    }
 }
