@@ -1,8 +1,10 @@
 package com.kaizendeveloper.bitcoinsandbox
 
+import android.support.test.InstrumentationRegistry
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
+import com.kaizendeveloper.bitcoinsandbox.util.wrap
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -12,16 +14,17 @@ import java.util.UUID
 class TransactionComposerTest {
 
     private val amountList = listOf(3.5, 2.1, 4.22, 5.99, 5.0, 0.5, 9.99, 11.11, 2.456, 2.457)
+    private val utxoPool = UTXOPool(InstrumentationRegistry.getContext())
 
     @Before
     fun setup() {
         amountList.forEach {
-            UTXOPool.add(
-                UTXO(UUID.randomUUID().toString().toByteArray(), 0),
+            utxoPool.add(
+                UTXO(generateRandomHash().wrap(), 0),
                 TransactionOutput(it, "Alice").also {
                 })
-            UTXOPool.add(
-                UTXO(UUID.randomUUID().toString().toByteArray(), 0),
+            utxoPool.add(
+                UTXO(generateRandomHash().wrap(), 0),
                 TransactionOutput(it, "Bob")
             )
         }
@@ -29,7 +32,7 @@ class TransactionComposerTest {
 
     @After
     fun tearDown() {
-        UTXOPool.reset()
+        utxoPool.reset()
     }
 
     @Test
@@ -37,7 +40,7 @@ class TransactionComposerTest {
         val sendAmount = 11.55
         var accumulatedAmount = 0.0
 
-        val utxoToSend = UTXOPool.unspentOutputMap
+        val utxoToSend = utxoPool.unspentOutputMap
             .asSequence()
             .filter { it.value.address == "Alice" }
             .sortedBy { it.value }
@@ -54,4 +57,7 @@ class TransactionComposerTest {
 
         println(result.toString())
     }
+
+    //TODO This is needed in many places. Move to separate class
+    private fun generateRandomHash() = UUID.randomUUID().toString().toByteArray()
 }

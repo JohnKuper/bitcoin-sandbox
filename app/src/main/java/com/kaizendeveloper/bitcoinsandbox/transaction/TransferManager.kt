@@ -27,7 +27,7 @@ class TransferManager {
         val txParams = prepareTransferParams(amount, sender)
         val transaction = Transaction().apply {
             txParams.second.forEach {
-                addInput(it.txHash, it.outputIndex)
+                addInput(it.txHash.data, it.outputIndex)
             }
             addOutput(amount, recipient.address)
             if (txParams.first > amount) {

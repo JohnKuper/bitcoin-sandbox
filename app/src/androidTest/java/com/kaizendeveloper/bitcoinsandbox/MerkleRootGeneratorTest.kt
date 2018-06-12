@@ -1,5 +1,6 @@
-package com.kaizendeveloper.bitcoinsandbox.blockchain
+package com.kaizendeveloper.bitcoinsandbox
 
+import com.kaizendeveloper.bitcoinsandbox.blockchain.MerkleRootGenerator
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertNotNull

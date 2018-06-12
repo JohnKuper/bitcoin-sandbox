@@ -2,6 +2,7 @@ package com.kaizendeveloper.bitcoinsandbox.transaction
 
 import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
+import com.kaizendeveloper.bitcoinsandbox.util.wrap
 
 class TxHandler {
 
@@ -72,7 +73,7 @@ class TxHandler {
                     SandboxApplication.utxoPool.remove(UTXO.fromTxInput(it))
                 }
                 it.outputs.forEachIndexed { index, output ->
-                    val newUtxo = UTXO(it.hash!!, index)
+                    val newUtxo = UTXO(it.hash!!.wrap(), index)
                     SandboxApplication.utxoPool.add(newUtxo, output)
                 }
                 addToMempool(it)

@@ -22,7 +22,7 @@ class MempoolRepository(
 
         val txEntity = TxEntity(txUUID, txHash, transaction.isCoinbase)
         val txInputs = transaction.inputs.map {
-            TxInputEntity(txUUID, it.prevTxHash.data, it.outputIndex, it.scriptSig)
+            TxInputEntity(txUUID, it.txHash.data, it.outputIndex, it.scriptSig)
         }
         val txOutputs = transaction.outputs.map {
             TxOutputEntity(txUUID, it.amount, it.address)

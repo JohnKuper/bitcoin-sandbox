@@ -8,7 +8,7 @@ import org.junit.runner.RunWith
 
 
 @RunWith(AndroidJUnit4::class)
-class KeysTest {
+class CipherTest {
 
     @Test
     fun decodedPublicKey() {

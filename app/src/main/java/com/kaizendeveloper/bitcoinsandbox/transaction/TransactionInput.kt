@@ -4,13 +4,19 @@ import com.kaizendeveloper.bitcoinsandbox.util.ByteArrayWrapper
 import com.kaizendeveloper.bitcoinsandbox.util.toByteArray
 import java.io.OutputStream
 
-data class TransactionInput(val prevTxHash: ByteArrayWrapper, val outputIndex: Int) {
-
+/**
+ * [TransactionInput] corresponding to the [TransactionOutput] with outputIndex [outputIndex] in the
+ * transaction whose hash is [txHash]
+ */
+data class TransactionInput(
+    val txHash: ByteArrayWrapper,
+    val outputIndex: Int,
     var scriptSig: ScriptSig? = null
+) {
 
     fun serializeToSign(outputStream: OutputStream) {
         with(outputStream) {
-            write(prevTxHash.data)
+            write(txHash.data)
             write(outputIndex.toByteArray())
         }
     }

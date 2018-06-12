@@ -18,7 +18,5 @@ class TxInputEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 
-    fun toTransactionInput() = TransactionInput(prevTxHash.wrap(), outputIndex).apply {
-        scriptSig = this@TxInputEntity.scriptSig
-    }
+    fun toTransactionInput() = TransactionInput(prevTxHash.wrap(), outputIndex, scriptSig)
 }

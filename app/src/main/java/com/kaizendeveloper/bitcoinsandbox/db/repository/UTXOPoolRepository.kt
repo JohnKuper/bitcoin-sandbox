@@ -1,6 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.db.repository
 
-import android.app.Application
+import android.content.Context
 import com.kaizendeveloper.bitcoinsandbox.db.SandboxDatabase
 import com.kaizendeveloper.bitcoinsandbox.db.entity.UTXOWithTxOutput
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
@@ -8,9 +8,9 @@ import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
 import org.jetbrains.anko.doAsync
 
 //TODO Remove db from repository
-class UTXOPoolRepository(app: Application) {
+class UTXOPoolRepository(context: Context) {
 
-    private val db = SandboxDatabase.getInstance(app)
+    private val db = SandboxDatabase.getInstance(context)
     private val utxoPoolDao = db.utxoPoolDao()
 
     val utxoPool = utxoPoolDao.getAll()
@@ -20,6 +20,6 @@ class UTXOPoolRepository(app: Application) {
     }
 
     fun delete(utxo: UTXO) {
-        doAsync { utxoPoolDao.delete(utxo.txHash, utxo.outputIndex) }
+        doAsync { utxoPoolDao.delete(utxo.txHash.data, utxo.outputIndex) }
     }
 }
