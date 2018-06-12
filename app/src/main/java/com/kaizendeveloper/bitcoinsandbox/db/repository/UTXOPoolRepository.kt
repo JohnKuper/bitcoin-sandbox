@@ -7,7 +7,7 @@ import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
 import org.jetbrains.anko.doAsync
 
-
+//TODO Remove db from repository
 class UTXOPoolRepository(app: Application) {
 
     private val db = SandboxDatabase.getInstance(app)

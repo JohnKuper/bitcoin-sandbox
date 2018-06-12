@@ -30,7 +30,7 @@ class TxHandler {
             val scriptSig = input.scriptSig
             if (txOutput == null
                 || scriptSig == null
-                || !Cipher.verifySignature(scriptSig.publicKey, tx.getRawDataToSign(index), scriptSig.signature)
+                || !Cipher.verifySignature(scriptSig.publicKey, tx.getRawDataToSign(index), scriptSig.signature.data)
             ) {
                 return false
             }

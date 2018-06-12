@@ -11,7 +11,7 @@ interface UTXOPoolDao {
     @Insert
     fun insert(utxo: UTXOWithTxOutput)
 
-    @Query("DELETE FROM utxo_pool WHERE txHash = :txHash AND outputIndex = :outputIndex")
+    @Query("DELETE from utxo_pool WHERE txHash = :txHash AND outputIndex = :outputIndex")
     fun delete(txHash: ByteArray, outputIndex: Int)
 
     @Query("SELECT * from utxo_pool")

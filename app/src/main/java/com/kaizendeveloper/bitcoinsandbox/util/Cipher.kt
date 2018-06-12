@@ -6,6 +6,7 @@ import android.security.keystore.KeyProperties.PURPOSE_SIGN
 import android.security.keystore.KeyProperties.PURPOSE_VERIFY
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import java.security.KeyFactory
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.KeyStore
@@ -14,6 +15,7 @@ import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.Signature
 import java.security.spec.ECGenParameterSpec
+import java.security.spec.X509EncodedKeySpec
 
 object Cipher {
 
@@ -67,6 +69,13 @@ object Cipher {
         val publicKey = ks.getCertificate(user.name).publicKey
 
         return KeyPair(publicKey, privateKey)
+    }
+
+    fun decodePublicKey(encoded: ByteArray): PublicKey {
+        val spec = X509EncodedKeySpec(encoded)
+        val keyFactory = KeyFactory.getInstance("EC")
+
+        return keyFactory.generatePublic(spec)
     }
 
     private fun getECSignature() = Signature.getInstance("SHA256withECDSA")

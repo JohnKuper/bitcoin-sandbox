@@ -6,7 +6,7 @@ import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import io.reactivex.Maybe
 import org.jetbrains.anko.doAsync
 
-
+//TODO Remove db from repository
 class UsersRepository(app: Application) {
 
     private val db = SandboxDatabase.getInstance(app)

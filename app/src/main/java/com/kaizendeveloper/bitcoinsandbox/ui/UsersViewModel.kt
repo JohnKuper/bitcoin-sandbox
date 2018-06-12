@@ -25,15 +25,15 @@ class UsersViewModel(app: Application) : AndroidViewModel(app) {
         init {
             addSource(usersRepository.currentUser, {
                 lastUser = it
-                considerNotify()
+                considerNotifyUserDataChanged()
             })
             addSource(utxoPoolRepository.utxoPool, {
                 lastUTXOPool = it
-                considerNotify()
+                considerNotifyUserDataChanged()
             })
         }
 
-        private fun considerNotify() {
+        private fun considerNotifyUserDataChanged() {
             val user = lastUser
             val utxoPool = lastUTXOPool
             if (user != null && utxoPool != null) {

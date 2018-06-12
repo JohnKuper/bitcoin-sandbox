@@ -15,3 +15,5 @@ fun ByteArray.toHexString(): String {
 
     return result.toString()
 }
+
+fun ByteArray.wrap(): ByteArrayWrapper = ByteArrayWrapper(this)

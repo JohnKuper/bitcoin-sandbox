@@ -4,6 +4,7 @@ import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
+import com.kaizendeveloper.bitcoinsandbox.util.wrap
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 
@@ -36,7 +37,7 @@ class TransferManager {
             val keyPair = Cipher.retrieveKeyPair(sender)
             inputs.forEachIndexed { index, _ ->
                 val inputSignature = Cipher.sign(getRawDataToSign(index), keyPair.private)
-                val scriptSig = TransactionInput.ScriptSig(inputSignature, keyPair.public)
+                val scriptSig = ScriptSig(inputSignature.wrap(), keyPair.public)
                 addScriptSig(scriptSig, index)
             }
 

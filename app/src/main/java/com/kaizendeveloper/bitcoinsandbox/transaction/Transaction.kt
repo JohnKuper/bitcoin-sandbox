@@ -1,8 +1,10 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
+import com.kaizendeveloper.bitcoinsandbox.util.toByteArray
+import com.kaizendeveloper.bitcoinsandbox.util.wrap
 import java.io.ByteArrayOutputStream
-import java.util.UUID
+import java.util.Arrays
 
 class Transaction() {
 
@@ -20,14 +22,14 @@ class Transaction() {
     }
 
     fun addInput(prevTxHash: ByteArray, outputIndex: Int) {
-        inputs.add(TransactionInput(prevTxHash, outputIndex))
+        inputs.add(TransactionInput(prevTxHash.wrap(), outputIndex))
     }
 
     fun addOutput(value: Double, address: String) {
         outputs.add(TransactionOutput(value, address))
     }
 
-    fun addScriptSig(scriptSig: TransactionInput.ScriptSig, inputIndex: Int) {
+    fun addScriptSig(scriptSig: ScriptSig, inputIndex: Int) {
         inputs[inputIndex].scriptSig = scriptSig
     }
 
@@ -42,11 +44,33 @@ class Transaction() {
         return ByteArrayOutputStream().apply {
             inputs.forEach { it.serialize(this) }
             outputs.forEach { it.serialize(this) }
-            write(UUID.randomUUID().toString().toByteArray())
+            write(System.currentTimeMillis().toByteArray())
         }.toByteArray()
     }
 
     fun build() {
         hash = Cipher.sha256(getRawData())
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Transaction
+
+        if (inputs != other.inputs) return false
+        if (outputs != other.outputs) return false
+        if (!Arrays.equals(hash, other.hash)) return false
+        if (isCoinbase != other.isCoinbase) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = inputs.hashCode()
+        result = 31 * result + outputs.hashCode()
+        result = 31 * result + (hash?.let { Arrays.hashCode(it) } ?: 0)
+        result = 31 * result + isCoinbase.hashCode()
+        return result
     }
 }

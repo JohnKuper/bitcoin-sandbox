@@ -27,6 +27,6 @@ class UTXO(val txHash: ByteArray, val outputIndex: Int) {
 
     companion object {
 
-        fun fromTxInput(txInput: TransactionInput) = UTXO(txInput.prevTxHash, txInput.outputIndex)
+        fun fromTxInput(txInput: TransactionInput) = UTXO(txInput.prevTxHash.data, txInput.outputIndex)
     }
 }

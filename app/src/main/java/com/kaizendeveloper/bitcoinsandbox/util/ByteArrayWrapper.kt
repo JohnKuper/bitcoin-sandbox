@@ -2,10 +2,10 @@ package com.kaizendeveloper.bitcoinsandbox.util
 
 import java.util.Arrays
 
-
+//TODO Replace all ByteArrays properties that are necessary for equals logic on this class
 class ByteArrayWrapper(byteArray: ByteArray) {
 
-    private val data: ByteArray = byteArray.copyOf()
+    val data: ByteArray = byteArray.copyOf()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
