@@ -10,7 +10,7 @@ import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import com.kaizendeveloper.bitcoinsandbox.util.decodeBits
 import com.kaizendeveloper.bitcoinsandbox.util.toByteArray
 import com.kaizendeveloper.bitcoinsandbox.util.toHexString
-import io.reactivex.Completable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
@@ -22,17 +22,20 @@ object Miner {
     private val mempool = SandboxApplication.mempool
     private val txHandler = TxHandler()
 
-    fun mine(recipient: User): Completable {
+    fun mine(recipient: User): Single<Block> {
         return if (!SandboxApplication.prefHelper.isBootstrapped() || mempool.getAll().isNotEmpty()) {
             addCoinBaseTx(recipient)
 
             val prevBlockHash = BlockChain.getLastHash()
-            val merkleRoot = MerkleRootGenerator.generate(mempool.getAll().map { it.hash!! })
+            val transactions = mempool.getAll()
+            val merkleRoot = MerkleRootGenerator.generate(transactions.map { it.hash!! })
             val timeStamp = Calendar.getInstance().timeInMillis
 
             val immutableMiningData = prepareImmutableRawMiningData(prevBlockHash, merkleRoot, timeStamp)
             var nonce = 0
-            Completable.fromCallable {
+
+            //TODO Rewrite this in more Rx style using different operators
+            Single.fromCallable {
                 var validHash = Cipher.maxHash
 
                 while (BigInteger(validHash.toHexString(), 16) >= decodeBits(CURRENT_TARGET)) {
@@ -42,11 +45,10 @@ object Miner {
                 Log.d(SANDBOX_TAG, "Number of cycles: $nonce")
                 Log.d(SANDBOX_TAG, "Valid hash: ${validHash.toHexString()}")
 
-                val newBlock = Block(validHash, prevBlockHash, merkleRoot, timeStamp, CURRENT_TARGET, nonce)
-                BlockChain.processBlock(newBlock)
+                Block(validHash, prevBlockHash, merkleRoot, timeStamp, CURRENT_TARGET, nonce, transactions)
             }.subscribeOn(Schedulers.computation())
         } else {
-            Completable.error(IllegalStateException("Block chain is already bootstrapped and mempool is empty"))
+            Single.error(IllegalStateException("Block chain is already bootstrapped and mempool is empty"))
         }
     }
 

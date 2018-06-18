@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
+import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.util.toHexString
@@ -30,6 +31,7 @@ class MempoolFragment : UsersViewModelFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupRecycler()
 
+        //TODO Delegate this logic to view model
         fab.setOnClickListener {
             withCurrentUser { user ->
                 Miner.mine(user)
@@ -37,6 +39,7 @@ class MempoolFragment : UsersViewModelFragment() {
                     .subscribe(
                         {
                             Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show()
+                            SandboxApplication.mempoolRepo.insert(it)
                         },
                         {
                             Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
@@ -49,7 +52,11 @@ class MempoolFragment : UsersViewModelFragment() {
         super.onActivityCreated(savedInstanceState)
         transactionsViewModel = ViewModelProviders.of(this).get(TransactionsViewModel::class.java)
         transactionsViewModel.transactions.observe(this, Observer { txs ->
-            txs?.also { txsAdapter.setTransactions(it) }
+            txs?.also {
+                txsAdapter.setTransactions(it.filter {
+                    !it.isConfirmed
+                })
+            }
         })
     }
 

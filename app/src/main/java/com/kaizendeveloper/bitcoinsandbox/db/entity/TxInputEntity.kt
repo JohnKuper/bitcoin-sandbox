@@ -10,7 +10,7 @@ import com.kaizendeveloper.bitcoinsandbox.util.wrap
 @Entity(tableName = "mempool_inputs")
 class TxInputEntity(
     var parentTxUUID: String,
-    var prevTxHash: ByteArray,
+    var incomeTxHash: ByteArray,
     var outputIndex: Int,
     @Embedded
     var scriptSig: ScriptSig?
@@ -18,5 +18,5 @@ class TxInputEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 
-    fun toTransactionInput() = TransactionInput(prevTxHash.wrap(), outputIndex, scriptSig)
+    fun toTransactionInput() = TransactionInput(incomeTxHash.wrap(), outputIndex, scriptSig)
 }

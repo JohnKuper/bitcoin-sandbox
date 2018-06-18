@@ -8,6 +8,7 @@ import android.content.Context
 import com.kaizendeveloper.bitcoinsandbox.db.dao.MempoolDao
 import com.kaizendeveloper.bitcoinsandbox.db.dao.UTXOPoolDao
 import com.kaizendeveloper.bitcoinsandbox.db.dao.UserDao
+import com.kaizendeveloper.bitcoinsandbox.db.entity.BlockEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxInputEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxOutputEntity
@@ -20,7 +21,8 @@ import com.kaizendeveloper.bitcoinsandbox.db.entity.User
         UTXOWithTxOutput::class,
         TxEntity::class,
         TxInputEntity::class,
-        TxOutputEntity::class
+        TxOutputEntity::class,
+        BlockEntity::class
     ],
     version = 1,
     exportSchema = false
@@ -44,7 +46,8 @@ abstract class SandboxDatabase : RoomDatabase() {
                 INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     SandboxDatabase::class.java, DATABASE_NAME
-                ).build().also { INSTANCE = it }
+                ).allowMainThreadQueries()
+                    .build().also { INSTANCE = it }
             }
         }
     }

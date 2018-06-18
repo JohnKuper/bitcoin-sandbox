@@ -19,6 +19,7 @@ class TxWithRelationData(
             outputs.addAll(txOutputs.map { it.toTransactionOutput() })
             hash = txEntity.hash
             isCoinbase = txEntity.isCoinbase
+            isConfirmed = txEntity.isConfirmed
         }
     }
 }

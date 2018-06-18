@@ -14,6 +14,7 @@ class Transaction() {
     var hash: ByteArray? = null
 
     var isCoinbase: Boolean = false
+    var isConfirmed: Boolean = false
 
     constructor(amount: Double, address: String) : this() {
         isCoinbase = true

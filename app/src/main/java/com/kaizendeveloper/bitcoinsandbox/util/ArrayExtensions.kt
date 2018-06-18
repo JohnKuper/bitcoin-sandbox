@@ -1,5 +1,7 @@
 package com.kaizendeveloper.bitcoinsandbox.util
 
+import java.util.UUID
+
 private val HEX_CHARS = "0123456789ABCDEF".toCharArray()
 
 fun ByteArray.toHexString(): String {
@@ -17,3 +19,5 @@ fun ByteArray.toHexString(): String {
 }
 
 fun ByteArray.wrap(): ByteArrayWrapper = ByteArrayWrapper(this)
+
+fun ByteArray.toUUIDString(): String = UUID.nameUUIDFromBytes(this).toString()

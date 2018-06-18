@@ -5,6 +5,9 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
+import android.arch.persistence.room.Update
+import com.kaizendeveloper.bitcoinsandbox.db.entity.BlockEntity
+import com.kaizendeveloper.bitcoinsandbox.db.entity.BlockWithTransactions
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxInputEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxOutputEntity
@@ -21,7 +24,17 @@ interface MempoolDao {
     @Insert
     fun insert(txOutputEntity: TxOutputEntity)
 
+    @Update
+    fun update(txEntity: TxEntity)
+
+    @Insert
+    fun insert(block: BlockEntity)
+
+    @Transaction
+    @Query("SELECT * from blockchain")
+    fun getAllBlocks(): LiveData<List<BlockWithTransactions>>
+
     @Transaction
     @Query("SELECT * from mempool_transactions")
-    fun getAll(): LiveData<List<TxWithRelationData>>
+    fun getAllTransactions(): LiveData<List<TxWithRelationData>>
 }

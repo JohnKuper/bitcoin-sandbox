@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.fragment_blockchain.blockchain_list as blo
 class BlockChainFragment : Fragment() {
 
     private val blocksAdapter = BlocksAdapter(mutableListOf())
-    private lateinit var blockChainViewModel: BlockChainViewModel
+    private lateinit var transactionsViewModel: TransactionsViewModel
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -33,8 +33,8 @@ class BlockChainFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        blockChainViewModel = ViewModelProviders.of(this).get(BlockChainViewModel::class.java)
-        blockChainViewModel.blockChain.observe(this, Observer {
+        transactionsViewModel = ViewModelProviders.of(this).get(TransactionsViewModel::class.java)
+        transactionsViewModel.blocks.observe(this, Observer {
             it?.also { blocksAdapter.setBlocks(it) }
         })
     }

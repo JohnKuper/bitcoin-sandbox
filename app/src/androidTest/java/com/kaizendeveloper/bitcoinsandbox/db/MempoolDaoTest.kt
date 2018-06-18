@@ -2,6 +2,9 @@ package com.kaizendeveloper.bitcoinsandbox.db
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
+import com.kaizendeveloper.bitcoinsandbox.LiveDataTestUtil.getValue
+import com.kaizendeveloper.bitcoinsandbox.blockchain.Block
+import com.kaizendeveloper.bitcoinsandbox.blockchain.CURRENT_TARGET
 import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
 import com.kaizendeveloper.bitcoinsandbox.transaction.ScriptSig
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
@@ -41,9 +44,26 @@ class MempoolDaoTest : DbTest() {
             build()
         }
 
+        val transactions = listOf(transaction1, transaction2)
         mempoolRepo.insert(transaction1)
         mempoolRepo.insert(transaction2)
 
-        assertTrue(arrayListOf(transaction1, transaction2) == mempoolRepo.getAll())
+        val dbTransactions = getValue(mempoolRepo.transactions)
+        assertTrue(transactions == dbTransactions)
+
+
+        transaction1.isConfirmed = true
+        transaction2.isConfirmed = true
+        val block = Block(
+            "block".toByteArray(),
+            "prev".toByteArray(),
+            "merkle_root".toByteArray(),
+            System.currentTimeMillis(),
+            CURRENT_TARGET,
+            45343423,
+            transactions
+        )
+
+        mempoolRepo.insert(block)
     }
 }

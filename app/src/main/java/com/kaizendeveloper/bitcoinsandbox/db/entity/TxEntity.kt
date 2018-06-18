@@ -2,13 +2,23 @@ package com.kaizendeveloper.bitcoinsandbox.db.entity
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
+import com.kaizendeveloper.bitcoinsandbox.util.toUUIDString
 
 @Entity(tableName = "mempool_transactions")
 class TxEntity(
-    var uuid: String,
     var hash: ByteArray,
-    var isCoinbase: Boolean
+    var isCoinbase: Boolean = false,
+    var isConfirmed: Boolean = false,
+    var parentBlockId: String? = null,
+    @PrimaryKey
+    var uuid: String = hash.toUUIDString()
 ) {
-    @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+
+    companion object {
+
+        fun fromTransaction(transaction: Transaction): TxEntity {
+            return TxEntity(transaction.hash!!, transaction.isCoinbase, transaction.isConfirmed)
+        }
+    }
 }

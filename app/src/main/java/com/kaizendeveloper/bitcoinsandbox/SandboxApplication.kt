@@ -40,9 +40,11 @@ class SandboxApplication : Application() {
 
         Miner.mine(satoshi)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ Log.d(SANDBOX_TAG, "Genesis block has been created") })
-
-        prefHelper.setBootstrapped()
+            .subscribe { block ->
+                Log.d(SANDBOX_TAG, "Genesis block has been created")
+                mempoolRepo.insert(block)
+                prefHelper.setBootstrapped()
+            }
     }
 
     companion object {
