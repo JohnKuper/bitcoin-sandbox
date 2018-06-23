@@ -6,16 +6,12 @@ import android.util.Log
 import com.facebook.stetho.Stetho
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
 import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
-import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
-import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepository
 import com.kaizendeveloper.bitcoinsandbox.di.DaggerAppComponent
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
-import com.kaizendeveloper.bitcoinsandbox.transaction.TransferManager
 import com.kaizendeveloper.bitcoinsandbox.util.SharedPreferencesHelper
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
-import io.reactivex.android.schedulers.AndroidSchedulers
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
 import javax.inject.Inject
@@ -29,17 +25,7 @@ class SandboxApplication : Application(), HasActivityInjector {
     @Inject
     lateinit var userManager: UserManager
     @Inject
-    lateinit var transferManager: TransferManager
-    @Inject
     lateinit var miner: Miner
-
-
-    //TODO remove all except mempoolRepo and inject them into view models using Factory technique
-    //Repositories
-    @Inject
-    lateinit var usersRepo: UsersRepository
-    @Inject
-    lateinit var utxoPoolRepository: UTXOPoolRepository
     @Inject
     lateinit var mempoolRepo: MempoolRepository
 
@@ -65,17 +51,18 @@ class SandboxApplication : Application(), HasActivityInjector {
     override fun activityInjector(): AndroidInjector<Activity> = dispatchingAndroidInjector
 
     private fun bootstrapBlockChain() {
-        val satoshi = userManager.createUser("Satoshi", true)
-        userManager.createUser("Alice", false)
-        userManager.createUser("Bob", false)
-
-        miner.mine(satoshi)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { block ->
+        userManager
+            .createUserIfAbsent("Satoshi", true)
+            .flatMap { user ->
+                miner.mine(user)
+            }.subscribe { block ->
                 Log.d(SANDBOX_TAG, "Genesis block has been created")
                 mempoolRepo.insert(block)
                 prefHelper.setBootstrapped()
             }
+
+        userManager.createUserIfAbsent("Alice", false).subscribe()
+        userManager.createUserIfAbsent("Bob", false).subscribe()
     }
 
     companion object {

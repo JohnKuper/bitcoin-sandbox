@@ -58,20 +58,14 @@ class UsersFragment : UsersViewModelFragment() {
             setPositiveButton(android.R.string.ok) { _, _ ->
                 val userName = dialogView.userName.text.toString()
                 if (userName.isNotBlank()) {
-                    createIfAbsent(userName)
+                    createUserIfAbsent(userName)
                 }
             }
         }.create().show()
     }
 
-    //TODO Use return value after insertion and build logic upon it
-    private fun createIfAbsent(name: String) {
-//        UserManager.getByName(name)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .doOnSuccess { Toast.makeText(context, "User is already exists", Toast.LENGTH_SHORT).show() }
-//            .doOnComplete { UserManager.createUser(name, false) }
-//            .subscribe()
+    private fun createUserIfAbsent(name: String) {
+        usersViewModel.createUserIfAbsent(name).subscribe()
     }
 
     inner class UsersAdapter(private val users: MutableList<User>) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {

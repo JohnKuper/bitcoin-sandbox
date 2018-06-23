@@ -7,12 +7,14 @@ import com.kaizendeveloper.bitcoinsandbox.db.entity.UTXOWithTxOutput
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepository
+import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 import javax.inject.Inject
 
 class UsersViewModel @Inject constructor(
     private val usersRepository: UsersRepository,
-    utxoPoolRepository: UTXOPoolRepository
+    private val utxoPoolRepository: UTXOPoolRepository,
+    private val userManager: UserManager
 ) : ViewModel() {
 
     val users: LiveData<List<User>> = usersRepository.users
@@ -42,6 +44,8 @@ class UsersViewModel @Inject constructor(
             }
         }
     }
+
+    fun createUserIfAbsent(name: String) = userManager.createUserIfAbsent(name)
 
     fun updateCurrentUserIfNeeded(newCurrent: User) {
         val oldUser = currentUser.value

@@ -1,7 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -13,14 +12,10 @@ import android.widget.TextView
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Block
 import com.kaizendeveloper.bitcoinsandbox.util.toHexString
-import javax.inject.Inject
 import kotlinx.android.synthetic.main.fragment_blockchain.blockchain_list as blockChainList
 
 
 class BlockChainFragment : BaseFragment() {
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val blocksAdapter = BlocksAdapter(mutableListOf())
     private lateinit var transactionsViewModel: TransactionsViewModel
