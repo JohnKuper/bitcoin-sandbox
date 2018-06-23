@@ -1,15 +1,14 @@
 package com.kaizendeveloper.bitcoinsandbox.model
 
-import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepository
-import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import java.security.interfaces.ECPublicKey
+import javax.inject.Inject
 
-object UserManager {
-
-    private val usersRepo = UsersRepository(SandboxApplication.application)
+class UserManager @Inject constructor(
+    private val usersRepo: UsersRepository
+) {
 
     fun createUser(name: String, isCurrent: Boolean = false): User {
         val keyPair = Cipher.generateECKeyPair(name)
@@ -19,26 +18,4 @@ object UserManager {
         usersRepo.insert(user)
         return user
     }
-
-    fun calculateBalance(user: User): Double {
-        return SandboxApplication.utxoPool.getAllTxOutputs().fold(0.0) { balance, output ->
-            if (output.address == user.address) {
-                balance + output.amount
-            } else {
-                balance
-            }
-        }
-    }
-
-    fun calculateBalance(user: User, utxoPool: List<TransactionOutput>): Double {
-        return utxoPool.fold(0.0) { balance, output ->
-            if (output.address == user.address) {
-                balance + output.amount
-            } else {
-                balance
-            }
-        }
-    }
-
-    fun getByName(name: String) = usersRepo.getByName(name)
 }

@@ -1,44 +1,75 @@
 package com.kaizendeveloper.bitcoinsandbox
 
+import android.app.Activity
 import android.app.Application
 import android.util.Log
 import com.facebook.stetho.Stetho
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
 import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
+import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
+import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepository
+import com.kaizendeveloper.bitcoinsandbox.di.DaggerAppComponent
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
-import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
-import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
+import com.kaizendeveloper.bitcoinsandbox.transaction.TransferManager
 import com.kaizendeveloper.bitcoinsandbox.util.SharedPreferencesHelper
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasActivityInjector
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
+import javax.inject.Inject
 
 const val SANDBOX_TAG = "BitcoinSandbox"
 
-class SandboxApplication : Application() {
+class SandboxApplication : Application(), HasActivityInjector {
+
+    @Inject
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
+    @Inject
+    lateinit var userManager: UserManager
+    @Inject
+    lateinit var transferManager: TransferManager
+    @Inject
+    lateinit var miner: Miner
+
+
+    //TODO remove all except mempoolRepo and inject them into view models using Factory technique
+    //Repositories
+    @Inject
+    lateinit var usersRepo: UsersRepository
+    @Inject
+    lateinit var utxoPoolRepository: UTXOPoolRepository
+    @Inject
+    lateinit var mempoolRepo: MempoolRepository
 
     override fun onCreate() {
         super.onCreate()
+        DaggerAppComponent
+            .builder()
+            .application(this)
+            .build()
+            .inject(this)
+
         Stetho.initializeWithDefaults(this)
         Security.addProvider(BouncyCastleProvider())
 
         application = this
         prefHelper = SharedPreferencesHelper.getInstance(this)
-        utxoPool = UTXOPool(this)
-        mempoolRepo = MempoolRepository(this)
-        mempool = Mempool(mempoolRepo)
 
         if (!prefHelper.isBootstrapped()) {
             bootstrapBlockChain()
         }
     }
 
-    private fun bootstrapBlockChain() {
-        val satoshi = UserManager.createUser("Satoshi", true)
-        UserManager.createUser("Alice", false)
-        UserManager.createUser("Bob", false)
+    override fun activityInjector(): AndroidInjector<Activity> = dispatchingAndroidInjector
 
-        Miner.mine(satoshi)
+    private fun bootstrapBlockChain() {
+        val satoshi = userManager.createUser("Satoshi", true)
+        userManager.createUser("Alice", false)
+        userManager.createUser("Bob", false)
+
+        miner.mine(satoshi)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { block ->
                 Log.d(SANDBOX_TAG, "Genesis block has been created")
@@ -50,8 +81,5 @@ class SandboxApplication : Application() {
     companion object {
         lateinit var application: SandboxApplication
         lateinit var prefHelper: SharedPreferencesHelper
-        lateinit var utxoPool: UTXOPool
-        lateinit var mempool: Mempool
-        lateinit var mempoolRepo: MempoolRepository
     }
 }

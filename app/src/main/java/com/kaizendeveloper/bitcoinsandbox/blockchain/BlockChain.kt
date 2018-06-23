@@ -2,7 +2,6 @@ package com.kaizendeveloper.bitcoinsandbox.blockchain
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import com.kaizendeveloper.bitcoinsandbox.util.toUUIDString
@@ -10,7 +9,6 @@ import java.util.LinkedList
 
 object BlockChain {
 
-    private val mempoolRepository = SandboxApplication.mempoolRepo
     private val mutableBlocks = MutableLiveData<LinkedList<Block>>()
     private val blocks = LinkedList<Block>()
 

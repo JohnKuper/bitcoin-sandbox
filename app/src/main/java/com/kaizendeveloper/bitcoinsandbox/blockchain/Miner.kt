@@ -4,6 +4,7 @@ import android.util.Log
 import com.kaizendeveloper.bitcoinsandbox.SANDBOX_TAG
 import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
+import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
@@ -15,12 +16,13 @@ import io.reactivex.schedulers.Schedulers
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import java.util.Calendar
+import javax.inject.Inject
 
 
-object Miner {
-
-    private val mempool = SandboxApplication.mempool
-    private val txHandler = TxHandler()
+class Miner @Inject constructor(
+    private val mempool: Mempool,
+    private val txHandler: TxHandler
+) {
 
     fun mine(recipient: User): Single<Block> {
         return if (!SandboxApplication.prefHelper.isBootstrapped() || mempool.getAll().isNotEmpty()) {

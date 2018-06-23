@@ -10,7 +10,8 @@ import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 
 class TransactionsViewModel(app: Application) : AndroidViewModel(app) {
 
-    private val mempoolRepository: MempoolRepository = SandboxApplication.mempoolRepo
+    //TODO Use correct injectioin
+    private val mempoolRepository: MempoolRepository = SandboxApplication.application.mempoolRepo
 
     val transactions: LiveData<List<Transaction>> = mempoolRepository.transactions
     val blocks: LiveData<List<Block>> = mempoolRepository.blocks

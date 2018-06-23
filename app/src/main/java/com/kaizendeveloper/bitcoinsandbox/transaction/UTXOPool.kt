@@ -1,13 +1,12 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
-import android.content.Context
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
 import com.kaizendeveloper.bitcoinsandbox.util.observeOnce
 import java.util.HashMap
 
-class UTXOPool(context: Context) {
-
-    private val utxoPoolRepository: UTXOPoolRepository = UTXOPoolRepository(context)
+class UTXOPool constructor(
+    private val utxoPoolRepository: UTXOPoolRepository
+) {
 
     /**
      * The current collection of UTXOs, with each one mapped to its corresponding transaction output

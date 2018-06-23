@@ -1,10 +1,8 @@
 package com.kaizendeveloper.bitcoinsandbox.db
 
 import android.arch.persistence.room.Database
-import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
-import android.content.Context
 import com.kaizendeveloper.bitcoinsandbox.db.dao.MempoolDao
 import com.kaizendeveloper.bitcoinsandbox.db.dao.UTXOPoolDao
 import com.kaizendeveloper.bitcoinsandbox.db.dao.UserDao
@@ -36,19 +34,20 @@ abstract class SandboxDatabase : RoomDatabase() {
 
     companion object {
 
-        private const val DATABASE_NAME = "bitcoin.db"
+        const val DATABASE_NAME = "bitcoin.db"
 
+        //TODO Maybe useful for tests coz dagger is not ready yet
         @Volatile
         private var INSTANCE: SandboxDatabase? = null
 
-        fun getInstance(context: Context): SandboxDatabase {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: Room.databaseBuilder(
-                    context.applicationContext,
-                    SandboxDatabase::class.java, DATABASE_NAME
-                ).allowMainThreadQueries()
-                    .build().also { INSTANCE = it }
-            }
-        }
+//        fun getInstance(context: Context): SandboxDatabase {
+//            return INSTANCE ?: synchronized(this) {
+//                INSTANCE ?: Room.databaseBuilder(
+//                    context.applicationContext,
+//                    SandboxDatabase::class.java, DATABASE_NAME
+//                ).allowMainThreadQueries()
+//                    .build().also { INSTANCE = it }
+//            }
+//        }
     }
 }

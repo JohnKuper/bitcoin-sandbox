@@ -1,12 +1,13 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
-import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import com.kaizendeveloper.bitcoinsandbox.util.wrap
+import javax.inject.Inject
 
-class TxHandler {
-
-    private val mempool: Mempool = SandboxApplication.mempool
+class TxHandler @Inject constructor(
+    private val utxoPool: UTXOPool,
+    private val mempool: Mempool
+) {
 
     /**
      * @return true if:
@@ -25,11 +26,11 @@ class TxHandler {
         for ((index, input) in tx.inputs.withIndex()) {
 
             val utxo = UTXO.fromTxInput(input)
-            if (!SandboxApplication.utxoPool.contains(utxo)) {
+            if (!utxoPool.contains(utxo)) {
                 return false
             }
 
-            val txOutput = SandboxApplication.utxoPool.get(utxo)
+            val txOutput = utxoPool.get(utxo)
             val scriptSig = input.scriptSig
             if (txOutput == null
                 || scriptSig == null
@@ -72,11 +73,11 @@ class TxHandler {
             .filter { isValidTx(it) }
             .onEach {
                 it.inputs.forEach {
-                    SandboxApplication.utxoPool.remove(UTXO.fromTxInput(it))
+                    utxoPool.remove(UTXO.fromTxInput(it))
                 }
                 it.outputs.forEachIndexed { index, output ->
                     val newUtxo = UTXO(it.hash!!.wrap(), index)
-                    SandboxApplication.utxoPool.add(newUtxo, output)
+                    utxoPool.add(newUtxo, output)
                 }
                 addToMempool(it)
             }.toList().toTypedArray()

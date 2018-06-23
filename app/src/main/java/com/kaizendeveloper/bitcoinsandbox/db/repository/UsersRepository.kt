@@ -1,16 +1,16 @@
 package com.kaizendeveloper.bitcoinsandbox.db.repository
 
-import android.app.Application
 import com.kaizendeveloper.bitcoinsandbox.db.SandboxDatabase
+import com.kaizendeveloper.bitcoinsandbox.db.dao.UserDao
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import io.reactivex.Maybe
 import org.jetbrains.anko.doAsync
+import javax.inject.Inject
 
-//TODO Remove db from repository
-class UsersRepository(app: Application) {
-
-    private val db = SandboxDatabase.getInstance(app)
-    private val userDao = db.userDao()
+class UsersRepository @Inject constructor(
+    private val db: SandboxDatabase,
+    private val userDao: UserDao
+) {
 
     val users = userDao.getAll()
     val currentUser = userDao.getCurrent()

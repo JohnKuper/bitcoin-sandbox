@@ -4,17 +4,19 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
+import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.db.entity.UTXOWithTxOutput
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepository
-import com.kaizendeveloper.bitcoinsandbox.model.UserManager
+import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 
 
 class UsersViewModel(app: Application) : AndroidViewModel(app) {
 
-    private val usersRepository: UsersRepository = UsersRepository(app)
-    private val utxoPoolRepository: UTXOPoolRepository = UTXOPoolRepository(app)
+    //TODO Use correct injections
+    private val usersRepository: UsersRepository = SandboxApplication.application.usersRepo
+    private val utxoPoolRepository: UTXOPoolRepository = SandboxApplication.application.utxoPoolRepository
 
     val users: LiveData<List<User>> = usersRepository.users
     val currentUser: LiveData<User> = object : MediatorLiveData<User>() {
@@ -38,7 +40,7 @@ class UsersViewModel(app: Application) : AndroidViewModel(app) {
             val utxoPool = lastUTXOPool
             if (user != null && utxoPool != null) {
                 value = user.copy().apply {
-                    balance = UserManager.calculateBalance(user, utxoPool.map { it.txOutput })
+                    balance = calculateBalance(user, utxoPool.map { it.txOutput })
                 }
             }
         }
@@ -48,6 +50,16 @@ class UsersViewModel(app: Application) : AndroidViewModel(app) {
         val oldUser = currentUser.value
         if (oldUser != null && oldUser != newCurrent) {
             usersRepository.updateCurrent(oldUser, newCurrent)
+        }
+    }
+
+    fun calculateBalance(user: User, utxoPool: List<TransactionOutput>): Double {
+        return utxoPool.fold(0.0) { balance, output ->
+            if (output.address == user.address) {
+                balance + output.amount
+            } else {
+                balance
+            }
         }
     }
 }

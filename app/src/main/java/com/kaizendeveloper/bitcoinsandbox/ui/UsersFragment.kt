@@ -11,12 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.TextView
-import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
-import com.kaizendeveloper.bitcoinsandbox.model.UserManager
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.dialog_new_user.view.userName
 import kotlinx.android.synthetic.main.fragment_users.fab
 import kotlinx.android.synthetic.main.fragment_users.users_list as userList
@@ -68,14 +64,14 @@ class UsersFragment : UsersViewModelFragment() {
         }.create().show()
     }
 
-    //TODO Move getByName to UsersViewModel
+    //TODO Use return value after insertion and build logic upon it
     private fun createIfAbsent(name: String) {
-        UserManager.getByName(name)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSuccess { Toast.makeText(context, "User is already exists", Toast.LENGTH_SHORT).show() }
-            .doOnComplete { UserManager.createUser(name, false) }
-            .subscribe()
+//        UserManager.getByName(name)
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .doOnSuccess { Toast.makeText(context, "User is already exists", Toast.LENGTH_SHORT).show() }
+//            .doOnComplete { UserManager.createUser(name, false) }
+//            .subscribe()
     }
 
     inner class UsersAdapter(private val users: MutableList<User>) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {

@@ -9,14 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
-import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
-import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.util.toHexString
-import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.fragment_mempool.fab
 import kotlinx.android.synthetic.main.fragment_mempool.mempoolList
 
 class MempoolFragment : UsersViewModelFragment() {
@@ -32,20 +27,20 @@ class MempoolFragment : UsersViewModelFragment() {
         setupRecycler()
 
         //TODO Delegate this logic to view model
-        fab.setOnClickListener {
-            withCurrentUser { user ->
-                Miner.mine(user)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        {
-                            Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show()
-                            SandboxApplication.mempoolRepo.insert(it)
-                        },
-                        {
-                            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                        })
-            }
-        }
+//        fab.setOnClickListener {
+//            withCurrentUser { user ->
+//                SandboxApplication.m(user)
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(
+//                        {
+//                            Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show()
+//                            SandboxApplication.mempoolRepo.insert(it)
+//                        },
+//                        {
+//                            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+//                        })
+//            }
+//        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

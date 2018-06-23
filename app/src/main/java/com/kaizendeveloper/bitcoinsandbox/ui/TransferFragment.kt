@@ -10,8 +10,8 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
+import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
-import com.kaizendeveloper.bitcoinsandbox.transaction.TransferManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_transfer.amount
 import kotlinx.android.synthetic.main.fragment_transfer.fab
@@ -23,7 +23,8 @@ class TransferFragment : UsersViewModelFragment() {
 
     private lateinit var spinnerAdapter: ArrayAdapter<User>
 
-    private val transferManager = TransferManager()
+    //TODO use correct fragment injection
+    private val transferManager = SandboxApplication.application.transferManager
 
     private val transferAmount: Double
         get() = amount.text.takeIf { it.isNotEmpty() }?.toString()?.toDouble() ?: 0.0

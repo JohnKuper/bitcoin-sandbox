@@ -3,7 +3,6 @@ package com.kaizendeveloper.bitcoinsandbox.db.repository
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-import android.content.Context
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Block
 import com.kaizendeveloper.bitcoinsandbox.db.SandboxDatabase
 import com.kaizendeveloper.bitcoinsandbox.db.dao.MempoolDao
@@ -13,14 +12,13 @@ import com.kaizendeveloper.bitcoinsandbox.db.entity.TxInputEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxOutputEntity
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.util.toUUIDString
+import javax.inject.Inject
 
 //TODO Make All repos testable by passing executors to them separately, otherwise doAsync is not testable
-class MempoolRepository(
-    context: Context,
-    private val db: SandboxDatabase = SandboxDatabase.getInstance(context)
+class MempoolRepository @Inject constructor(
+    private val db: SandboxDatabase,
+    private val mempoolDao: MempoolDao
 ) {
-
-    private val mempoolDao: MempoolDao = db.mempoolDao()
 
     val transactions: LiveData<List<Transaction>> =
         Transformations.switchMap(mempoolDao.getAllTransactions()) { dbTransactions ->
