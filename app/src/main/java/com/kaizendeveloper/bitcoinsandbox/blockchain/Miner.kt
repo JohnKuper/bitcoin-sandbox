@@ -17,8 +17,9 @@ import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import java.util.Calendar
 import javax.inject.Inject
+import javax.inject.Singleton
 
-
+@Singleton
 class Miner @Inject constructor(
     private val mempool: Mempool,
     private val txHandler: TxHandler

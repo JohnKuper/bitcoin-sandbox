@@ -1,5 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.annotation.LayoutRes
@@ -11,21 +12,16 @@ import android.widget.TextView
 import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
-import com.kaizendeveloper.bitcoinsandbox.transaction.TransferManager
+import com.kaizendeveloper.bitcoinsandbox.transaction.ProgressStatus
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_transfer.amount
 import kotlinx.android.synthetic.main.fragment_transfer.fab
 import kotlinx.android.synthetic.main.fragment_transfer.sender
-import javax.inject.Inject
 import kotlinx.android.synthetic.main.fragment_transfer.spinner_recipient as spinnerRecipient
 
-
-//TODO Probably just BaseFragment
 class TransferFragment : UsersViewModelFragment() {
 
-    @Inject
-    lateinit var transferManager: TransferManager
-
+    private lateinit var transactionsViewModel: TransactionsViewModel
     private lateinit var spinnerAdapter: ArrayAdapter<User>
 
     private val transferAmount: Double
@@ -40,7 +36,16 @@ class TransferFragment : UsersViewModelFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        transactionsViewModel =
+                ViewModelProviders.of(requireActivity(), viewModelFactory).get(TransactionsViewModel::class.java)
+        transactionsViewModel.transactionStatus
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                when (it) {
+                    ProgressStatus.COMPLETED -> setUiBlocked(false)
+                    ProgressStatus.IN_PROGRESS -> setUiBlocked(true)
+                }
+            }
         spinnerAdapter = UsersSpinnerAdapter(requireActivity())
         spinnerRecipient.adapter = spinnerAdapter
 
@@ -49,13 +54,19 @@ class TransferFragment : UsersViewModelFragment() {
         }
     }
 
-    //TODO delegate to TransactionsViewModel
+    private fun setUiBlocked(isBlocked: Boolean) {
+        fab.isEnabled = !isBlocked
+    }
+
     private fun sendCoins() {
         withCurrentUser { user ->
             if (transferAmount > 0) {
-                transferManager.sendCoins(transferAmount, user, recipient)
+                transactionsViewModel.sendCoins(transferAmount, user, recipient)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ showSuccessTransfer() }, { amount.error = "Not enough coins!" })
+                    .subscribe(
+                        { showSuccessTransfer() },
+                        { amount.error = "Not enough coins!" }
+                    )
             }
         }
     }
