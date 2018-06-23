@@ -1,21 +1,26 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.support.v7.app.AppCompatActivity
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
+import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.tabLayout
 import kotlinx.android.synthetic.main.activity_main.viewPager
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
+import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : DaggerAppCompatActivity() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var usersViewModel: UsersViewModel
 
@@ -36,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        usersViewModel = ViewModelProviders.of(this).get(UsersViewModel::class.java)
+        usersViewModel = ViewModelProviders.of(this, viewModelFactory).get(UsersViewModel::class.java)
         usersViewModel.currentUser.observe(this, Observer { user ->
             user?.also { updateTitle(it) }
         })

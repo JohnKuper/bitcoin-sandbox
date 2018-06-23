@@ -3,8 +3,12 @@ package com.kaizendeveloper.bitcoinsandbox.transaction
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
 import com.kaizendeveloper.bitcoinsandbox.util.observeOnce
 import java.util.HashMap
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class UTXOPool constructor(
+
+@Singleton
+class UTXOPool @Inject constructor(
     private val utxoPoolRepository: UTXOPoolRepository
 ) {
 

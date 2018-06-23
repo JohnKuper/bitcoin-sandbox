@@ -9,15 +9,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
+import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.util.toHexString
+import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.fragment_mempool.fab
 import kotlinx.android.synthetic.main.fragment_mempool.mempoolList
+import javax.inject.Inject
 
+//TODO Probably just BaseFragment
 class MempoolFragment : UsersViewModelFragment() {
 
-    private var txsAdapter: TransactionsAdapter = TransactionsAdapter(mutableListOf())
+    @Inject
+    lateinit var miner: Miner
+
     private lateinit var transactionsViewModel: TransactionsViewModel
+
+    private var txsAdapter: TransactionsAdapter = TransactionsAdapter(mutableListOf())
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_mempool, container, false)
@@ -27,25 +37,27 @@ class MempoolFragment : UsersViewModelFragment() {
         setupRecycler()
 
         //TODO Delegate this logic to view model
-//        fab.setOnClickListener {
-//            withCurrentUser { user ->
-//                SandboxApplication.m(user)
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(
-//                        {
-//                            Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show()
+        fab.setOnClickListener {
+            withCurrentUser { user ->
+                miner.mine(user)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        {
+                            Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show()
+                            //TODO View model should insert block
 //                            SandboxApplication.mempoolRepo.insert(it)
-//                        },
-//                        {
-//                            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-//                        })
-//            }
-//        }
+                        },
+                        {
+                            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                        })
+            }
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        transactionsViewModel = ViewModelProviders.of(this).get(TransactionsViewModel::class.java)
+        transactionsViewModel =
+                ViewModelProviders.of(requireActivity(), viewModelFactory).get(TransactionsViewModel::class.java)
         transactionsViewModel.transactions.observe(this, Observer { txs ->
             txs?.also {
                 txsAdapter.setTransactions(it.filter {

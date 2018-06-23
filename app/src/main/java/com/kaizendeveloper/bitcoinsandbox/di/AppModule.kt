@@ -4,15 +4,11 @@ import android.app.Application
 import android.arch.persistence.room.Room
 import android.content.Context
 import com.kaizendeveloper.bitcoinsandbox.db.SandboxDatabase
-import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
-import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
-import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
-import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module
+@Module(includes = [ViewModelsModule::class])
 class AppModule {
 
     @Provides
@@ -42,12 +38,4 @@ class AppModule {
     @Provides
     @Singleton
     fun provideMempoolDao(db: SandboxDatabase) = db.mempoolDao()
-
-    @Provides
-    @Singleton
-    fun provideMempool(mempoolRepository: MempoolRepository) = Mempool(mempoolRepository)
-
-    @Provides
-    @Singleton
-    fun provideUtxoPool(utxoPoolRepository: UTXOPoolRepository) = UTXOPool(utxoPoolRepository)
 }

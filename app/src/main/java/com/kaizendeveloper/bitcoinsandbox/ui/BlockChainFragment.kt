@@ -1,9 +1,9 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -13,10 +13,14 @@ import android.widget.TextView
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Block
 import com.kaizendeveloper.bitcoinsandbox.util.toHexString
+import javax.inject.Inject
 import kotlinx.android.synthetic.main.fragment_blockchain.blockchain_list as blockChainList
 
 
-class BlockChainFragment : Fragment() {
+class BlockChainFragment : BaseFragment() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val blocksAdapter = BlocksAdapter(mutableListOf())
     private lateinit var transactionsViewModel: TransactionsViewModel
@@ -33,7 +37,8 @@ class BlockChainFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        transactionsViewModel = ViewModelProviders.of(this).get(TransactionsViewModel::class.java)
+        transactionsViewModel =
+                ViewModelProviders.of(requireActivity(), viewModelFactory).get(TransactionsViewModel::class.java)
         transactionsViewModel.blocks.observe(this, Observer {
             it?.also { blocksAdapter.setBlocks(it) }
         })

@@ -1,22 +1,19 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
-import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
+import android.arch.lifecycle.ViewModel
 import com.kaizendeveloper.bitcoinsandbox.db.entity.UTXOWithTxOutput
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepository
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
+import javax.inject.Inject
 
-
-class UsersViewModel(app: Application) : AndroidViewModel(app) {
-
-    //TODO Use correct injections
-    private val usersRepository: UsersRepository = SandboxApplication.application.usersRepo
-    private val utxoPoolRepository: UTXOPoolRepository = SandboxApplication.application.utxoPoolRepository
+class UsersViewModel @Inject constructor(
+    private val usersRepository: UsersRepository,
+    utxoPoolRepository: UTXOPoolRepository
+) : ViewModel() {
 
     val users: LiveData<List<User>> = usersRepository.users
     val currentUser: LiveData<User> = object : MediatorLiveData<User>() {

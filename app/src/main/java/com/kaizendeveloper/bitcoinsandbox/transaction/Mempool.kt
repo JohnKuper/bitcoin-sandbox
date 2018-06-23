@@ -2,8 +2,11 @@ package com.kaizendeveloper.bitcoinsandbox.transaction
 
 import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
 import com.kaizendeveloper.bitcoinsandbox.util.observeOnce
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class Mempool constructor(
+@Singleton
+class Mempool @Inject constructor(
     private val mempoolRepository: MempoolRepository
 ) {
 

@@ -1,21 +1,25 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.util.observeOnce
+import javax.inject.Inject
 
 
-open class UsersViewModelFragment : Fragment() {
+open class UsersViewModelFragment : BaseFragment() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     protected lateinit var usersViewModel: UsersViewModel
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        usersViewModel = ViewModelProviders.of(requireActivity()).get(UsersViewModel::class.java)
+        usersViewModel = ViewModelProviders.of(requireActivity(), viewModelFactory).get(UsersViewModel::class.java)
         usersViewModel.users.observe(this, Observer { users ->
             users?.also { onUsersChanged(users) }
         })
@@ -24,6 +28,7 @@ open class UsersViewModelFragment : Fragment() {
         })
     }
 
+    //TODO Bull Shit!!! View model already knows current user. Just delegate user's click to it.
     protected fun withCurrentUser(block: (User) -> Unit) {
         usersViewModel.currentUser.observeOnce {
             block(it!!)
