@@ -4,7 +4,7 @@ import android.util.Log
 import com.kaizendeveloper.bitcoinsandbox.SANDBOX_TAG
 import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
-import com.kaizendeveloper.bitcoinsandbox.transaction.Mempool
+import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
@@ -21,43 +21,48 @@ import javax.inject.Singleton
 
 @Singleton
 class Miner @Inject constructor(
-    private val mempool: Mempool,
-    private val txHandler: TxHandler
+    private val txHandler: TxHandler,
+    private val mempoolRepository: MempoolRepository
 ) {
 
     fun mine(recipient: User): Single<Block> {
-        return if (!SandboxApplication.prefHelper.isBootstrapped() || mempool.getAll().isNotEmpty()) {
-            addCoinBaseTx(recipient)
+        return getUnconfirmedTransactions(recipient)
+            .filter { it.isNotEmpty() }
+            .toSingle()
+            .flatMap { transactions ->
 
-            val prevBlockHash = BlockChain.getLastHash()
-            val transactions = mempool.getAll()
-            val merkleRoot = MerkleRootGenerator.generate(transactions.map { it.hash!! })
-            val timeStamp = Calendar.getInstance().timeInMillis
+                val prevBlockHash = BlockChain.getLastHash()
+                val merkleRoot = MerkleRootGenerator.generate(transactions.map { it.hash!! })
+                val timeStamp = Calendar.getInstance().timeInMillis
 
-            val immutableMiningData = prepareImmutableRawMiningData(prevBlockHash, merkleRoot, timeStamp)
-            var nonce = 0
+                val immutableMiningData = prepareImmutableRawMiningData(prevBlockHash, merkleRoot, timeStamp)
+                var nonce = 0
 
-            //TODO Rewrite this in more Rx style using different operators
-            Single.fromCallable {
-                var validHash = Cipher.maxHash
+                //TODO Rewrite this in more Rx style using different operators
+                Single.fromCallable {
+                    var validHash = Cipher.maxHash
 
-                while (BigInteger(validHash.toHexString(), 16) >= decodeBits(CURRENT_TARGET)) {
-                    validHash = Cipher.sha256(immutableMiningData + nonce++.toByteArray())
-                }
+                    while (BigInteger(validHash.toHexString(), 16) >= decodeBits(CURRENT_TARGET)) {
+                        validHash = Cipher.sha256(immutableMiningData + nonce++.toByteArray())
+                    }
 
-                Log.d(SANDBOX_TAG, "Number of cycles: $nonce")
-                Log.d(SANDBOX_TAG, "Valid hash: ${validHash.toHexString()}")
+                    Log.d(SANDBOX_TAG, "Number of cycles: $nonce")
+                    Log.d(SANDBOX_TAG, "Valid hash: ${validHash.toHexString()}")
 
-                Block(validHash, prevBlockHash, merkleRoot, timeStamp, CURRENT_TARGET, nonce, transactions)
-            }.subscribeOn(Schedulers.computation())
-        } else {
-            Single.error(IllegalStateException("Block chain is already bootstrapped and mempool is empty"))
-        }
+                    Block(validHash, prevBlockHash, merkleRoot, timeStamp, CURRENT_TARGET, nonce, transactions)
+                }.subscribeOn(Schedulers.computation())
+            }
     }
 
-    private fun addCoinBaseTx(recipient: User) {
-        val coinbaseTx = Transaction(MINER_REWARD, recipient.address)
-        txHandler.handleTxs(arrayOf(coinbaseTx))
+    private fun getUnconfirmedTransactions(recipient: User): Single<List<Transaction>> {
+        return if (!SandboxApplication.prefHelper.isBootstrapped()) {
+            val coinbaseTx = Transaction(MINER_REWARD, recipient.address)
+            txHandler.handleTxs(arrayOf(coinbaseTx))
+
+            Single.just(listOf(coinbaseTx))
+        } else {
+            mempoolRepository.getAllUnconfirmed()
+        }
     }
 
     private fun prepareImmutableRawMiningData(

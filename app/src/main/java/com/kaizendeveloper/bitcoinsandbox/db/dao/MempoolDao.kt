@@ -12,6 +12,7 @@ import com.kaizendeveloper.bitcoinsandbox.db.entity.TxEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxInputEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxOutputEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxWithRelationData
+import io.reactivex.Single
 
 @Dao
 interface MempoolDao {
@@ -37,4 +38,8 @@ interface MempoolDao {
     @Transaction
     @Query("SELECT * from mempool_transactions")
     fun getAllTransactions(): LiveData<List<TxWithRelationData>>
+
+    @Transaction
+    @Query("SELECT * from mempool_transactions WHERE isConfirmed = 0")
+    fun getAllUnconfirmed(): Single<List<TxWithRelationData>>
 }

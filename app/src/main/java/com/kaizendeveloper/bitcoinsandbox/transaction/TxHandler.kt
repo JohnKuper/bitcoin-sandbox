@@ -1,12 +1,13 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
+import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import com.kaizendeveloper.bitcoinsandbox.util.wrap
 import javax.inject.Inject
 
 class TxHandler @Inject constructor(
     private val utxoPool: UTXOPool,
-    private val mempool: Mempool
+    private val mempoolRepository: MempoolRepository
 ) {
 
     /**
@@ -79,15 +80,7 @@ class TxHandler @Inject constructor(
                     val newUtxo = UTXO(it.hash!!.wrap(), index)
                     utxoPool.add(newUtxo, output)
                 }
-                addToMempool(it)
+                mempoolRepository.insert(it)
             }.toList().toTypedArray()
-    }
-
-    private fun addToMempool(tx: Transaction) {
-        if (tx.isCoinbase) {
-            mempool.addCoinbase(tx)
-        } else {
-            mempool.add(tx)
-        }
     }
 }

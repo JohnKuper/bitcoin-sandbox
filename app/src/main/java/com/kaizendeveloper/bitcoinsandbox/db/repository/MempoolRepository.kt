@@ -12,6 +12,7 @@ import com.kaizendeveloper.bitcoinsandbox.db.entity.TxInputEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxOutputEntity
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.util.toUUIDString
+import io.reactivex.Single
 import javax.inject.Inject
 
 //TODO Make All repos testable by passing executors to them separately, otherwise doAsync is not testable
@@ -64,5 +65,9 @@ class MempoolRepository @Inject constructor(
                 })
             }
         }
+    }
+
+    fun getAllUnconfirmed() = mempoolDao.getAllUnconfirmed().flatMap { dbTransactions ->
+        Single.just(dbTransactions.map { it.toTransaction() })
     }
 }
