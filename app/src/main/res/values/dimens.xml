@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="screen_horizontal_padding">16dp</dimen>
+    <!-- Spacing -->
+    <dimen name="spaceXS">8dp</dimen>
+    <dimen name="spaceS">12dp</dimen>
+    <dimen name="spaceM">16dp</dimen>
+
+    <!-- Typography -->
+    <dimen name="text_body">16sp</dimen>
 </resources>

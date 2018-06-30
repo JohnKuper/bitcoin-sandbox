@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Bitcoin sandbox</string>
+
+    <string name="mempool_is_empty_label">Mempool is empty</string>
+    <string name="transfer_from_label">From</string>
+    <string name="transfer_to_label">To</string>
+
+    <string name="enter_user_name_hint">Enter user name</string>
+    <string name="enter_the_amount_hint">Enter the amount</string>
 </resources>

@@ -13,8 +13,11 @@ import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.transaction.ProgressStatus
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
+import com.kaizendeveloper.bitcoinsandbox.util.hide
+import com.kaizendeveloper.bitcoinsandbox.util.show
 import com.kaizendeveloper.bitcoinsandbox.util.toHexString
 import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.fragment_mempool.emptyLabel
 import kotlinx.android.synthetic.main.fragment_mempool.fab
 import kotlinx.android.synthetic.main.fragment_mempool.mempoolList
 
@@ -57,11 +60,29 @@ class MempoolFragment : UsersViewModelFragment() {
             }
         transactionsViewModel.transactions.observe(this, Observer { txs ->
             txs?.also {
-                txsAdapter.setTransactions(it.filter {
-                    !it.isConfirmed
-                })
+                handleTransactions(it)
             }
         })
+    }
+
+    private fun handleTransactions(transactions: List<Transaction>) {
+        val confirmedTxs = transactions.filter { !it.isConfirmed }
+        confirmedTxs.takeIf { it.isNotEmpty() }?.also {
+            hideEmptyView()
+            txsAdapter.setTransactions(it)
+        } ?: showEmptyView()
+    }
+
+    private fun showEmptyView() {
+        emptyLabel.show()
+        fab.hide()
+        mempoolList.hide()
+    }
+
+    private fun hideEmptyView() {
+        emptyLabel.hide()
+        fab.show()
+        mempoolList.show()
     }
 
     private fun setUiBlocked(isBlocked: Boolean) {
