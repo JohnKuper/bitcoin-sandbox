@@ -9,12 +9,10 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
+import com.kaizendeveloper.bitcoinsandbox.util.formatAmount
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.tabLayout
 import kotlinx.android.synthetic.main.activity_main.viewPager
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.Locale
 import javax.inject.Inject
 
 class MainActivity : DaggerAppCompatActivity() {
@@ -23,8 +21,6 @@ class MainActivity : DaggerAppCompatActivity() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var usersViewModel: UsersViewModel
-
-    private val balanceFormat = DecimalFormat("0.00", DecimalFormatSymbols(Locale.UK))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,8 +45,7 @@ class MainActivity : DaggerAppCompatActivity() {
 
     private fun updateTitle(user: User) {
         user.also {
-            val balance = balanceFormat.format(user.balance)
-            title = "${it.name} - $balance$"
+            title = "${it.name} - ${formatAmount(user.balance)}"
         }
     }
 

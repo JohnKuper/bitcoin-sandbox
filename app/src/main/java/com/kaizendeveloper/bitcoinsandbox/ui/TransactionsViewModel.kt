@@ -9,6 +9,7 @@ import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransferManager
+import com.kaizendeveloper.bitcoinsandbox.util.findItem
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -37,6 +38,8 @@ class TransactionsViewModel @Inject constructor(
             .doFinally { notifyOperationInProgress(false) }
             .doOnSuccess { mempoolRepository.insert(it) }
     }
+
+    fun getTransactionByHash(hash: ByteArray): Transaction = transactions.findItem { it.hash!!.contentEquals(hash) }
 
     private fun notifyOperationInProgress(inProgress: Boolean) {
         (operationInProgress as MutableLiveData).postValue(inProgress)

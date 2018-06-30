@@ -12,9 +12,9 @@ import android.widget.TextView
 import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
+import com.kaizendeveloper.bitcoinsandbox.util.formatAmount
 import com.kaizendeveloper.bitcoinsandbox.util.hide
 import com.kaizendeveloper.bitcoinsandbox.util.show
-import com.kaizendeveloper.bitcoinsandbox.util.toHexString
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_mempool.emptyLabel
 import kotlinx.android.synthetic.main.fragment_mempool.fab
@@ -96,15 +96,25 @@ class MempoolFragment : UsersViewModelFragment() {
     inner class TransactionsAdapter(private val txs: MutableList<Transaction>) :
         RecyclerView.Adapter<TransactionsAdapter.ViewHolder>() {
 
+        private val inflater by lazy { LayoutInflater.from(requireContext()) }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val inflater = LayoutInflater.from(parent.context)
             val view = inflater.inflate(R.layout.item_transaction, parent, false)
             return ViewHolder(view)
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             with(txs[position]) {
-                holder.txInfo.text = hash!!.toHexString()
+                val prevTx = transactionsViewModel.getTransactionByHash(inputs[0].txHash.data)
+                val ownerAddress = prevTx.outputs[inputs[0].outputIndex].address
+
+                val fromWho = usersViewModel.getUserByAddress(ownerAddress).name
+                val toWhom = usersViewModel.getUserByAddress(outputs[0].address).name
+                val howMuch = outputs.filterNot { it.address == ownerAddress }
+                    .fold(0.0) { acc, txOutput -> acc + txOutput.amount }
+
+                val txInfo = "$fromWho ----> $toWhom (${formatAmount(howMuch)})"
+                holder.txInfo.text = txInfo
             }
         }
 
@@ -121,7 +131,7 @@ class MempoolFragment : UsersViewModelFragment() {
         }
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val txInfo: TextView = view.findViewById(R.id.tx_info)
+            val txInfo: TextView = view.findViewById(R.id.transferInfo)
         }
     }
 }

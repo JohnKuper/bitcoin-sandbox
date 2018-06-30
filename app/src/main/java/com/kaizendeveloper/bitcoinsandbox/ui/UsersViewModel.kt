@@ -9,6 +9,7 @@ import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepository
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
+import com.kaizendeveloper.bitcoinsandbox.util.findItem
 import javax.inject.Inject
 
 class UsersViewModel @Inject constructor(
@@ -63,4 +64,6 @@ class UsersViewModel @Inject constructor(
             }
         }
     }
+
+    fun getUserByAddress(address: String): User = users.findItem { it.address == address }
 }
