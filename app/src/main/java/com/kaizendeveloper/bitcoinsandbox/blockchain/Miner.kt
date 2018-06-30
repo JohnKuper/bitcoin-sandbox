@@ -27,8 +27,6 @@ class Miner @Inject constructor(
 
     fun mine(recipient: User): Single<Block> {
         return getUnconfirmedTransactions(recipient)
-            .filter { it.isNotEmpty() }
-            .toSingle()
             .flatMap { transactions ->
 
                 val prevBlockHash = BlockChain.getLastHash()
@@ -50,18 +48,24 @@ class Miner @Inject constructor(
                     Log.d(SANDBOX_TAG, "Valid hash: ${validHash.toHexString()}")
 
                     Block(validHash, prevBlockHash, merkleRoot, timeStamp, CURRENT_TARGET, nonce, transactions)
+                }.doOnSuccess {
+                    val coinbaseTx = it.transactions.single { it.isCoinbase }
+                    txHandler.handleTxs(arrayOf(coinbaseTx))
                 }.subscribeOn(Schedulers.computation())
             }
     }
 
     private fun getUnconfirmedTransactions(recipient: User): Single<List<Transaction>> {
-        return if (!SandboxApplication.prefHelper.isBootstrapped()) {
-            val coinbaseTx = Transaction(MINER_REWARD, recipient.address)
-            txHandler.handleTxs(arrayOf(coinbaseTx))
+        val coinbaseTx = Transaction(MINER_REWARD, recipient.address)
 
+        return if (!SandboxApplication.prefHelper.isBootstrapped()) {
             Single.just(listOf(coinbaseTx))
         } else {
-            mempoolRepository.getAllUnconfirmed()
+            mempoolRepository
+                .getAllUnconfirmed()
+                .filter { it.isNotEmpty() }
+                .toSingle()
+                .flatMap { Single.just(it.plus(coinbaseTx)) }
         }
     }
 

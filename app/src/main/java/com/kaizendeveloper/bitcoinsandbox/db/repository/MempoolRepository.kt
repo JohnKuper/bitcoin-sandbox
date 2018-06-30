@@ -67,7 +67,7 @@ class MempoolRepository @Inject constructor(
         }
     }
 
-    fun getAllUnconfirmed() = mempoolDao.getAllUnconfirmed().flatMap { dbTransactions ->
+    fun getAllUnconfirmed(): Single<List<Transaction>> = mempoolDao.getAllUnconfirmed().flatMap { dbTransactions ->
         Single.just(dbTransactions.map { it.toTransaction() })
     }
 }
