@@ -1,5 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
@@ -12,7 +13,6 @@ import android.widget.TextView
 import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
-import com.kaizendeveloper.bitcoinsandbox.transaction.ProgressStatus
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_transfer.amount
 import kotlinx.android.synthetic.main.fragment_transfer.fab
@@ -38,14 +38,8 @@ class TransferFragment : UsersViewModelFragment() {
         super.onActivityCreated(savedInstanceState)
         transactionsViewModel =
                 ViewModelProviders.of(requireActivity(), viewModelFactory).get(TransactionsViewModel::class.java)
-        transactionsViewModel.transactionStatus
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                when (it) {
-                    ProgressStatus.COMPLETED -> setUiBlocked(false)
-                    ProgressStatus.IN_PROGRESS -> setUiBlocked(true)
-                }
-            }
+        transactionsViewModel.operationInProgress.observe(this, Observer { setUiBlocked(it!!) })
+
         spinnerAdapter = UsersSpinnerAdapter(requireActivity())
         spinnerRecipient.adapter = spinnerAdapter
 
@@ -55,7 +49,11 @@ class TransferFragment : UsersViewModelFragment() {
     }
 
     private fun setUiBlocked(isBlocked: Boolean) {
-        fab.isEnabled = !isBlocked
+        if (isBlocked) {
+            ProgressFragment.show(requireFragmentManager())
+        } else {
+            ProgressFragment.hide(requireFragmentManager())
+        }
     }
 
     private fun sendCoins() {

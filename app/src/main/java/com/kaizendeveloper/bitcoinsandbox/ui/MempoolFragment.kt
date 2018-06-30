@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
-import com.kaizendeveloper.bitcoinsandbox.transaction.ProgressStatus
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.util.hide
 import com.kaizendeveloper.bitcoinsandbox.util.show
@@ -50,14 +49,7 @@ class MempoolFragment : UsersViewModelFragment() {
         super.onActivityCreated(savedInstanceState)
         transactionsViewModel =
                 ViewModelProviders.of(requireActivity(), viewModelFactory).get(TransactionsViewModel::class.java)
-        transactionsViewModel.transactionStatus
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                when (it) {
-                    ProgressStatus.COMPLETED -> setUiBlocked(false)
-                    ProgressStatus.IN_PROGRESS -> setUiBlocked(true)
-                }
-            }
+        transactionsViewModel.operationInProgress.observe(this, Observer { setUiBlocked(it!!) })
         transactionsViewModel.transactions.observe(this, Observer { txs ->
             txs?.also {
                 handleTransactions(it)
@@ -86,7 +78,11 @@ class MempoolFragment : UsersViewModelFragment() {
     }
 
     private fun setUiBlocked(isBlocked: Boolean) {
-        fab.isEnabled = !isBlocked
+        if (isBlocked) {
+            ProgressFragment.show(requireFragmentManager())
+        } else {
+            ProgressFragment.hide(requireFragmentManager())
+        }
     }
 
     private fun setupRecycler() {
