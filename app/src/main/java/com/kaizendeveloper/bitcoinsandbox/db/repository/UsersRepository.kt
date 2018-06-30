@@ -7,7 +7,9 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import org.jetbrains.anko.doAsync
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class UsersRepository @Inject constructor(
     private val db: SandboxDatabase,
     private val userDao: UserDao

@@ -38,4 +38,8 @@ class AppModule {
     @Provides
     @Singleton
     fun provideMempoolDao(db: SandboxDatabase) = db.mempoolDao()
+
+    @Provides
+    @Singleton
+    fun provideBlockchainDao(db: SandboxDatabase) = db.blockchainDao()
 }

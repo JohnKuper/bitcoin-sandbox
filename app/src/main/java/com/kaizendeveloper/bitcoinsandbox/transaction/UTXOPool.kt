@@ -6,7 +6,6 @@ import java.util.HashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class UTXOPool @Inject constructor(
     private val utxoPoolRepository: UTXOPoolRepository
@@ -45,8 +44,6 @@ class UTXOPool @Inject constructor(
     fun get(utxo: UTXO): TransactionOutput? {
         return unspentOutputMap[utxo]
     }
-
-    fun getAllTxOutputs() = unspentOutputMap.values.toList()
 
     fun reset() {
         unspentOutputMap.clear()

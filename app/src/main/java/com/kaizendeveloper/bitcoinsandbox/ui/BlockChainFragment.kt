@@ -12,6 +12,9 @@ import android.widget.TextView
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Block
 import com.kaizendeveloper.bitcoinsandbox.util.toHexString
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlinx.android.synthetic.main.fragment_blockchain.blockchain_list as blockChainList
 
 
@@ -57,13 +60,28 @@ class BlockChainFragment : BaseFragment() {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            with(blocks[position]) {
-                holder.hash.text = hash.toHexString()
+            blocks[position].also {
+                val blockInfo = """
+                    hash: ${it.hash.toHexString()}
+                    parent hash: ${it.prevBlockHash.toHexString()}
+                    merkle root: ${it.merkleRoot.toHexString()}
+                    timestamp: ${formatTimestamp(it.timestamp)}
+                    nonce: ${it.nonce}
+                    transactions count: ${it.transactions.filterNot { it.isCoinbase }.size}
+                """.trimIndent()
+
+                holder.blockInfo.text = blockInfo
             }
         }
 
         override fun getItemCount(): Int {
             return blocks.size
+        }
+
+        private fun formatTimestamp(timestamp: Long): String {
+            val timestampDate = Date(timestamp)
+            val formatter = SimpleDateFormat("yyyy-MM-dd, kk:mm:ss", Locale.UK)
+            return formatter.format(timestampDate)
         }
 
         fun setBlocks(blocks: List<Block>) {
@@ -75,7 +93,7 @@ class BlockChainFragment : BaseFragment() {
         }
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val hash: TextView = view.findViewById(R.id.hash)
+            val blockInfo: TextView = view.findViewById(R.id.blockInfo)
         }
     }
 }

@@ -6,9 +6,7 @@ import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import com.kaizendeveloper.bitcoinsandbox.util.wrap
 import java.security.PublicKey
 
-
 class Converters {
-
     @TypeConverter
     fun encodePublicKey(key: PublicKey): ByteArray = key.encoded
 

@@ -9,7 +9,6 @@ import com.kaizendeveloper.bitcoinsandbox.util.ByteArrayWrapper
 data class UTXO(val txHash: ByteArrayWrapper, val outputIndex: Int) {
 
     companion object {
-
         fun fromTxInput(txInput: TransactionInput) = UTXO(txInput.txHash, txInput.outputIndex)
     }
 }

@@ -4,6 +4,7 @@ import android.util.Log
 import com.kaizendeveloper.bitcoinsandbox.SANDBOX_TAG
 import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
+import com.kaizendeveloper.bitcoinsandbox.db.repository.BlockchainRepository
 import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
@@ -22,14 +23,14 @@ import javax.inject.Singleton
 @Singleton
 class Miner @Inject constructor(
     private val txHandler: TxHandler,
-    private val mempoolRepository: MempoolRepository
+    private val mempoolRepo: MempoolRepository,
+    private val blockchainRepo: BlockchainRepository
 ) {
 
     fun mine(recipient: User): Single<Block> {
         return getUnconfirmedTransactions(recipient)
             .flatMap { transactions ->
-
-                val prevBlockHash = BlockChain.getLastHash()
+                val prevBlockHash = blockchainRepo.getLastHash()
                 val merkleRoot = MerkleRootGenerator.generate(transactions.map { it.hash!! })
                 val timeStamp = Calendar.getInstance().timeInMillis
 
@@ -38,7 +39,7 @@ class Miner @Inject constructor(
 
                 //TODO Rewrite this in more Rx style using different operators
                 Single.fromCallable {
-                    var validHash = Cipher.maxHash
+                    var validHash = Cipher.MAX_HASH
 
                     while (BigInteger(validHash.toHexString(), 16) >= decodeBits(CURRENT_TARGET)) {
                         validHash = Cipher.sha256(immutableMiningData + nonce++.toByteArray())
@@ -61,7 +62,7 @@ class Miner @Inject constructor(
         return if (!SandboxApplication.prefHelper.isBootstrapped()) {
             Single.just(listOf(coinbaseTx))
         } else {
-            mempoolRepository
+            mempoolRepo
                 .getAllUnconfirmed()
                 .filter { it.isNotEmpty() }
                 .toSingle()

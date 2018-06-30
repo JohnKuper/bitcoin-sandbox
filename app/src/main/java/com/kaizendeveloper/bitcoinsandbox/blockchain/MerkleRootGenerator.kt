@@ -36,7 +36,7 @@ class MerkleRootGenerator {
 
             val paddedHashes = ArrayList(hashes)
             while (!isPowOf2(size++)) {
-                paddedHashes.add(Cipher.zeroHash)
+                paddedHashes.add(Cipher.ZERO_HASH)
             }
 
             return paddedHashes

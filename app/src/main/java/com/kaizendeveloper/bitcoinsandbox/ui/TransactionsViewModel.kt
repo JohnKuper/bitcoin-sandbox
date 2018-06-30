@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Block
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
+import com.kaizendeveloper.bitcoinsandbox.db.repository.BlockchainRepository
 import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransferManager
@@ -17,11 +18,12 @@ import javax.inject.Inject
 class TransactionsViewModel @Inject constructor(
     private val transferManager: TransferManager,
     private val miner: Miner,
-    private val mempoolRepository: MempoolRepository
+    private val blockchainRepository: BlockchainRepository,
+    mempoolRepository: MempoolRepository
 ) : ViewModel() {
 
     val transactions: LiveData<List<Transaction>> = mempoolRepository.transactions
-    val blocks: LiveData<List<Block>> = mempoolRepository.blocks
+    val blocks: LiveData<List<Block>> = blockchainRepository.blocks
 
     val operationInProgress: LiveData<Boolean> = MutableLiveData<Boolean>()
 
@@ -34,9 +36,9 @@ class TransactionsViewModel @Inject constructor(
 
     fun mine(user: User): Single<Block> {
         return miner.mine(user)
+            .doOnSuccess { blockchainRepository.insert(it) }
             .doOnSubscribe { notifyOperationInProgress(true) }
             .doFinally { notifyOperationInProgress(false) }
-            .doOnSuccess { mempoolRepository.insert(it) }
     }
 
     fun getTransactionByHash(hash: ByteArray): Transaction = transactions.findItem { it.hash!!.contentEquals(hash) }

@@ -6,7 +6,9 @@ import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
 import org.jetbrains.anko.doAsync
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class UTXOPoolRepository @Inject constructor(
     private val utxoPoolDao: UTXOPoolDao
 ) {

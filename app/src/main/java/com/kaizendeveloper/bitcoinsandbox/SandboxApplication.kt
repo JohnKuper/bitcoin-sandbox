@@ -5,7 +5,7 @@ import android.app.Application
 import android.util.Log
 import com.facebook.stetho.Stetho
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
-import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
+import com.kaizendeveloper.bitcoinsandbox.db.repository.BlockchainRepository
 import com.kaizendeveloper.bitcoinsandbox.di.DaggerAppComponent
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 import com.kaizendeveloper.bitcoinsandbox.util.SharedPreferencesHelper
@@ -27,7 +27,7 @@ class SandboxApplication : Application(), HasActivityInjector {
     @Inject
     lateinit var miner: Miner
     @Inject
-    lateinit var mempoolRepo: MempoolRepository
+    lateinit var blockchainRepo: BlockchainRepository
 
     override fun onCreate() {
         super.onCreate()
@@ -57,7 +57,7 @@ class SandboxApplication : Application(), HasActivityInjector {
                 miner.mine(user)
             }.subscribe { block ->
                 Log.d(SANDBOX_TAG, "Genesis block has been created")
-                mempoolRepo.insert(block)
+                blockchainRepo.insert(block)
                 prefHelper.setBootstrapped()
             }
 

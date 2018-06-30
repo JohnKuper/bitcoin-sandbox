@@ -3,6 +3,7 @@ package com.kaizendeveloper.bitcoinsandbox.db
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
+import com.kaizendeveloper.bitcoinsandbox.db.dao.BlockchainDao
 import com.kaizendeveloper.bitcoinsandbox.db.dao.MempoolDao
 import com.kaizendeveloper.bitcoinsandbox.db.dao.UTXOPoolDao
 import com.kaizendeveloper.bitcoinsandbox.db.dao.UserDao
@@ -31,6 +32,7 @@ abstract class SandboxDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun utxoPoolDao(): UTXOPoolDao
     abstract fun mempoolDao(): MempoolDao
+    abstract fun blockchainDao(): BlockchainDao
 
     companion object {
 
