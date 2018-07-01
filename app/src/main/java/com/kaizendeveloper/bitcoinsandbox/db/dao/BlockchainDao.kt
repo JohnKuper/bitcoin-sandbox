@@ -14,6 +14,10 @@ interface BlockchainDao {
     fun insert(block: BlockEntity)
 
     @Transaction
-    @Query("SELECT * from blockchain")
+    @Query("SELECT * FROM blockchain")
     fun getAll(): LiveData<List<BlockWithTransactions>>
+
+    @Transaction
+    @Query("SELECT * FROM blockchain ORDER BY timestamp DESC LIMIT 1")
+    fun getLastBlock(): BlockWithTransactions?
 }

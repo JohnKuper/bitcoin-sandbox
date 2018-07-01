@@ -6,30 +6,28 @@ import android.arch.lifecycle.ViewModel
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepository
-import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
 import com.kaizendeveloper.bitcoinsandbox.util.requireValue
 import javax.inject.Inject
 
 class UsersViewModel @Inject constructor(
-    private val usersRepository: UsersRepository,
-    private val utxoPoolRepository: UTXOPoolRepository,
-    private val userManager: UserManager
+    private val usersRepo: UsersRepository,
+    private val utxoPoolRepo: UTXOPoolRepository
 ) : ViewModel() {
 
-    val users: LiveData<List<User>> = usersRepository.users
+    val users: LiveData<List<User>> = usersRepo.users
     val currentUser: LiveData<User> = object : MediatorLiveData<User>() {
 
         private var lastUser: User? = null
         private var lastUTXOPool: HashMap<UTXO, TransactionOutput>? = null
 
         init {
-            addSource(usersRepository.currentUser, {
+            addSource(usersRepo.currentUser, {
                 lastUser = it
                 considerNotifyUserDataChanged()
             })
-            addSource(utxoPoolRepository.utxoPool, {
+            addSource(utxoPoolRepo.utxoPool, {
                 lastUTXOPool = it
                 considerNotifyUserDataChanged()
             })
@@ -46,12 +44,12 @@ class UsersViewModel @Inject constructor(
         }
     }
 
-    fun createUserIfAbsent(name: String) = userManager.createUserIfAbsent(name)
+    fun createUserIfAbsent(name: String) = usersRepo.createUserIfAbsent(name)
 
     fun updateCurrentUserIfNeeded(newCurrent: User) {
         val oldUser = currentUser.value
         if (oldUser != null && oldUser != newCurrent) {
-            usersRepository.updateCurrent(oldUser, newCurrent)
+            usersRepo.updateCurrent(oldUser, newCurrent).subscribe()
         }
     }
 

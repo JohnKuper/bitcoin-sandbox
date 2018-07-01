@@ -21,7 +21,7 @@ class UTXOPoolRepository @Inject constructor(
     private val utxoPoolDao: UTXOPoolDao
 ) {
 
-    val utxoPool: LiveData<HashMap<UTXO, TransactionOutput>> = Transformations.switchMap(utxoPoolDao.getAll()) {
+    val utxoPool: LiveData<HashMap<UTXO, TransactionOutput>> = Transformations.switchMap(utxoPoolDao.getAllObservable()) {
         MutableLiveData<HashMap<UTXO, TransactionOutput>>().apply {
             value = it.associateTo(hashMapOf()) { it.utxo to it.txOutput }
         }
@@ -43,6 +43,6 @@ class UTXOPoolRepository @Inject constructor(
     }
 
     fun getUtxoPool(): HashMap<UTXO, TransactionOutput> {
-        return utxoPoolDao.getAllAsList().associateTo(hashMapOf()) { it.utxo to it.txOutput }
+        return utxoPoolDao.getAll().associateTo(hashMapOf()) { it.utxo to it.txOutput }
     }
 }

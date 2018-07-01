@@ -43,6 +43,5 @@ class BlockchainRepository @Inject constructor(
         }.subscribeOn(Schedulers.io())
     }
 
-    //TODO Don't rely on live data for business logic
-    fun getLastHash(): ByteArray = blocks.value?.last()?.hash ?: Cipher.ZERO_HASH
+    fun getLastHash(): ByteArray = blockchainDao.getLastBlock()?.toBlock()?.hash ?: Cipher.ZERO_HASH
 }

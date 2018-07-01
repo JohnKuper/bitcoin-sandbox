@@ -2,16 +2,17 @@ package com.kaizendeveloper.bitcoinsandbox
 
 import android.app.Activity
 import android.app.Application
-import android.util.Log
+import android.widget.Toast
 import com.facebook.stetho.Stetho
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
-import com.kaizendeveloper.bitcoinsandbox.db.repository.BlockchainRepository
+import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepository
 import com.kaizendeveloper.bitcoinsandbox.di.DaggerAppComponent
-import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 import com.kaizendeveloper.bitcoinsandbox.util.SharedPreferencesHelper
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
 import javax.inject.Inject
@@ -23,11 +24,9 @@ class SandboxApplication : Application(), HasActivityInjector {
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
     @Inject
-    lateinit var userManager: UserManager
+    lateinit var usersRepo: UsersRepository
     @Inject
     lateinit var miner: Miner
-    @Inject
-    lateinit var blockchainRepo: BlockchainRepository
 
     override fun onCreate() {
         super.onCreate()
@@ -51,17 +50,19 @@ class SandboxApplication : Application(), HasActivityInjector {
     override fun activityInjector(): AndroidInjector<Activity> = dispatchingAndroidInjector
 
     private fun bootstrapBlockChain() {
-        userManager
-            .createUserIfAbsent("Satoshi", true)
+        Single.concat(
+            usersRepo.createUserIfAbsent("Satoshi", true),
+            usersRepo.createUserIfAbsent("Alice", false),
+            usersRepo.createUserIfAbsent("Bob", false)
+        )
+            .filter { it.isCurrent }
             .flatMapCompletable { user ->
                 miner.mine(user)
-            }.subscribe {
-                Log.d(SANDBOX_TAG, "Genesis block has been created")
+            }.observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Toast.makeText(this, "Genesis block has been created", Toast.LENGTH_LONG).show()
                 prefHelper.setBootstrapped()
             }
-
-        userManager.createUserIfAbsent("Alice", false).subscribe()
-        userManager.createUserIfAbsent("Bob", false).subscribe()
     }
 
     companion object {

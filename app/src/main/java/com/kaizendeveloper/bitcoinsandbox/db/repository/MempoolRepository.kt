@@ -51,7 +51,9 @@ class MempoolRepository @Inject constructor(
         }.subscribeOn(Schedulers.io())
     }
 
-    fun getAllUnconfirmed(): Single<List<Transaction>> = mempoolDao.getAllUnconfirmed().flatMap { dbTransactions ->
-        Single.just(dbTransactions.map { it.toTransaction() })
+    fun getAllUnconfirmed(): Single<List<Transaction>> {
+        return mempoolDao.getAllUnconfirmed().map {
+            it.map { it.toTransaction() }
+        }
     }
 }

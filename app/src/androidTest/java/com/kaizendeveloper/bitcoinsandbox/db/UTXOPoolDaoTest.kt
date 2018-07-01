@@ -35,7 +35,7 @@ class UTXOPoolDaoTest : DbTest() {
     fun insertAndGetAll() {
         populateDb()
 
-        val dbValue = getValue(db.utxoPoolDao().getAll())
+        val dbValue = getValue(db.utxoPoolDao().getAllObservable())
         assertTrue(utxoPool == dbValue)
     }
 
@@ -49,7 +49,7 @@ class UTXOPoolDaoTest : DbTest() {
             utxoPool.removeAt(0)
         }
 
-        val dbValue = getValue(db.utxoPoolDao().getAll())
+        val dbValue = getValue(db.utxoPoolDao().getAllObservable())
         assertTrue(utxoPool == dbValue)
     }
 
