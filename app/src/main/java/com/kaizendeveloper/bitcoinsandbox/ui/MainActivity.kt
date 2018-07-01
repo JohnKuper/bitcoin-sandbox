@@ -53,7 +53,7 @@ class MainActivity : DaggerAppCompatActivity() {
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> BlockChainFragment()
+                0 -> BlockchainFragment()
                 1 -> MempoolFragment()
                 2 -> TransferFragment()
                 3 -> UsersFragment()

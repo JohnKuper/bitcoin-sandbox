@@ -1,6 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.di
 
-import com.kaizendeveloper.bitcoinsandbox.ui.BlockChainFragment
+import com.kaizendeveloper.bitcoinsandbox.ui.BlockchainFragment
 import com.kaizendeveloper.bitcoinsandbox.ui.MempoolFragment
 import com.kaizendeveloper.bitcoinsandbox.ui.TransferFragment
 import com.kaizendeveloper.bitcoinsandbox.ui.UsersFragment
@@ -21,5 +21,5 @@ abstract class FragmentsBuildersModule {
     abstract fun contributeMempoolFragment(): MempoolFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeBlockchainFragment(): BlockChainFragment
+    abstract fun contributeBlockchainFragment(): BlockchainFragment
 }

@@ -18,7 +18,7 @@ import java.util.Locale
 import kotlinx.android.synthetic.main.fragment_blockchain.blockchain_list as blockChainList
 
 
-class BlockChainFragment : BaseFragment() {
+class BlockchainFragment : BaseFragment() {
 
     private val blocksAdapter = BlocksAdapter(mutableListOf())
     private lateinit var transactionsViewModel: TransactionsViewModel
@@ -80,7 +80,7 @@ class BlockChainFragment : BaseFragment() {
 
         private fun formatTimestamp(timestamp: Long): String {
             val timestampDate = Date(timestamp)
-            val formatter = SimpleDateFormat("yyyy-MM-dd, kk:mm:ss", Locale.UK)
+            val formatter = SimpleDateFormat("yyyy-MM-dd, HH:mm:ss", Locale.UK)
             return formatter.format(timestampDate)
         }
 
