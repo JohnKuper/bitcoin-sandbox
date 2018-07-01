@@ -24,7 +24,7 @@ class AppModule {
             context.applicationContext,
             SandboxDatabase::class.java,
             SandboxDatabase.DATABASE_NAME
-        ).allowMainThreadQueries().build()
+        ).build()
     }
 
     @Provides

@@ -1,7 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.ui
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
@@ -29,7 +28,6 @@ class UsersFragment : UsersViewModelFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setupRecycler()
-        observeViewModel()
 
         fab.setOnClickListener { showUserCreationDialog() }
     }
@@ -41,10 +39,8 @@ class UsersFragment : UsersViewModelFragment() {
         }
     }
 
-    private fun observeViewModel() {
-        usersViewModel.users.observe(this, Observer<List<User>> {
-            it?.also { usersAdapter.setUsers(it) }
-        })
+    override fun onUsersChanged(users: List<User>) {
+        usersAdapter.setUsers(users)
     }
 
     @SuppressLint("InflateParams")

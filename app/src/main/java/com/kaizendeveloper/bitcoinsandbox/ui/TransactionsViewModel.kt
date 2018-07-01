@@ -17,7 +17,7 @@ import javax.inject.Inject
 class TransactionsViewModel @Inject constructor(
     private val transferManager: TransferManager,
     private val miner: Miner,
-    private val blockchainRepository: BlockchainRepository,
+    blockchainRepository: BlockchainRepository,
     mempoolRepository: MempoolRepository
 ) : ViewModel() {
 
