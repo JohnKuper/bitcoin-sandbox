@@ -10,7 +10,9 @@ import com.kaizendeveloper.bitcoinsandbox.db.entity.TxInputEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxOutputEntity
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.util.toUUIDString
+import io.reactivex.Completable
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,23 +30,25 @@ class MempoolRepository @Inject constructor(
             }
         }
 
-    fun insert(transaction: Transaction) {
-        val txHash = transaction.hash!!
-        val txUUID = txHash.toUUIDString()
+    fun insert(transaction: Transaction): Completable {
+        return Completable.fromAction {
+            val txHash = transaction.hash!!
+            val txUUID = txHash.toUUIDString()
 
-        val txEntity = TxEntity.fromTransaction(transaction)
-        val txInputs = transaction.inputs.map {
-            TxInputEntity(txUUID, it.txHash.data, it.outputIndex, it.scriptSig)
-        }
-        val txOutputs = transaction.outputs.map {
-            TxOutputEntity(txUUID, it.amount, it.address)
-        }
+            val txEntity = TxEntity.fromTransaction(transaction)
+            val txInputs = transaction.inputs.map {
+                TxInputEntity(txUUID, it.txHash.data, it.outputIndex, it.scriptSig)
+            }
+            val txOutputs = transaction.outputs.map {
+                TxOutputEntity(txUUID, it.amount, it.address)
+            }
 
-        db.runInTransaction {
-            mempoolDao.insert(txEntity)
-            txInputs.forEach { mempoolDao.insert(it) }
-            txOutputs.forEach { mempoolDao.insert(it) }
-        }
+            db.runInTransaction {
+                mempoolDao.insert(txEntity)
+                txInputs.forEach { mempoolDao.insert(it) }
+                txOutputs.forEach { mempoolDao.insert(it) }
+            }
+        }.subscribeOn(Schedulers.io())
     }
 
     fun getAllUnconfirmed(): Single<List<Transaction>> = mempoolDao.getAllUnconfirmed().flatMap { dbTransactions ->

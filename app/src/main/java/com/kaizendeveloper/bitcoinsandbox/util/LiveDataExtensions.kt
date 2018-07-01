@@ -14,8 +14,9 @@ fun <T> LiveData<T>.observeOnce(block: (T?) -> Unit) {
     })
 }
 
-inline fun <reified T> LiveData<T>.observeOnceBlocked(block: (T?) -> Unit) {
-    val data = arrayOfNulls<T>(1)
+//TODO Looks like it works wrong
+fun <T> LiveData<T>.requireValue(): T {
+    val data = arrayOfNulls<Any>(1)
     val latch = CountDownLatch(1)
 
     observeForever(object : Observer<T> {
@@ -26,19 +27,7 @@ inline fun <reified T> LiveData<T>.observeOnceBlocked(block: (T?) -> Unit) {
         }
     })
 
-    latch.await(1, TimeUnit.SECONDS)
-    block(data[0])
-}
-
-fun <T> LiveData<List<T>>.findItem(predicate: (T) -> Boolean): T {
-    val currentValue = value
-    return if (currentValue != null) {
-        currentValue.first { predicate(it) }
-    } else {
-        var result: T? = null
-        observeOnceBlocked { items ->
-            result = items?.first { predicate(it) }
-        }
-        return result!!
-    }
+    latch.await(2, TimeUnit.SECONDS)
+    @Suppress("UNCHECKED_CAST")
+    return data[0] as T
 }

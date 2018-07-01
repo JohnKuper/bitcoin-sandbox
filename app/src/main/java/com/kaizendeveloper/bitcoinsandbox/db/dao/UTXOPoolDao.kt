@@ -16,4 +16,7 @@ interface UTXOPoolDao {
 
     @Query("SELECT * from utxo_pool")
     fun getAll(): LiveData<List<UTXOWithTxOutput>>
+
+    @Query("SELECT * from utxo_pool")
+    fun getAllAsList(): List<UTXOWithTxOutput>
 }

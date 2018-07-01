@@ -58,7 +58,7 @@ class MempoolFragment : UsersViewModelFragment() {
     }
 
     private fun handleTransactions(transactions: List<Transaction>) {
-        val confirmedTxs = transactions.filter { !it.isConfirmed }
+        val confirmedTxs = transactions.filterNot { it.isConfirmed || it.isCoinbase }
         confirmedTxs.takeIf { it.isNotEmpty() }?.also {
             hideEmptyView()
             txsAdapter.setTransactions(it)

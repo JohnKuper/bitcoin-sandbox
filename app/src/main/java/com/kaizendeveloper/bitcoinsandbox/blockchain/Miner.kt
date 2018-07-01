@@ -51,7 +51,7 @@ class Miner @Inject constructor(
                     Block(validHash, prevBlockHash, merkleRoot, timeStamp, CURRENT_TARGET, nonce, transactions)
                 }.doOnSuccess {
                     val coinbaseTx = it.transactions.single { it.isCoinbase }
-                    txHandler.handleTxs(arrayOf(coinbaseTx))
+                    txHandler.handleTxs(arrayOf(coinbaseTx)).subscribe()
                 }.subscribeOn(Schedulers.computation())
             }
     }

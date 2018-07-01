@@ -1,18 +1,21 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
 import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
+import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
-import com.kaizendeveloper.bitcoinsandbox.util.wrap
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class TxHandler @Inject constructor(
-    private val utxoPool: UTXOPool,
-    private val mempoolRepository: MempoolRepository
+    private val utxoPoolRepo: UTXOPoolRepository,
+    private val mempoolRepo: MempoolRepository
 ) {
 
     /**
      * @return true if:
-     * (1) all outputs claimed by [tx] are in the current [UTXOPool],
+     * (1) all outputs claimed by [tx] are in the current utxo pool,
      * (2) the signatures on each input of [tx] are valid,
      * (3) no [UTXO] is claimed multiple times by [tx],
      * (4) all of [tx]s output values are non-negative, and
@@ -27,11 +30,12 @@ class TxHandler @Inject constructor(
         for ((index, input) in tx.inputs.withIndex()) {
 
             val utxo = UTXO.fromTxInput(input)
+            val utxoPool = utxoPoolRepo.getUtxoPool()
             if (!utxoPool.contains(utxo)) {
                 return false
             }
 
-            val txOutput = utxoPool.get(utxo)
+            val txOutput = utxoPool[utxo]
             val scriptSig = input.scriptSig
             if (txOutput == null
                 || scriptSig == null
@@ -65,22 +69,14 @@ class TxHandler @Inject constructor(
 
     /**
      * Handles unordered array of proposed transactions, checking each transaction for correctness, returning a
-     * mutually valid array of accepted transactions, and updating the current [UTXOPool] as appropriate.
+     * mutually valid array of accepted transactions, and updating the current utxo pool as appropriate.
      */
 
-    fun handleTxs(possibleTxs: Array<Transaction>): Array<Transaction> {
-        return possibleTxs
-            .asSequence()
+    fun handleTxs(possibleTxs: Array<Transaction>): Completable {
+        return Observable.fromIterable(possibleTxs.toList())
             .filter { isValidTx(it) }
-            .onEach {
-                it.inputs.forEach {
-                    utxoPool.remove(UTXO.fromTxInput(it))
-                }
-                it.outputs.forEachIndexed { index, output ->
-                    val newUtxo = UTXO(it.hash!!.wrap(), index)
-                    utxoPool.add(newUtxo, output)
-                }
-                mempoolRepository.insert(it)
-            }.toList().toTypedArray()
+            .concatMapCompletable {
+                utxoPoolRepo.updatePool(it).andThen(mempoolRepo.insert(it))
+            }.subscribeOn(Schedulers.computation())
     }
 }

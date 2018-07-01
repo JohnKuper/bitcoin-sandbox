@@ -3,13 +3,13 @@ package com.kaizendeveloper.bitcoinsandbox.ui
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.ViewModel
-import com.kaizendeveloper.bitcoinsandbox.db.entity.UTXOWithTxOutput
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepository
 import com.kaizendeveloper.bitcoinsandbox.model.UserManager
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
-import com.kaizendeveloper.bitcoinsandbox.util.findItem
+import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
+import com.kaizendeveloper.bitcoinsandbox.util.requireValue
 import javax.inject.Inject
 
 class UsersViewModel @Inject constructor(
@@ -22,7 +22,7 @@ class UsersViewModel @Inject constructor(
     val currentUser: LiveData<User> = object : MediatorLiveData<User>() {
 
         private var lastUser: User? = null
-        private var lastUTXOPool: List<UTXOWithTxOutput>? = null
+        private var lastUTXOPool: HashMap<UTXO, TransactionOutput>? = null
 
         init {
             addSource(usersRepository.currentUser, {
@@ -40,7 +40,7 @@ class UsersViewModel @Inject constructor(
             val utxoPool = lastUTXOPool
             if (user != null && utxoPool != null) {
                 value = user.copy().apply {
-                    balance = calculateBalance(user, utxoPool.map { it.txOutput })
+                    balance = calculateBalance(user, utxoPool.values.toList())
                 }
             }
         }
@@ -65,5 +65,6 @@ class UsersViewModel @Inject constructor(
         }
     }
 
-    fun getUserByAddress(address: String): User = users.findItem { it.address == address }
+    //TODO Don't rely on live data for business logic
+    fun getUserByAddress(address: String): User = users.requireValue().single { it.address == address }
 }

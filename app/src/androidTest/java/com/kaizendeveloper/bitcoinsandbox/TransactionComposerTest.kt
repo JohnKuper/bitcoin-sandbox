@@ -3,7 +3,6 @@ package com.kaizendeveloper.bitcoinsandbox
 import android.support.test.InstrumentationRegistry
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
-import com.kaizendeveloper.bitcoinsandbox.transaction.UTXOPool
 import com.kaizendeveloper.bitcoinsandbox.util.wrap
 import org.junit.After
 import org.junit.Before

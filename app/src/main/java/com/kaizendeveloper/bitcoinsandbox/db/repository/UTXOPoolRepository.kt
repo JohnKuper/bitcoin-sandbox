@@ -1,25 +1,48 @@
 package com.kaizendeveloper.bitcoinsandbox.db.repository
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
+import com.kaizendeveloper.bitcoinsandbox.db.SandboxDatabase
 import com.kaizendeveloper.bitcoinsandbox.db.dao.UTXOPoolDao
 import com.kaizendeveloper.bitcoinsandbox.db.entity.UTXOWithTxOutput
+import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
-import org.jetbrains.anko.doAsync
+import com.kaizendeveloper.bitcoinsandbox.util.wrap
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class UTXOPoolRepository @Inject constructor(
+    private val db: SandboxDatabase,
     private val utxoPoolDao: UTXOPoolDao
 ) {
 
-    val utxoPool = utxoPoolDao.getAll()
-
-    fun insert(utxo: UTXO, txOutput: TransactionOutput) {
-        doAsync { utxoPoolDao.insert(UTXOWithTxOutput(utxo, txOutput)) }
+    val utxoPool: LiveData<HashMap<UTXO, TransactionOutput>> = Transformations.switchMap(utxoPoolDao.getAll()) {
+        MutableLiveData<HashMap<UTXO, TransactionOutput>>().apply {
+            value = it.associateTo(hashMapOf()) { it.utxo to it.txOutput }
+        }
     }
 
-    fun delete(utxo: UTXO) {
-        doAsync { utxoPoolDao.delete(utxo.txHash.data, utxo.outputIndex) }
+    fun updatePool(transaction: Transaction): Completable {
+        return Completable.fromAction {
+            db.runInTransaction {
+                transaction.inputs.forEach {
+                    val oldUtxo = UTXO.fromTxInput(it)
+                    utxoPoolDao.delete(oldUtxo.txHash.data, oldUtxo.outputIndex)
+                }
+                transaction.outputs.forEachIndexed { index, output ->
+                    val newUtxo = UTXO(transaction.hash!!.wrap(), index)
+                    utxoPoolDao.insert(UTXOWithTxOutput(newUtxo, output))
+                }
+            }
+        }.subscribeOn(Schedulers.io())
+    }
+
+    fun getUtxoPool(): HashMap<UTXO, TransactionOutput> {
+        return utxoPoolDao.getAllAsList().associateTo(hashMapOf()) { it.utxo to it.txOutput }
     }
 }
