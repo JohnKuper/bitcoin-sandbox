@@ -1,4 +1,4 @@
-package com.kaizendeveloper.bitcoinsandbox.ui
+package com.kaizendeveloper.bitcoinsandbox.ui.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -12,8 +12,6 @@ import android.widget.RadioButton
 import android.widget.TextView
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
-import kotlinx.android.synthetic.main.dialog_new_user.view.userName
-import kotlinx.android.synthetic.main.fragment_users.fab
 import kotlinx.android.synthetic.main.fragment_users.users_list as userList
 
 

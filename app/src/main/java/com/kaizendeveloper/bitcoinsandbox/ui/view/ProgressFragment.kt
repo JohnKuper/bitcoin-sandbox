@@ -1,4 +1,4 @@
-package com.kaizendeveloper.bitcoinsandbox.ui
+package com.kaizendeveloper.bitcoinsandbox.ui.view
 
 import android.app.Dialog
 import android.os.Bundle
@@ -42,7 +42,8 @@ class ProgressFragment : DialogFragment() {
         fun show(fragmentManager: FragmentManager) {
             val fragment = fragmentManager.findFragmentByTag(TAG) as? ProgressFragment
             if (fragment == null) {
-                ProgressFragment().showNow(fragmentManager, TAG)
+                ProgressFragment()
+                    .showNow(fragmentManager, TAG)
             }
         }
 

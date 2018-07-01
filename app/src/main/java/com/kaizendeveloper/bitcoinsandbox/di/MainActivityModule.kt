@@ -1,6 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.di
 
-import com.kaizendeveloper.bitcoinsandbox.ui.MainActivity
+import com.kaizendeveloper.bitcoinsandbox.ui.view.MainActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

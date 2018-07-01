@@ -2,8 +2,8 @@ package com.kaizendeveloper.bitcoinsandbox.di
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import com.kaizendeveloper.bitcoinsandbox.ui.TransactionsViewModel
-import com.kaizendeveloper.bitcoinsandbox.ui.UsersViewModel
+import com.kaizendeveloper.bitcoinsandbox.ui.viewmodel.TransactionsViewModel
+import com.kaizendeveloper.bitcoinsandbox.ui.viewmodel.UsersViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

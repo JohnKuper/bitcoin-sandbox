@@ -1,4 +1,4 @@
-package com.kaizendeveloper.bitcoinsandbox.ui
+package com.kaizendeveloper.bitcoinsandbox.ui.viewmodel
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData

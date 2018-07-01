@@ -1,4 +1,4 @@
-package com.kaizendeveloper.bitcoinsandbox.ui
+package com.kaizendeveloper.bitcoinsandbox.ui.view
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -13,10 +13,8 @@ import android.widget.TextView
 import android.widget.Toast
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
+import com.kaizendeveloper.bitcoinsandbox.ui.viewmodel.TransactionsViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.fragment_transfer.amount
-import kotlinx.android.synthetic.main.fragment_transfer.fab
-import kotlinx.android.synthetic.main.fragment_transfer.sender
 import kotlinx.android.synthetic.main.fragment_transfer.spinner_recipient as spinnerRecipient
 
 class TransferFragment : UsersViewModelFragment() {

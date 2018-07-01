@@ -1,4 +1,4 @@
-package com.kaizendeveloper.bitcoinsandbox.ui
+package com.kaizendeveloper.bitcoinsandbox.ui.view
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
@@ -9,10 +9,9 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
+import com.kaizendeveloper.bitcoinsandbox.ui.viewmodel.UsersViewModel
 import com.kaizendeveloper.bitcoinsandbox.util.formatAmount
 import dagger.android.support.DaggerAppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.tabLayout
-import kotlinx.android.synthetic.main.activity_main.viewPager
 import javax.inject.Inject
 
 class MainActivity : DaggerAppCompatActivity() {
@@ -31,7 +30,8 @@ class MainActivity : DaggerAppCompatActivity() {
     }
 
     private fun setupViewPager() {
-        viewPager.adapter = BitCoinPagerAdapter(supportFragmentManager)
+        viewPager.adapter =
+                BitCoinPagerAdapter(supportFragmentManager)
         viewPager.offscreenPageLimit = 4
         tabLayout.setupWithViewPager(viewPager)
     }

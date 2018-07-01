@@ -1,9 +1,9 @@
 package com.kaizendeveloper.bitcoinsandbox.di
 
-import com.kaizendeveloper.bitcoinsandbox.ui.BlockchainFragment
-import com.kaizendeveloper.bitcoinsandbox.ui.MempoolFragment
-import com.kaizendeveloper.bitcoinsandbox.ui.TransferFragment
-import com.kaizendeveloper.bitcoinsandbox.ui.UsersFragment
+import com.kaizendeveloper.bitcoinsandbox.ui.view.BlockchainFragment
+import com.kaizendeveloper.bitcoinsandbox.ui.view.MempoolFragment
+import com.kaizendeveloper.bitcoinsandbox.ui.view.TransferFragment
+import com.kaizendeveloper.bitcoinsandbox.ui.view.UsersFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

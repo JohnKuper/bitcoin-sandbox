@@ -1,4 +1,4 @@
-package com.kaizendeveloper.bitcoinsandbox.ui
+package com.kaizendeveloper.bitcoinsandbox.ui.view
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Block
+import com.kaizendeveloper.bitcoinsandbox.ui.viewmodel.TransactionsViewModel
 import com.kaizendeveloper.bitcoinsandbox.util.toHexString
 import java.text.SimpleDateFormat
 import java.util.Date

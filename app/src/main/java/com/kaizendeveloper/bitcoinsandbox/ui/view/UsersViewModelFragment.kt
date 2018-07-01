@@ -1,9 +1,10 @@
-package com.kaizendeveloper.bitcoinsandbox.ui
+package com.kaizendeveloper.bitcoinsandbox.ui.view
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
+import com.kaizendeveloper.bitcoinsandbox.ui.viewmodel.UsersViewModel
 import com.kaizendeveloper.bitcoinsandbox.util.observeOnce
 
 open class UsersViewModelFragment : BaseFragment() {
