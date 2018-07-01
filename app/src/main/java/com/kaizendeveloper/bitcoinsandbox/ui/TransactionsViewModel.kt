@@ -12,7 +12,6 @@ import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransferManager
 import com.kaizendeveloper.bitcoinsandbox.util.requireValue
 import io.reactivex.Completable
-import io.reactivex.Single
 import javax.inject.Inject
 
 class TransactionsViewModel @Inject constructor(
@@ -34,9 +33,8 @@ class TransactionsViewModel @Inject constructor(
             .doFinally { notifyOperationInProgress(false) }
     }
 
-    fun mine(user: User): Single<Block> {
+    fun mine(user: User): Completable {
         return miner.mine(user)
-            .doOnSuccess { blockchainRepository.insert(it) }
             .doOnSubscribe { notifyOperationInProgress(true) }
             .doFinally { notifyOperationInProgress(false) }
     }

@@ -53,11 +53,10 @@ class SandboxApplication : Application(), HasActivityInjector {
     private fun bootstrapBlockChain() {
         userManager
             .createUserIfAbsent("Satoshi", true)
-            .flatMap { user ->
+            .flatMapCompletable { user ->
                 miner.mine(user)
-            }.subscribe { block ->
+            }.subscribe {
                 Log.d(SANDBOX_TAG, "Genesis block has been created")
-                blockchainRepo.insert(block)
                 prefHelper.setBootstrapped()
             }
 

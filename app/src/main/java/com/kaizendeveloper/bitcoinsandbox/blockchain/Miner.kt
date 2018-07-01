@@ -1,17 +1,15 @@
 package com.kaizendeveloper.bitcoinsandbox.blockchain
 
-import android.util.Log
-import com.kaizendeveloper.bitcoinsandbox.SANDBOX_TAG
 import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.db.repository.BlockchainRepository
 import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
-import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import com.kaizendeveloper.bitcoinsandbox.util.decodeBits
 import com.kaizendeveloper.bitcoinsandbox.util.toByteArray
 import com.kaizendeveloper.bitcoinsandbox.util.toHexString
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import java.io.ByteArrayOutputStream
@@ -22,12 +20,12 @@ import javax.inject.Singleton
 
 @Singleton
 class Miner @Inject constructor(
-    private val txHandler: TxHandler,
+    private val blockHandler: BlockHandler,
     private val mempoolRepo: MempoolRepository,
     private val blockchainRepo: BlockchainRepository
 ) {
 
-    fun mine(recipient: User): Single<Block> {
+    fun mine(recipient: User): Completable {
         return getUnconfirmedTransactions(recipient)
             .flatMap { transactions ->
                 val prevBlockHash = blockchainRepo.getLastHash()
@@ -45,15 +43,10 @@ class Miner @Inject constructor(
                         validHash = Cipher.sha256(immutableMiningData + nonce++.toByteArray())
                     }
 
-                    Log.d(SANDBOX_TAG, "Number of cycles: $nonce")
-                    Log.d(SANDBOX_TAG, "Valid hash: ${validHash.toHexString()}")
-
                     Block(validHash, prevBlockHash, merkleRoot, timeStamp, CURRENT_TARGET, nonce, transactions)
-                }.doOnSuccess {
-                    val coinbaseTx = it.transactions.single { it.isCoinbase }
-                    txHandler.handleTxs(arrayOf(coinbaseTx)).subscribe()
-                }.subscribeOn(Schedulers.computation())
-            }
+                }
+            }.flatMapCompletable { blockHandler.handleBlock(it) }
+            .subscribeOn(Schedulers.computation())
     }
 
     private fun getUnconfirmedTransactions(recipient: User): Single<List<Transaction>> {

@@ -10,6 +10,8 @@ import com.kaizendeveloper.bitcoinsandbox.db.dao.MempoolDao
 import com.kaizendeveloper.bitcoinsandbox.db.entity.BlockEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxEntity
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,19 +28,21 @@ class BlockchainRepository @Inject constructor(
         }
     }
 
-    fun insert(block: Block) {
-        val blockEntity = BlockEntity.fromBlock(block)
-
-        db.runInTransaction {
-            blockchainDao.insert(blockEntity)
-            block.transactions.forEach {
-                it.isConfirmed = true
-                mempoolDao.update(TxEntity.fromTransaction(it).apply {
-                    parentBlockId = blockEntity.uuid
-                })
+    fun insert(block: Block): Completable {
+        return Completable.fromAction {
+            val blockEntity = BlockEntity.fromBlock(block)
+            db.runInTransaction {
+                blockchainDao.insert(blockEntity)
+                block.transactions.forEach {
+                    it.isConfirmed = true
+                    mempoolDao.update(TxEntity.fromTransaction(it).apply {
+                        parentBlockId = blockEntity.uuid
+                    })
+                }
             }
-        }
+        }.subscribeOn(Schedulers.io())
     }
 
+    //TODO Don't rely on live data for business logic
     fun getLastHash(): ByteArray = blocks.value?.last()?.hash ?: Cipher.ZERO_HASH
 }

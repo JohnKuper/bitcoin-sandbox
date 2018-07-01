@@ -39,7 +39,7 @@ class MempoolFragment : UsersViewModelFragment() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                         { Toast.makeText(context, "Block has been minted", Toast.LENGTH_SHORT).show() },
-                        { Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show() }
+                        { Toast.makeText(context, "Mining is failed", Toast.LENGTH_SHORT).show() }
                     )
             }
         }
