@@ -8,13 +8,8 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module(
-    includes = [
-        ViewModelsModule::class,
-        DaoModule::class
-    ]
-)
-class AppModule {
+@Module(includes = [DaoModule::class])
+class TestAppModule {
 
     @Provides
     @Singleton
@@ -25,10 +20,9 @@ class AppModule {
     @Provides
     @Singleton
     fun provideDatabase(context: Context): SandboxDatabase {
-        return Room.databaseBuilder(
+        return Room.inMemoryDatabaseBuilder(
             context.applicationContext,
-            SandboxDatabase::class.java,
-            SandboxDatabase.DATABASE_NAME
-        ).build()
+            SandboxDatabase::class.java
+        ).allowMainThreadQueries().build()
     }
 }

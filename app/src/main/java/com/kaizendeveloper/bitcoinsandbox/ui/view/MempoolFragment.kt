@@ -14,7 +14,12 @@ import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.ui.viewmodel.TransactionsViewModel
 import com.kaizendeveloper.bitcoinsandbox.util.formatAmount
+import com.kaizendeveloper.bitcoinsandbox.util.hide
+import com.kaizendeveloper.bitcoinsandbox.util.show
 import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.fragment_mempool.emptyLabel
+import kotlinx.android.synthetic.main.fragment_mempool.fab
+import kotlinx.android.synthetic.main.fragment_mempool.mempoolList
 
 class MempoolFragment : UsersViewModelFragment() {
 

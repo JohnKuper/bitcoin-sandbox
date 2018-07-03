@@ -6,7 +6,6 @@ import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.model.BitCoinPublicKey
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import io.reactivex.Completable
-import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import java.security.interfaces.ECPublicKey
@@ -32,22 +31,16 @@ class UsersRepository @Inject constructor(
     }
 
     fun createUserIfAbsent(name: String, isCurrent: Boolean = false): Single<User> {
-        return getByName(name)
+        return userDao.getByName(name)
             .switchIfEmpty(
                 Single.fromCallable {
                     val keyPair = Cipher.generateECKeyPair(name)
                     val bitCoinPublicKey = BitCoinPublicKey(keyPair.public as ECPublicKey)
                     val user = User(name, bitCoinPublicKey.address, isCurrent)
 
-                    insert(user)
+                    userDao.insert(user)
                     user
                 }
             ).subscribeOn(Schedulers.computation())
     }
-
-    private fun insert(user: User) {
-        userDao.insert(user)
-    }
-
-    private fun getByName(name: String): Maybe<User> = userDao.getByName(name)
 }

@@ -66,6 +66,7 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$dagger"
     kapt "com.google.dagger:dagger-compiler:$dagger"
     kapt "com.google.dagger:dagger-android-processor:$dagger"
+    kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger"
 
     // Misc
     implementation 'org.bouncycastle:bcprov-jdk15on:1.59'

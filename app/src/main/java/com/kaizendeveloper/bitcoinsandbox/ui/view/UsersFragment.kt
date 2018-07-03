@@ -12,6 +12,8 @@ import android.widget.RadioButton
 import android.widget.TextView
 import com.kaizendeveloper.bitcoinsandbox.R
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
+import kotlinx.android.synthetic.main.dialog_new_user.view.userName
+import kotlinx.android.synthetic.main.fragment_users.fab
 import kotlinx.android.synthetic.main.fragment_users.users_list as userList
 
 

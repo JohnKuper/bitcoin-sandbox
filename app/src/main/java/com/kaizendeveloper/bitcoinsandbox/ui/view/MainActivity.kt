@@ -12,6 +12,8 @@ import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.ui.viewmodel.UsersViewModel
 import com.kaizendeveloper.bitcoinsandbox.util.formatAmount
 import dagger.android.support.DaggerAppCompatActivity
+import kotlinx.android.synthetic.main.activity_main.tabLayout
+import kotlinx.android.synthetic.main.activity_main.viewPager
 import javax.inject.Inject
 
 class MainActivity : DaggerAppCompatActivity() {
