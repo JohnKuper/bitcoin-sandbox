@@ -21,7 +21,7 @@ import javax.inject.Inject
 class MempoolRepositoryTest : DbTest() {
 
     @Inject
-    lateinit var mempoolRepository: MempoolRepository
+    lateinit var mempoolRepo: MempoolRepository
     @Inject
     lateinit var mempoolDao: MempoolDao
 
@@ -49,10 +49,10 @@ class MempoolRepositoryTest : DbTest() {
             build()
         }
 
-        mempoolRepository.insert(transaction).blockingAwait()
+        mempoolRepo.insert(transaction).blockingAwait()
 
         val dbTransaction = mempoolDao.getAll().requireValue()[0]
-        val unconfirmedTx = mempoolRepository.getAllUnconfirmed().blockingGet()[0]
+        val unconfirmedTx = mempoolRepo.getAllUnconfirmed().blockingGet()[0]
 
         assertEquals(transaction, dbTransaction.toTransaction())
         assertEquals(transaction, unconfirmedTx)

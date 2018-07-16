@@ -1,6 +1,7 @@
 package com.kaizendeveloper.bitcoinsandbox.di
 
 import android.app.Application
+import com.kaizendeveloper.bitcoinsandbox.db.repository.BlockchainRepositoryTest
 import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepositoryTest
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepositoryTest
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepositoryTest
@@ -27,4 +28,5 @@ interface TestAppComponent {
     fun inject(usersRepo: UsersRepositoryTest)
     fun inject(mempoolRepo: MempoolRepositoryTest)
     fun inject(utxoPoolRepo: UTXOPoolRepositoryTest)
+    fun inject(blockchainRepo: BlockchainRepositoryTest)
 }

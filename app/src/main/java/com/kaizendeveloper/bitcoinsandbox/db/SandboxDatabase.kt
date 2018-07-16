@@ -33,4 +33,8 @@ abstract class SandboxDatabase : RoomDatabase() {
     abstract fun utxoPoolDao(): UTXOPoolDao
     abstract fun mempoolDao(): MempoolDao
     abstract fun blockchainDao(): BlockchainDao
+
+    companion object {
+        const val DATABASE_NAME = "bitcoin.db"
+    }
 }

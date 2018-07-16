@@ -17,7 +17,7 @@ import javax.inject.Inject
 class UTXOPoolRepositoryTest : DbTest() {
 
     @Inject
-    lateinit var utxoPoolRepository: UTXOPoolRepository
+    lateinit var utxoPoolRepo: UTXOPoolRepository
 
     @Before
     fun setup() {
@@ -27,23 +27,23 @@ class UTXOPoolRepositoryTest : DbTest() {
     @Test
     fun updateUtxoPool() {
         val coinbaseTx = Transaction(25.00, SATOSHI.address)
-        utxoPoolRepository.updatePool(coinbaseTx).subscribe()
+        utxoPoolRepo.updatePool(coinbaseTx).subscribe()
 
         var utxo = UTXO(coinbaseTx.hash!!.wrap(), 0)
         var txOutput = coinbaseTx.outputs[0]
 
-        assertEquals(hashMapOf(utxo to txOutput), utxoPoolRepository.getUtxoPool())
+        assertEquals(hashMapOf(utxo to txOutput), utxoPoolRepo.getUtxoPool())
 
         val transferTx = Transaction().apply {
             addInput(coinbaseTx.hash!!, 0)
             addOutput(25.00, ALICE.address)
             build()
         }
-        utxoPoolRepository.updatePool(transferTx).subscribe()
+        utxoPoolRepo.updatePool(transferTx).subscribe()
 
         utxo = UTXO(transferTx.hash!!.wrap(), 0)
         txOutput = transferTx.outputs[0]
 
-        assertEquals(hashMapOf(utxo to txOutput), utxoPoolRepository.getUtxoPool())
+        assertEquals(hashMapOf(utxo to txOutput), utxoPoolRepo.getUtxoPool())
     }
 }

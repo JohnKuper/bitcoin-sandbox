@@ -22,4 +22,4 @@ fun ByteArray.wrap(): ByteArrayWrapper = ByteArrayWrapper(this)
 
 fun ByteArray.toUUIDString(): String = UUID.nameUUIDFromBytes(this).toString()
 
-fun randomByteArray() = System.currentTimeMillis().toByteArray()
+fun randomByteArray() = UUID.randomUUID().toString().toByteArray()

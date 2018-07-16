@@ -7,7 +7,6 @@ import org.junit.Assert.assertNotNull
 import org.junit.Test
 import java.util.UUID
 
-
 class MerkleRootGeneratorTest {
 
     private fun generateMockTxsHashes(count: Int): List<ByteArray> {
