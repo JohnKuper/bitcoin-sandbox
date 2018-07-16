@@ -16,7 +16,6 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
 
-//TODO Make All repos testable by passing executors to them separately, otherwise doAsync is not testable
 @Singleton
 class MempoolRepository @Inject constructor(
     private val db: SandboxDatabase,

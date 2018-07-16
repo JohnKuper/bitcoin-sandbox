@@ -23,7 +23,7 @@ open class UsersViewModelFragment : BaseFragment() {
         })
     }
 
-    //TODO Bull Shit!!! View model already knows current user. Just delegate user's click to it.
+    //TODO Bullshit!!! View model already knows current user. Just delegate user's click to it.
     protected fun withCurrentUser(block: (User) -> Unit) {
         usersViewModel.currentUser.observeOnce {
             block(it!!)

@@ -33,23 +33,4 @@ abstract class SandboxDatabase : RoomDatabase() {
     abstract fun utxoPoolDao(): UTXOPoolDao
     abstract fun mempoolDao(): MempoolDao
     abstract fun blockchainDao(): BlockchainDao
-
-    companion object {
-
-        const val DATABASE_NAME = "bitcoin.db"
-
-        //TODO Maybe useful for tests coz dagger is not ready yet
-        @Volatile
-        private var INSTANCE: SandboxDatabase? = null
-
-//        fun getInstance(context: Context): SandboxDatabase {
-//            return INSTANCE ?: synchronized(this) {
-//                INSTANCE ?: Room.databaseBuilder(
-//                    context.applicationContext,
-//                    SandboxDatabase::class.java, DATABASE_NAME
-//                ).allowMainThreadQueries()
-//                    .build().also { INSTANCE = it }
-//            }
-//        }
-    }
 }

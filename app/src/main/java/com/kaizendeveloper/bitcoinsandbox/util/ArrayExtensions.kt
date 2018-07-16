@@ -21,3 +21,5 @@ fun ByteArray.toHexString(): String {
 fun ByteArray.wrap(): ByteArrayWrapper = ByteArrayWrapper(this)
 
 fun ByteArray.toUUIDString(): String = UUID.nameUUIDFromBytes(this).toString()
+
+fun randomByteArray() = System.currentTimeMillis().toByteArray()

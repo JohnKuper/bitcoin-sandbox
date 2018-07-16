@@ -4,6 +4,8 @@ import android.support.test.runner.AndroidJUnit4
 import com.kaizendeveloper.bitcoinsandbox.db.DbTest
 import com.kaizendeveloper.bitcoinsandbox.db.dao.UserDao
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
+import com.kaizendeveloper.bitcoinsandbox.util.ALICE_NAME
+import com.kaizendeveloper.bitcoinsandbox.util.SATOSHI_NAME
 import com.kaizendeveloper.bitcoinsandbox.util.requireValue
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
@@ -26,7 +28,7 @@ class UsersRepositoryTest : DbTest() {
     }
 
     @Test
-    fun testCreateUserIfAbsent() {
+    fun createUserIfAbsent() {
         val satoshi = createUserIfAbsent(SATOSHI_NAME, true)
         val dbSatoshi = getByName(SATOSHI_NAME)
 
@@ -45,7 +47,7 @@ class UsersRepositoryTest : DbTest() {
     }
 
     @Test
-    fun testUpdateCurrent() {
+    fun updateCurrent() {
         val satoshi = createUserIfAbsent(SATOSHI_NAME, true)
         val alice = createUserIfAbsent(ALICE_NAME, false)
 
@@ -65,10 +67,5 @@ class UsersRepositoryTest : DbTest() {
 
     private fun getByName(name: String): User {
         return userDao.getByName(name).blockingGet()
-    }
-
-    companion object {
-        const val SATOSHI_NAME = "Satoshi"
-        const val ALICE_NAME = "Alice"
     }
 }

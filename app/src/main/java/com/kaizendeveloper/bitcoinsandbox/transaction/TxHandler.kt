@@ -71,7 +71,6 @@ class TxHandler @Inject constructor(
      * Handles unordered array of proposed transactions, checking each transaction for correctness, returning a
      * mutually valid array of accepted transactions, and updating the current utxo pool as appropriate.
      */
-
     fun handleTxs(possibleTxs: Array<Transaction>): Completable {
         return Observable.fromIterable(possibleTxs.toList())
             .filter { isValidTx(it) }
