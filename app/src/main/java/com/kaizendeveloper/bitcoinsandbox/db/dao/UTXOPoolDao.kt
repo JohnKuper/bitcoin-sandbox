@@ -15,8 +15,5 @@ interface UTXOPoolDao {
     fun delete(txHash: ByteArray, outputIndex: Int)
 
     @Query("SELECT * from utxo_pool")
-    fun getAllObservable(): LiveData<List<UTXOWithTxOutput>>
-
-    @Query("SELECT * from utxo_pool")
-    fun getAll(): List<UTXOWithTxOutput>
+    fun getAll(): LiveData<List<UTXOWithTxOutput>>
 }

@@ -9,6 +9,7 @@ import com.kaizendeveloper.bitcoinsandbox.db.entity.UTXOWithTxOutput
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
+import com.kaizendeveloper.bitcoinsandbox.util.requireValue
 import com.kaizendeveloper.bitcoinsandbox.util.wrap
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
@@ -21,11 +22,12 @@ class UTXOPoolRepository @Inject constructor(
     private val utxoPoolDao: UTXOPoolDao
 ) {
 
-    val utxoPool: LiveData<HashMap<UTXO, TransactionOutput>> = Transformations.switchMap(utxoPoolDao.getAllObservable()) {
-        MutableLiveData<HashMap<UTXO, TransactionOutput>>().apply {
-            value = it.associateTo(hashMapOf()) { it.utxo to it.txOutput }
+    val utxoPool: LiveData<HashMap<UTXO, TransactionOutput>> =
+        Transformations.switchMap(utxoPoolDao.getAll()) {
+            MutableLiveData<HashMap<UTXO, TransactionOutput>>().apply {
+                value = it.associateTo(hashMapOf()) { it.utxo to it.txOutput }
+            }
         }
-    }
 
     fun updatePool(transaction: Transaction): Completable {
         return Completable.fromAction {
@@ -43,6 +45,6 @@ class UTXOPoolRepository @Inject constructor(
     }
 
     fun getUtxoPool(): HashMap<UTXO, TransactionOutput> {
-        return utxoPoolDao.getAll().associateTo(hashMapOf()) { it.utxo to it.txOutput }
+        return utxoPoolDao.getAll().requireValue().associateTo(hashMapOf()) { it.utxo to it.txOutput }
     }
 }
