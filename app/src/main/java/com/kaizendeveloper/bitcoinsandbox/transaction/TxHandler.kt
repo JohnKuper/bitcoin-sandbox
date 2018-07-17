@@ -4,7 +4,7 @@ import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import io.reactivex.Completable
-import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -68,13 +68,12 @@ class TxHandler @Inject constructor(
     }
 
     /**
-     * Handles unordered array of proposed transactions, checking each transaction for correctness, returning a
-     * mutually valid array of accepted transactions, and updating the current utxo pool as appropriate.
+     * Handles proposed transaction and updates current utxo pool and mempool if it's a valid.
      */
-    fun handleTxs(possibleTxs: Array<Transaction>): Completable {
-        return Observable.fromIterable(possibleTxs.toList())
+    fun handle(transaction: Transaction): Completable {
+        return Single.just(transaction)
             .filter { isValidTx(it) }
-            .concatMapCompletable {
+            .flatMapCompletable {
                 utxoPoolRepo.updatePool(it).andThen(mempoolRepo.insert(it))
             }.subscribeOn(Schedulers.computation())
     }

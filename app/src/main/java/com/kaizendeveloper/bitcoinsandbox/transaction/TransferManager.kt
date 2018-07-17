@@ -40,7 +40,7 @@ class TransferManager @Inject constructor(
                 build()
             }
         }.flatMapCompletable {
-            txHandler.handleTxs(arrayOf(it))
+            txHandler.handle(it)
         }.subscribeOn(Schedulers.computation())
     }
 

@@ -11,9 +11,8 @@ class BlockHandler @Inject constructor(
 ) {
 
     fun handleBlock(block: Block): Completable {
-        val coinbaseTx = arrayOf(block.transactions.single { it.isCoinbase })
         return txHandler
-            .handleTxs(coinbaseTx)
+            .handle(block.transactions.single { it.isCoinbase })
             .andThen(blockchainRepo.insert(block))
     }
 }
