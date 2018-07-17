@@ -4,8 +4,8 @@ import android.support.test.runner.AndroidJUnit4
 import com.kaizendeveloper.bitcoinsandbox.db.DbTest
 import com.kaizendeveloper.bitcoinsandbox.db.dao.UserDao
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
-import com.kaizendeveloper.bitcoinsandbox.util.ALICE_NAME
-import com.kaizendeveloper.bitcoinsandbox.util.SATOSHI_NAME
+import com.kaizendeveloper.bitcoinsandbox.util.UserTestUtil.Companion.ALICE
+import com.kaizendeveloper.bitcoinsandbox.util.UserTestUtil.Companion.SATOSHI
 import com.kaizendeveloper.bitcoinsandbox.util.requireValue
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
@@ -29,18 +29,18 @@ class UsersRepositoryTest : DbTest() {
 
     @Test
     fun createUserIfAbsent() {
-        val satoshi = createUserIfAbsent(SATOSHI_NAME, true)
-        val dbSatoshi = getByName(SATOSHI_NAME)
+        val satoshi = createUserIfAbsent(SATOSHI.name, true)
+        val dbSatoshi = getByName(SATOSHI.name)
 
         assertNotNull(satoshi)
         assertEquals(satoshi, dbSatoshi)
 
-        createUserIfAbsent(SATOSHI_NAME, true)
+        createUserIfAbsent(SATOSHI.name, true)
         var users = userDao.getAll().requireValue()
 
         assertEquals(1, users.size)
 
-        createUserIfAbsent(ALICE_NAME, false)
+        createUserIfAbsent(ALICE.name, false)
         users = userDao.getAll().requireValue()
 
         assertEquals(2, users.size)
@@ -48,16 +48,16 @@ class UsersRepositoryTest : DbTest() {
 
     @Test
     fun updateCurrent() {
-        val satoshi = createUserIfAbsent(SATOSHI_NAME, true)
-        val alice = createUserIfAbsent(ALICE_NAME, false)
+        val satoshi = createUserIfAbsent(SATOSHI.name, true)
+        val alice = createUserIfAbsent(ALICE.name, false)
 
         usersRepo.updateCurrent(satoshi, alice).blockingAwait()
 
         satoshi.isCurrent = false
         alice.isCurrent = true
 
-        assertEquals(satoshi, getByName(SATOSHI_NAME))
-        assertEquals(alice, getByName(ALICE_NAME))
+        assertEquals(satoshi, getByName(SATOSHI.name))
+        assertEquals(alice, getByName(ALICE.name))
     }
 
 

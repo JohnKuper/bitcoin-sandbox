@@ -17,66 +17,69 @@ import java.security.Signature
 import java.security.spec.ECGenParameterSpec
 import java.security.spec.X509EncodedKeySpec
 
-object Cipher {
+class Cipher {
 
-    private const val ANDROID_KEY_STORE = "AndroidKeyStore"
+    companion object {
 
-    val ZERO_HASH = ByteArray(32)
-    val MAX_HASH = ByteArray(32, { 0xFF.toByte() })
+        private const val ANDROID_KEY_STORE = "AndroidKeyStore"
 
-    fun generateECKeyPair(alias: String): KeyPair {
-        val keyGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, ANDROID_KEY_STORE).apply {
-            initialize(
-                KeyGenParameterSpec.Builder(alias, PURPOSE_SIGN or PURPOSE_VERIFY)
-                    .setAlgorithmParameterSpec(ECGenParameterSpec("secp256r1"))
-                    .setDigests(KeyProperties.DIGEST_SHA256)
-                    .build()
-            )
+        val ZERO_HASH = ByteArray(32)
+        val MAX_HASH = ByteArray(32) { 0xFF.toByte() }
+
+        fun generateECKeyPair(alias: String): KeyPair {
+            val keyGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, ANDROID_KEY_STORE).apply {
+                initialize(
+                    KeyGenParameterSpec.Builder(alias, PURPOSE_SIGN or PURPOSE_VERIFY)
+                        .setAlgorithmParameterSpec(ECGenParameterSpec("secp256r1"))
+                        .setDigests(KeyProperties.DIGEST_SHA256)
+                        .build()
+                )
+            }
+
+            return keyGen.genKeyPair()
         }
 
-        return keyGen.genKeyPair()
-    }
-
-    fun verifySignature(pubKey: PublicKey, message: ByteArray, signature: ByteArray): Boolean {
-        val sig = getECSignature().apply {
-            initVerify(pubKey)
+        fun verifySignature(pubKey: PublicKey, message: ByteArray, signature: ByteArray): Boolean {
+            val sig = getECSignature().apply {
+                initVerify(pubKey)
+            }
+            sig.update(message)
+            return sig.verify(signature)
         }
-        sig.update(message)
-        return sig.verify(signature)
-    }
 
-    fun sign(input: ByteArray, privateKey: PrivateKey): ByteArray {
-        val signature = getECSignature().apply {
-            initSign(privateKey)
+        fun sign(input: ByteArray, privateKey: PrivateKey): ByteArray {
+            val signature = getECSignature().apply {
+                initSign(privateKey)
+            }
+            signature.update(input)
+            return signature.sign()
         }
-        signature.update(input)
-        return signature.sign()
-    }
 
-    fun sha256(input: ByteArray): ByteArray = MessageDigest.getInstance("SHA-256").digest(input)
+        fun sha256(input: ByteArray): ByteArray = MessageDigest.getInstance("SHA-256").digest(input)
 
-    fun sha256Twice(input: ByteArray) = sha256(sha256(input))
+        fun sha256Twice(input: ByteArray) = sha256(sha256(input))
 
-    fun ripeMD160(input: ByteArray): ByteArray =
-        MessageDigest.getInstance("RipeMD160", BouncyCastleProvider()).digest(input)
+        fun ripeMD160(input: ByteArray): ByteArray =
+            MessageDigest.getInstance("RipeMD160", BouncyCastleProvider()).digest(input)
 
-    fun retrieveKeyPair(user: User): KeyPair {
-        val ks = KeyStore.getInstance(ANDROID_KEY_STORE).apply {
-            load(null)
+        fun retrieveKeyPair(user: User): KeyPair {
+            val ks = KeyStore.getInstance(ANDROID_KEY_STORE).apply {
+                load(null)
+            }
+            val entry = ks.getEntry(user.name, null)
+            val privateKey = (entry as KeyStore.PrivateKeyEntry).privateKey
+            val publicKey = ks.getCertificate(user.name).publicKey
+
+            return KeyPair(publicKey, privateKey)
         }
-        val entry = ks.getEntry(user.name, null)
-        val privateKey = (entry as KeyStore.PrivateKeyEntry).privateKey
-        val publicKey = ks.getCertificate(user.name).publicKey
 
-        return KeyPair(publicKey, privateKey)
+        fun decodePublicKey(encoded: ByteArray): PublicKey {
+            val spec = X509EncodedKeySpec(encoded)
+            val keyFactory = KeyFactory.getInstance("EC")
+
+            return keyFactory.generatePublic(spec)
+        }
+
+        private fun getECSignature() = Signature.getInstance("SHA256withECDSA")
     }
-
-    fun decodePublicKey(encoded: ByteArray): PublicKey {
-        val spec = X509EncodedKeySpec(encoded)
-        val keyFactory = KeyFactory.getInstance("EC")
-
-        return keyFactory.generatePublic(spec)
-    }
-
-    private fun getECSignature() = Signature.getInstance("SHA256withECDSA")
 }

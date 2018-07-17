@@ -1,10 +1,8 @@
-package com.kaizendeveloper.bitcoinsandbox.util
+package com.kaizendeveloper.bitcoinsandbox.di
 
 import android.support.test.InstrumentationRegistry
 import com.kaizendeveloper.bitcoinsandbox.SandboxApplication
-import com.kaizendeveloper.bitcoinsandbox.TrampolineSchedulerRule
-import com.kaizendeveloper.bitcoinsandbox.di.DaggerTestAppComponent
-import com.kaizendeveloper.bitcoinsandbox.di.TestAppComponent
+import com.kaizendeveloper.bitcoinsandbox.util.TrampolineSchedulerRule
 import org.junit.Before
 import org.junit.Rule
 

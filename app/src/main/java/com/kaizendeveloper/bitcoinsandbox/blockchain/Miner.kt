@@ -31,21 +31,19 @@ class Miner @Inject constructor(
                 val prevBlockHash = blockchainRepo.getLastHash()
                 val merkleRoot = MerkleRootGenerator.generate(transactions.map { it.hash!! })
                 val timeStamp = Calendar.getInstance().timeInMillis
-
                 val immutableMiningData = prepareImmutableRawMiningData(prevBlockHash, merkleRoot, timeStamp)
+                val target = decodeBits(CURRENT_TARGET)
+
                 var nonce = 0
+                var validHash = Cipher.MAX_HASH
 
-                //TODO Rewrite this in more Rx style using different operators
-                Single.fromCallable {
-                    var validHash = Cipher.MAX_HASH
-
-                    while (BigInteger(validHash.toHexString(), 16) >= decodeBits(CURRENT_TARGET)) {
-                        validHash = Cipher.sha256(immutableMiningData + nonce++.toByteArray())
-                    }
-
-                    Block(validHash, prevBlockHash, merkleRoot, timeStamp, CURRENT_TARGET, nonce, transactions)
+                while (BigInteger(validHash.toHexString(), 16) >= target) {
+                    validHash = Cipher.sha256(immutableMiningData + nonce++.toByteArray())
                 }
-            }.flatMapCompletable { blockHandler.handleBlock(it) }
+
+                Single.just(Block(validHash, prevBlockHash, merkleRoot, timeStamp, CURRENT_TARGET, nonce, transactions))
+            }
+            .flatMapCompletable { blockHandler.handleBlock(it) }
             .subscribeOn(Schedulers.computation())
     }
 

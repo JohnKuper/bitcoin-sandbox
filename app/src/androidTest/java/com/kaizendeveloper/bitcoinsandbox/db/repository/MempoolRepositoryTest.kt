@@ -5,9 +5,9 @@ import com.kaizendeveloper.bitcoinsandbox.db.DbTest
 import com.kaizendeveloper.bitcoinsandbox.db.dao.MempoolDao
 import com.kaizendeveloper.bitcoinsandbox.transaction.ScriptSig
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
-import com.kaizendeveloper.bitcoinsandbox.util.ALICE_NAME
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
-import com.kaizendeveloper.bitcoinsandbox.util.SATOSHI_NAME
+import com.kaizendeveloper.bitcoinsandbox.util.UserTestUtil.Companion.ALICE
+import com.kaizendeveloper.bitcoinsandbox.util.UserTestUtil.Companion.SATOSHI
 import com.kaizendeveloper.bitcoinsandbox.util.randomByteArray
 import com.kaizendeveloper.bitcoinsandbox.util.requireValue
 import com.kaizendeveloper.bitcoinsandbox.util.wrap
@@ -32,8 +32,8 @@ class MempoolRepositoryTest : DbTest() {
 
     @Test
     fun insertTransaction() {
-        val satoshiKeyPair = Cipher.generateECKeyPair(SATOSHI_NAME)
-        val aliceKeyPair = Cipher.generateECKeyPair(ALICE_NAME)
+        val satoshiKeyPair = Cipher.generateECKeyPair(SATOSHI.name)
+        val aliceKeyPair = Cipher.generateECKeyPair(ALICE.name)
 
         val transaction = Transaction()
         val satoshiScriptSig = ScriptSig(randomByteArray().wrap(), satoshiKeyPair.public)
@@ -42,8 +42,8 @@ class MempoolRepositoryTest : DbTest() {
         with(transaction) {
             addInput(randomByteArray(), 0)
             addInput(randomByteArray(), 1)
-            addOutput(10.00, "satoshi_address")
-            addOutput(15.55, "alice_address")
+            addOutput(10.00, SATOSHI.address)
+            addOutput(15.55, ALICE.address)
             addScriptSig(satoshiScriptSig, 0)
             addScriptSig(aliceScriptSig, 1)
             build()
