@@ -1,13 +1,13 @@
 package com.kaizendeveloper.bitcoinsandbox.db.repository
 
+import UserTestUtil.Companion.ALICE
+import UserTestUtil.Companion.SATOSHI
 import android.support.test.runner.AndroidJUnit4
 import com.kaizendeveloper.bitcoinsandbox.db.DbTest
 import com.kaizendeveloper.bitcoinsandbox.db.dao.MempoolDao
 import com.kaizendeveloper.bitcoinsandbox.transaction.ScriptSig
 import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
-import com.kaizendeveloper.bitcoinsandbox.util.UserTestUtil.Companion.ALICE
-import com.kaizendeveloper.bitcoinsandbox.util.UserTestUtil.Companion.SATOSHI
 import com.kaizendeveloper.bitcoinsandbox.util.randomByteArray
 import com.kaizendeveloper.bitcoinsandbox.util.requireValue
 import com.kaizendeveloper.bitcoinsandbox.util.wrap

@@ -1,11 +1,11 @@
 package com.kaizendeveloper.bitcoinsandbox.db.repository
 
+import UserTestUtil.Companion.ALICE
+import UserTestUtil.Companion.SATOSHI
 import android.support.test.runner.AndroidJUnit4
 import com.kaizendeveloper.bitcoinsandbox.db.DbTest
 import com.kaizendeveloper.bitcoinsandbox.db.dao.UserDao
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
-import com.kaizendeveloper.bitcoinsandbox.util.UserTestUtil.Companion.ALICE
-import com.kaizendeveloper.bitcoinsandbox.util.UserTestUtil.Companion.SATOSHI
 import com.kaizendeveloper.bitcoinsandbox.util.requireValue
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull

@@ -1,5 +1,3 @@
-package com.kaizendeveloper.bitcoinsandbox.util
-
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 
 class UserTestUtil {

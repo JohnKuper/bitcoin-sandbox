@@ -6,9 +6,9 @@ import com.kaizendeveloper.bitcoinsandbox.blockchain.CURRENT_TARGET
 import com.kaizendeveloper.bitcoinsandbox.db.DbTest
 import com.kaizendeveloper.bitcoinsandbox.db.dao.BlockchainDao
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
-import com.kaizendeveloper.bitcoinsandbox.util.generateMockTransactions
 import com.kaizendeveloper.bitcoinsandbox.util.randomByteArray
 import com.kaizendeveloper.bitcoinsandbox.util.requireValue
+import generateMockTransactions
 import junit.framework.Assert.assertEquals
 import org.junit.Assert.assertArrayEquals
 import org.junit.Before

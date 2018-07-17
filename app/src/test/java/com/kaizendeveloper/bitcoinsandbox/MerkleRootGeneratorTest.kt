@@ -1,21 +1,15 @@
 package com.kaizendeveloper.bitcoinsandbox
 
 import com.kaizendeveloper.bitcoinsandbox.blockchain.MerkleRootGenerator
-import com.kaizendeveloper.bitcoinsandbox.transaction.Transaction
+import generateMockTransactions
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
-import java.util.UUID
 
 class MerkleRootGeneratorTest {
 
     private fun generateMockTxsHashes(count: Int): List<ByteArray> {
-        return arrayListOf<ByteArray>().apply {
-            repeat(count) {
-                val tx = Transaction(10.00, UUID.randomUUID().toString())
-                add(tx.hash!!)
-            }
-        }
+        return generateMockTransactions(count).map { it.hash!! }
     }
 
     @Test

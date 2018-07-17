@@ -3,7 +3,7 @@ package com.kaizendeveloper.bitcoinsandbox.db.repository
 import com.kaizendeveloper.bitcoinsandbox.db.SandboxDatabase
 import com.kaizendeveloper.bitcoinsandbox.db.dao.UserDao
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
-import com.kaizendeveloper.bitcoinsandbox.model.BitCoinPublicKey
+import com.kaizendeveloper.bitcoinsandbox.model.AddressGenerator
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -35,8 +35,8 @@ class UsersRepository @Inject constructor(
             .switchIfEmpty(
                 Single.fromCallable {
                     val keyPair = Cipher.generateECKeyPair(name)
-                    val bitCoinPublicKey = BitCoinPublicKey(keyPair.public as ECPublicKey)
-                    val user = User(name, bitCoinPublicKey.address, isCurrent)
+                    val address = AddressGenerator.generate(keyPair.public as ECPublicKey)
+                    val user = User(name, address, isCurrent)
 
                     userDao.insert(user)
                     user

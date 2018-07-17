@@ -1,8 +1,8 @@
 package com.kaizendeveloper.bitcoinsandbox
 
+import UserTestUtil.Companion.SATOSHI
 import android.support.test.runner.AndroidJUnit4
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
-import com.kaizendeveloper.bitcoinsandbox.util.UserTestUtil.Companion.SATOSHI
 import com.kaizendeveloper.bitcoinsandbox.util.randomByteArray
 import junit.framework.Assert.assertTrue
 import org.junit.Assert.assertArrayEquals
