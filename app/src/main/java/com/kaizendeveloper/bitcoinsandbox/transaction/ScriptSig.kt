@@ -8,7 +8,6 @@ import java.util.Arrays
 /**
  * Simple version of the real scriptSig for validating [TransactionInput]
  */
-//TODO It's possible to replace PublicKey here with wrapper since only encoded is used
 class ScriptSig(val signature: ByteArrayWrapper, val publicKey: PublicKey) {
 
     fun serialize(outputStream: OutputStream) {

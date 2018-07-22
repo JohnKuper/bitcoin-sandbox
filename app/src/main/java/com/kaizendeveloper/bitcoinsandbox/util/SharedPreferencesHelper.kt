@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 
-//TODO Introduces type safety for keys via Enum or remove this class if there is only one field
 class SharedPreferencesHelper private constructor(context: Context) {
 
     init {
@@ -28,8 +27,8 @@ class SharedPreferencesHelper private constructor(context: Context) {
         }
     }
 
-    fun setBootstrapped() {
-        prefs.edit { putBoolean(KEY_IS_BOOTSTRAPPED, true) }
+    fun setBootstrapped(isBootstrapped: Boolean) {
+        prefs.edit { putBoolean(KEY_IS_BOOTSTRAPPED, isBootstrapped) }
     }
 
     fun isBootstrapped() = prefs.getBoolean(KEY_IS_BOOTSTRAPPED, false)

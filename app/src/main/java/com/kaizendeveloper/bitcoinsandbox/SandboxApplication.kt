@@ -17,8 +17,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
 import javax.inject.Inject
 
-const val SANDBOX_TAG = "BitcoinSandbox"
-
 class SandboxApplication : Application(), HasActivityInjector {
 
     @Inject
@@ -61,7 +59,7 @@ class SandboxApplication : Application(), HasActivityInjector {
             }.observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Toast.makeText(this, "Genesis block has been created", Toast.LENGTH_LONG).show()
-                prefHelper.setBootstrapped()
+                prefHelper.setBootstrapped(true)
             }
     }
 

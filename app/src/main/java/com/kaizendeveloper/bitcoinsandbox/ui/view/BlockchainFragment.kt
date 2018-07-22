@@ -50,9 +50,10 @@ class BlockchainFragment : BaseFragment() {
         }
     }
 
-    //TODO Too many similar adapters. Probably should be improved.
     inner class BlocksAdapter(private val blocks: MutableList<Block>) :
         RecyclerView.Adapter<BlocksAdapter.ViewHolder>() {
+
+        private val dateFormat = SimpleDateFormat("yyyy-MM-dd, HH:mm:ss", Locale.UK)
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val inflater = LayoutInflater.from(parent.context)
@@ -81,14 +82,13 @@ class BlockchainFragment : BaseFragment() {
 
         private fun formatTimestamp(timestamp: Long): String {
             val timestampDate = Date(timestamp)
-            val formatter = SimpleDateFormat("yyyy-MM-dd, HH:mm:ss", Locale.UK)
-            return formatter.format(timestampDate)
+            return dateFormat.format(timestampDate)
         }
 
-        fun setBlocks(blocks: List<Block>) {
-            with(this.blocks) {
+        fun setBlocks(newBlocks: List<Block>) {
+            with(blocks) {
                 clear()
-                addAll(blocks)
+                addAll(newBlocks)
                 notifyDataSetChanged()
             }
         }

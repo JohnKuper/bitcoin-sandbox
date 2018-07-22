@@ -63,6 +63,5 @@ class UsersViewModel @Inject constructor(
         }
     }
 
-    //TODO Don't rely on live data for business logic
     fun getUserByAddress(address: String): User = users.requireValue().single { it.address == address }
 }

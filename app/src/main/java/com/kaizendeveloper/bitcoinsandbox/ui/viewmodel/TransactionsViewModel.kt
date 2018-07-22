@@ -39,7 +39,6 @@ class TransactionsViewModel @Inject constructor(
             .doFinally { notifyOperationInProgress(false) }
     }
 
-    //TODO Don't rely on live data for business logic
     fun getTransactionByHash(hash: ByteArray): Transaction {
         return transactions.requireValue().single {
             it.hash!!.contentEquals(hash)
