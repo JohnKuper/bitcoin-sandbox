@@ -11,6 +11,7 @@ import com.kaizendeveloper.bitcoinsandbox.db.entity.BlockEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.TxEntity
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import io.reactivex.Completable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,5 +44,10 @@ class BlockchainRepository @Inject constructor(
         }.subscribeOn(Schedulers.io())
     }
 
-    fun getLastHash(): ByteArray = blockchainDao.getLastBlock()?.toBlock()?.hash ?: Cipher.ZERO_HASH
+    fun getLastHash(): Single<ByteArray> {
+        return blockchainDao
+            .getLastBlock()
+            .map { it.toBlock().hash }
+            .switchIfEmpty(Single.just(Cipher.ZERO_HASH))
+    }
 }

@@ -1,6 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox
 
-import UserTestUtil.Companion.SATOSHI
+import SATOSHI
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 import com.kaizendeveloper.bitcoinsandbox.util.toByteArray
 import org.junit.Assert.assertArrayEquals

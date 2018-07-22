@@ -7,6 +7,7 @@ import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import com.kaizendeveloper.bitcoinsandbox.db.entity.BlockEntity
 import com.kaizendeveloper.bitcoinsandbox.db.entity.BlockWithTransactions
+import io.reactivex.Maybe
 
 @Dao
 interface BlockchainDao {
@@ -19,5 +20,5 @@ interface BlockchainDao {
 
     @Transaction
     @Query("SELECT * FROM blockchain ORDER BY timestamp DESC LIMIT 1")
-    fun getLastBlock(): BlockWithTransactions?
+    fun getLastBlock(): Maybe<BlockWithTransactions?>
 }

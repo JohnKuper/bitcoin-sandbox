@@ -11,8 +11,13 @@ class BlockHandler @Inject constructor(
 ) {
 
     fun handleBlock(block: Block): Completable {
-        return txHandler
-            .handle(block.transactions.single { it.isCoinbase })
-            .andThen(blockchainRepo.insert(block))
+        return blockchainRepo
+            .getLastHash()
+            .filter { it.contentEquals(block.prevBlockHash) }
+            .flatMapCompletable {
+                txHandler
+                    .handle(block.transactions.single { it.isCoinbase })
+                    .andThen(blockchainRepo.insert(block))
+            }
     }
 }

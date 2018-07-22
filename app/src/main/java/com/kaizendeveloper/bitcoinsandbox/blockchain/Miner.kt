@@ -28,7 +28,7 @@ class Miner @Inject constructor(
     fun mine(recipient: User): Completable {
         return getUnconfirmedTransactions(recipient)
             .flatMap { transactions ->
-                val prevBlockHash = blockchainRepo.getLastHash()
+                val prevBlockHash = blockchainRepo.getLastHash().blockingGet()
                 val merkleRoot = MerkleRootGenerator.generate(transactions.map { it.hash!! })
                 val timeStamp = Calendar.getInstance().timeInMillis
                 val immutableMiningData = prepareImmutableRawMiningData(prevBlockHash, merkleRoot, timeStamp)
