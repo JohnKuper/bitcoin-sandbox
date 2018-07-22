@@ -15,13 +15,13 @@ Bitcoin sandbox is a simplified version of Bitcoin network fundamentals like:
 - Block mining, considering network difficulty
 - Connecting blocks together into the blockchain
     
-# How everything works:
+# Functionality overview:
 1. At the beginning network should be bootstrapped, therefore 3 new users Satoshi, Alice, and Bob are created automatically. Each of them has a unique key pair. Satoshi is set as an active user and he is the author of a genesis block. More users can be created if needed.
 2. Users are able to send coins to each other.
 3. After each transfer UTXO pool is updated accordingly. (i.e sender loses its UTXOs, receiver acquires UTXOs and can use them in the future).
 4. All transactions are collected into the so-called Mempool. Miner takes transactions from this pool and uses them while mining the next block .
-5. Finally, once block is minted it's added to the blockchain with all necessary information inside it.
-6. Everything is cached into the database.
+5. Once block is minted it's added to the blockchain with all necessary information inside it.
+6. Users, Mempool, UTXO pool, blockchain are cached into the database.
 
 # Used technologies:
 - Kotlin
