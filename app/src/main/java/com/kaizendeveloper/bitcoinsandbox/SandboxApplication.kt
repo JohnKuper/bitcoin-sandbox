@@ -3,7 +3,6 @@ package com.kaizendeveloper.bitcoinsandbox
 import android.app.Activity
 import android.app.Application
 import android.widget.Toast
-import com.facebook.stetho.Stetho
 import com.kaizendeveloper.bitcoinsandbox.blockchain.Miner
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepository
 import com.kaizendeveloper.bitcoinsandbox.di.DaggerAppComponent
@@ -34,7 +33,6 @@ class SandboxApplication : Application(), HasActivityInjector {
             .build()
             .inject(this)
 
-        Stetho.initializeWithDefaults(this)
         Security.addProvider(BouncyCastleProvider())
 
         application = this

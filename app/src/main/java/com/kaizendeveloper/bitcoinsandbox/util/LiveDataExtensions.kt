@@ -14,9 +14,6 @@ fun <T> LiveData<T>.observeOnce(block: (T?) -> Unit) {
     })
 }
 
-/**
- * Should be used only on a worker thread, since [Observer.onChanged] will be invoked on the main thread.
- */
 fun <T> LiveData<T>.requireValue(): T {
     val data = arrayOfNulls<Any>(1)
     val latch = CountDownLatch(1)

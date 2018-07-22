@@ -2,7 +2,6 @@ package com.kaizendeveloper.bitcoinsandbox.util
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.core.content.edit
 
 class SharedPreferencesHelper private constructor(context: Context) {
 
@@ -28,7 +27,9 @@ class SharedPreferencesHelper private constructor(context: Context) {
     }
 
     fun setBootstrapped(isBootstrapped: Boolean) {
-        prefs.edit { putBoolean(KEY_IS_BOOTSTRAPPED, isBootstrapped) }
+        prefs.edit()
+            .putBoolean(KEY_IS_BOOTSTRAPPED, isBootstrapped)
+            .apply()
     }
 
     fun isBootstrapped() = prefs.getBoolean(KEY_IS_BOOTSTRAPPED, false)
