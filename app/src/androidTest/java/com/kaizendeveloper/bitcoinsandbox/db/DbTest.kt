@@ -12,7 +12,6 @@ abstract class DbTest : DaggerTest() {
     @get:Rule
     private val countingTaskExecutorRule = CountingTaskExecutorRule()
 
-    @Suppress("unused")
     @Inject
     protected lateinit var db: SandboxDatabase
 

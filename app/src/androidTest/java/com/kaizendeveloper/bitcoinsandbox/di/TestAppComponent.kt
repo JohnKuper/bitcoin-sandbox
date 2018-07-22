@@ -6,6 +6,7 @@ import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepositoryTest
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepositoryTest
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepositoryTest
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionHandlerTest
+import com.kaizendeveloper.bitcoinsandbox.transaction.TransferManagerTest
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -31,4 +32,5 @@ interface TestAppComponent {
     fun inject(utxoPoolRepo: UTXOPoolRepositoryTest)
     fun inject(blockchainRepo: BlockchainRepositoryTest)
     fun inject(transactionHandler: TransactionHandlerTest)
+    fun inject(transferManager: TransferManagerTest)
 }

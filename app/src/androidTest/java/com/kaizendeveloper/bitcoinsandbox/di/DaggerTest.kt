@@ -15,7 +15,7 @@ abstract class DaggerTest {
     protected lateinit var appComponent: TestAppComponent
 
     @Before
-    fun initDb() {
+    fun initComponent() {
         appComponent = DaggerTestAppComponent
             .builder()
             .application(InstrumentationRegistry.getTargetContext().applicationContext as SandboxApplication)

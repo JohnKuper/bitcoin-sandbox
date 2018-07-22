@@ -3,6 +3,7 @@ package com.kaizendeveloper.bitcoinsandbox.db.repository
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import android.support.annotation.WorkerThread
 import com.kaizendeveloper.bitcoinsandbox.db.SandboxDatabase
 import com.kaizendeveloper.bitcoinsandbox.db.dao.UTXOPoolDao
 import com.kaizendeveloper.bitcoinsandbox.db.entity.UTXOWithTxOutput
@@ -44,6 +45,7 @@ class UTXOPoolRepository @Inject constructor(
         }.subscribeOn(Schedulers.io())
     }
 
+    @WorkerThread
     fun getPool(): HashMap<UTXO, TransactionOutput> {
         return utxoPoolDao.getAll().requireValue().associateTo(hashMapOf()) { it.utxo to it.txOutput }
     }

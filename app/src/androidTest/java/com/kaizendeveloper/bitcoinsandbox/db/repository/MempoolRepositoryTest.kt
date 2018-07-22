@@ -1,7 +1,7 @@
 package com.kaizendeveloper.bitcoinsandbox.db.repository
 
-import UserTestUtil.Companion.ALICE
-import UserTestUtil.Companion.SATOSHI
+import ALICE
+import SATOSHI
 import android.support.test.runner.AndroidJUnit4
 import com.kaizendeveloper.bitcoinsandbox.db.DbTest
 import com.kaizendeveloper.bitcoinsandbox.db.dao.MempoolDao

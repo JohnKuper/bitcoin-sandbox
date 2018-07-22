@@ -1,18 +1,18 @@
 package com.kaizendeveloper.bitcoinsandbox
 
-import UserTestUtil.Companion.SATOSHI
+import SATOSHI
 import android.support.test.runner.AndroidJUnit4
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import com.kaizendeveloper.bitcoinsandbox.util.randomByteArray
 import junit.framework.Assert.assertTrue
 import org.junit.Assert.assertArrayEquals
-import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.security.KeyPair
 
 @RunWith(AndroidJUnit4::class)
 class CipherTest {
+
+    private val keyPair = Cipher.generateECKeyPair(SATOSHI.name)
 
     @Test
     fun verifySignature() {
@@ -33,16 +33,5 @@ class CipherTest {
     fun decodePublicKey() {
         val decodedPublicKey = Cipher.decodePublicKey(keyPair.public.encoded)
         assertArrayEquals(keyPair.public.encoded, decodedPublicKey.encoded)
-    }
-
-    companion object {
-
-        lateinit var keyPair: KeyPair
-
-        @BeforeClass
-        @JvmStatic
-        fun setup() {
-            keyPair = Cipher.generateECKeyPair(SATOSHI.name)
-        }
     }
 }

@@ -1,8 +1,8 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
-import UserTestUtil.Companion.ALICE
-import UserTestUtil.Companion.BOB
-import UserTestUtil.Companion.SATOSHI
+import ALICE
+import BOB
+import SATOSHI
 import android.support.test.runner.AndroidJUnit4
 import com.kaizendeveloper.bitcoinsandbox.db.DbTest
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
