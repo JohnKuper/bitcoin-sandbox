@@ -10,7 +10,7 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class TransferManager @Inject constructor(
-    private val txHandler: TxHandler,
+    private val txHandler: TransactionHandler,
     private val utxoPoolRepo: UTXOPoolRepository
 ) {
 
@@ -46,7 +46,7 @@ class TransferManager @Inject constructor(
 
     private fun prepareTransferParams(amount: Double, sender: User): Pair<Double, List<UTXO>> {
         var accumulatedAmount = 0.0
-        val outputsToSpend = utxoPoolRepo.getUtxoPool()
+        val outputsToSpend = utxoPoolRepo.getPool()
             .asSequence()
             .filter { it.value.address == sender.address }
             .sortedBy { it.value }

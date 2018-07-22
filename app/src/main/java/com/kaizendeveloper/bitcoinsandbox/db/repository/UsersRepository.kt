@@ -30,7 +30,7 @@ class UsersRepository @Inject constructor(
         }.subscribeOn(Schedulers.io())
     }
 
-    fun createUserIfAbsent(name: String, isCurrent: Boolean = false): Single<User> {
+    fun createIfAbsent(name: String, isCurrent: Boolean = false): Single<User> {
         return userDao.getByName(name)
             .switchIfEmpty(
                 Single.fromCallable {

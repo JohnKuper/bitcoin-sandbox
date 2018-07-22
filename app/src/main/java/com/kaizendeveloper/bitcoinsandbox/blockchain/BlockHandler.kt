@@ -1,12 +1,12 @@
 package com.kaizendeveloper.bitcoinsandbox.blockchain
 
 import com.kaizendeveloper.bitcoinsandbox.db.repository.BlockchainRepository
-import com.kaizendeveloper.bitcoinsandbox.transaction.TxHandler
+import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionHandler
 import io.reactivex.Completable
 import javax.inject.Inject
 
 class BlockHandler @Inject constructor(
-    private val txHandler: TxHandler,
+    private val txHandler: TransactionHandler,
     private val blockchainRepo: BlockchainRepository
 ) {
 

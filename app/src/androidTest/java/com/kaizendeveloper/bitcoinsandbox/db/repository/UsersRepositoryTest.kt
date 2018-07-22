@@ -62,7 +62,7 @@ class UsersRepositoryTest : DbTest() {
 
 
     private fun createUserIfAbsent(name: String, isCurrent: Boolean): User {
-        return usersRepo.createUserIfAbsent(name, isCurrent).blockingGet()
+        return usersRepo.createIfAbsent(name, isCurrent).blockingGet()
     }
 
     private fun getByName(name: String): User {

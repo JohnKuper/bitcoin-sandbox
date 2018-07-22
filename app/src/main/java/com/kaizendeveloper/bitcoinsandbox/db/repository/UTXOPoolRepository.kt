@@ -44,7 +44,7 @@ class UTXOPoolRepository @Inject constructor(
         }.subscribeOn(Schedulers.io())
     }
 
-    fun getUtxoPool(): HashMap<UTXO, TransactionOutput> {
+    fun getPool(): HashMap<UTXO, TransactionOutput> {
         return utxoPoolDao.getAll().requireValue().associateTo(hashMapOf()) { it.utxo to it.txOutput }
     }
 }

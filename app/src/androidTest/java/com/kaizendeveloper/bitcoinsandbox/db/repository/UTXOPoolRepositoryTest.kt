@@ -32,7 +32,7 @@ class UTXOPoolRepositoryTest : DbTest() {
         var utxo = UTXO(coinbaseTx.hash!!.wrap(), 0)
         var txOutput = coinbaseTx.outputs[0]
 
-        assertEquals(hashMapOf(utxo to txOutput), utxoPoolRepo.getUtxoPool())
+        assertEquals(hashMapOf(utxo to txOutput), utxoPoolRepo.getPool())
 
         val transferTx = Transaction().apply {
             addInput(coinbaseTx.hash!!, 0)
@@ -44,6 +44,6 @@ class UTXOPoolRepositoryTest : DbTest() {
         utxo = UTXO(transferTx.hash!!.wrap(), 0)
         txOutput = transferTx.outputs[0]
 
-        assertEquals(hashMapOf(utxo to txOutput), utxoPoolRepo.getUtxoPool())
+        assertEquals(hashMapOf(utxo to txOutput), utxoPoolRepo.getPool())
     }
 }

@@ -23,14 +23,14 @@ class UsersViewModel @Inject constructor(
         private var lastUTXOPool: HashMap<UTXO, TransactionOutput>? = null
 
         init {
-            addSource(usersRepo.currentUser, {
+            addSource(usersRepo.currentUser) {
                 lastUser = it
                 considerNotifyUserDataChanged()
-            })
-            addSource(utxoPoolRepo.utxoPool, {
+            }
+            addSource(utxoPoolRepo.utxoPool) {
                 lastUTXOPool = it
                 considerNotifyUserDataChanged()
-            })
+            }
         }
 
         private fun considerNotifyUserDataChanged() {
@@ -44,7 +44,7 @@ class UsersViewModel @Inject constructor(
         }
     }
 
-    fun createUserIfAbsent(name: String) = usersRepo.createUserIfAbsent(name)
+    fun createUserIfAbsent(name: String) = usersRepo.createIfAbsent(name)
 
     fun updateCurrentUserIfNeeded(newCurrent: User) {
         val oldUser = currentUser.value

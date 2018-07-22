@@ -51,9 +51,9 @@ class SandboxApplication : Application(), HasActivityInjector {
 
     private fun bootstrapBlockChain() {
         Single.concat(
-            usersRepo.createUserIfAbsent("Satoshi", true),
-            usersRepo.createUserIfAbsent("Alice", false),
-            usersRepo.createUserIfAbsent("Bob", false)
+            usersRepo.createIfAbsent("Satoshi", true),
+            usersRepo.createIfAbsent("Alice", false),
+            usersRepo.createIfAbsent("Bob", false)
         )
             .filter { it.isCurrent }
             .flatMapCompletable { user ->

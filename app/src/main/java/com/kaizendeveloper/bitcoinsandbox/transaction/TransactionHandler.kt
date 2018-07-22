@@ -1,5 +1,6 @@
 package com.kaizendeveloper.bitcoinsandbox.transaction
 
+import android.support.annotation.VisibleForTesting
 import com.kaizendeveloper.bitcoinsandbox.db.repository.MempoolRepository
 import com.kaizendeveloper.bitcoinsandbox.db.repository.UTXOPoolRepository
 import com.kaizendeveloper.bitcoinsandbox.util.Cipher
@@ -8,7 +9,7 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class TxHandler @Inject constructor(
+class TransactionHandler @Inject constructor(
     private val utxoPoolRepo: UTXOPoolRepository,
     private val mempoolRepo: MempoolRepository
 ) {
@@ -21,7 +22,8 @@ class TxHandler @Inject constructor(
      * (4) all of [tx]s output values are non-negative, and
      * (5) the sum of [tx]s input values is greater than or equal to the sum of its output values; and false otherwise.
      */
-    private fun isValidTx(tx: Transaction): Boolean {
+    @VisibleForTesting
+    fun isValidTx(tx: Transaction): Boolean {
         if (tx.isCoinbase) return true
 
         val utxoHashSet = hashSetOf<UTXO>()
@@ -30,7 +32,7 @@ class TxHandler @Inject constructor(
         for ((index, input) in tx.inputs.withIndex()) {
 
             val utxo = UTXO.fromTxInput(input)
-            val utxoPool = utxoPoolRepo.getUtxoPool()
+            val utxoPool = utxoPoolRepo.getPool()
             if (!utxoPool.contains(utxo)) {
                 return false
             }
