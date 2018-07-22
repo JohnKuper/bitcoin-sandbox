@@ -54,12 +54,14 @@ class TransferFragment : UsersViewModelFragment() {
             ProgressFragment.show(requireFragmentManager())
         } else {
             ProgressFragment.hide(requireFragmentManager())
+            fab.isEnabled = true
         }
     }
 
     private fun sendCoins() {
         withCurrentUser { user ->
             if (transferAmount > 0) {
+                fab.isEnabled = false
                 transactionsViewModel.sendCoins(transferAmount, user, recipient)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(

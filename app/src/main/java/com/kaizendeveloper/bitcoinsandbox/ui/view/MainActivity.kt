@@ -4,7 +4,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import com.kaizendeveloper.bitcoinsandbox.R
@@ -32,9 +31,9 @@ class MainActivity : DaggerAppCompatActivity() {
     }
 
     private fun setupViewPager() {
-        viewPager.adapter =
-                BitCoinPagerAdapter(supportFragmentManager)
-        viewPager.offscreenPageLimit = 4
+        val adapter = BitCoinPagerAdapter(supportFragmentManager)
+        viewPager.adapter = adapter
+        viewPager.offscreenPageLimit = adapter.count
         tabLayout.setupWithViewPager(viewPager)
     }
 
@@ -53,26 +52,17 @@ class MainActivity : DaggerAppCompatActivity() {
 
     class BitCoinPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
 
-        override fun getItem(position: Int): Fragment {
-            return when (position) {
-                0 -> BlockchainFragment()
-                1 -> MempoolFragment()
-                2 -> TransferFragment()
-                3 -> UsersFragment()
-                else -> throw IllegalStateException("Illegal pager position")
-            }
-        }
+        private val pagesWithTitles = listOf(
+            BlockchainFragment() to "Block chain",
+            MempoolFragment() to "Transactions",
+            TransferFragment() to "Transfer",
+            UsersFragment() to "Users"
+        )
 
-        override fun getPageTitle(position: Int): CharSequence? {
-            return when (position) {
-                0 -> "Block chain"
-                1 -> "Transactions"
-                2 -> "Transfer"
-                3 -> "Users"
-                else -> throw IllegalStateException("Illegal pager position")
-            }
-        }
+        override fun getItem(position: Int) = pagesWithTitles[position].first
 
-        override fun getCount() = 4
+        override fun getPageTitle(position: Int) = pagesWithTitles[position].second
+
+        override fun getCount() = pagesWithTitles.size
     }
 }
