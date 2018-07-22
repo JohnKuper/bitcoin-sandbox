@@ -3,6 +3,8 @@ After completing the course "Bitcoin and Cryptocurrency Technologies" by Princet
 
 I did not want to code one more boring GitHub REST API client and showing list of repositories on the screen. Instead, I wanted to implement something interesting with business logic under the hood.
 
+UI is as simple as possible since it's not a goal here and very time-consuming.
+
 # Bitcoin sandbox
 Bitcoin sandbox is a simplified version of Bitcoin network fundamentals like:
 
