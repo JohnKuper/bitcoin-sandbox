@@ -2,6 +2,9 @@ package com.kaizendeveloper.bitcoinsandbox.util
 
 import java.math.BigInteger
 
+/**
+ * Decodes compact representation of mining difficulty.
+ */
 fun decodeBits(compact: Long): BigInteger {
     val size = (compact shr 24).toInt() and 0xFF
     val bytes = ByteArray(size)

@@ -5,7 +5,7 @@ import com.kaizendeveloper.bitcoinsandbox.util.toByteArray
 import java.io.OutputStream
 
 /**
- * [TransactionInput] corresponding to the [TransactionOutput] with outputIndex [outputIndex] in the
+ * Transaction input corresponding to the [TransactionOutput] with outputIndex [outputIndex] in the
  * transaction whose hash is [txHash]
  */
 data class TransactionInput(

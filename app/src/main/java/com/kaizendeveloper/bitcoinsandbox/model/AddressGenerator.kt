@@ -5,6 +5,10 @@ import com.kaizendeveloper.bitcoinsandbox.util.Cipher
 import com.kaizendeveloper.bitcoinsandbox.util.toHexString
 import java.security.interfaces.ECPublicKey
 
+/**
+ * Generates bitcoin address according to rules:
+ * (https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch04.asciidoc#pubkey_to_address)
+ */
 class AddressGenerator {
 
     companion object {

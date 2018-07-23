@@ -11,6 +11,10 @@ class TxEntity(
     var isCoinbase: Boolean = false,
     var isConfirmed: Boolean = false,
     var parentBlockId: String? = null,
+    /**
+     * Serves as a foreign key.
+     * Helps to connect [TxEntity] with its relation data like [TxInputEntity] and [TxOutputEntity]
+     */
     @PrimaryKey
     var uuid: String = hash.toUUIDString()
 ) {

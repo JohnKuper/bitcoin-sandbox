@@ -9,6 +9,9 @@ import com.kaizendeveloper.bitcoinsandbox.util.wrap
 
 @Entity(tableName = "mempool_inputs")
 class TxInputEntity(
+    /**
+     * Serves as a foreign key for [TxEntity.uuid] to connect [TxInputEntity] with its parent.
+     */
     var parentTxUUID: String,
     var incomeTxHash: ByteArray,
     var outputIndex: Int,

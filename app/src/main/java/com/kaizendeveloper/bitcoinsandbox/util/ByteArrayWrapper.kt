@@ -2,6 +2,9 @@ package com.kaizendeveloper.bitcoinsandbox.util
 
 import java.util.Arrays
 
+/**
+ * Wrapper for [ByteArray] to reduce boilerplate while using equals/hashcode.
+ */
 class ByteArrayWrapper(byteArray: ByteArray) {
 
     val data: ByteArray = byteArray.copyOf()

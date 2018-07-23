@@ -13,6 +13,10 @@ class BlockEntity(
     var timestamp: Long,
     var target: Long,
     var nonce: Int,
+    /**
+     * Serves as a foreign key.
+     * Helps to connect [BlockEntity] with its relation data [TxWithRelationData] using [BlockWithTransactions] model.
+     */
     @PrimaryKey
     var uuid: String = hash.toUUIDString()
 ) {

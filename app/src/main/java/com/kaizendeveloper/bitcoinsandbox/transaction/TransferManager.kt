@@ -14,6 +14,10 @@ class TransferManager @Inject constructor(
     private val utxoPoolRepo: UTXOPoolRepository
 ) {
 
+    /**
+     * Transfers money from [sender] to [recipient]. Extra amount is sent back to the [sender] as new [UTXO] since
+     * coins are immutable.
+     */
     fun sendCoins(amount: Double, sender: User, recipient: User): Completable {
         return Single.fromCallable {
             if (sender.balance < amount) {
@@ -44,6 +48,11 @@ class TransferManager @Inject constructor(
         }.subscribeOn(Schedulers.computation())
     }
 
+    /**
+     * Collects sender's [UTXO] into [List] starting from those whose corresponding [TransactionOutput] has
+     * the smallest amount.
+     * Returns a [Pair] of all [UTXO] that should be spent and total amount of their corresponding [TransactionOutput]
+     */
     private fun prepareTransferParams(amount: Double, sender: User): Pair<Double, List<UTXO>> {
         var accumulatedAmount = 0.0
         val outputsToSpend = utxoPoolRepo.getPool()

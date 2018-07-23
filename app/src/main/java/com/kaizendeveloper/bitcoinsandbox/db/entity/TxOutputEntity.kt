@@ -6,6 +6,9 @@ import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 
 @Entity(tableName = "mempool_outputs")
 class TxOutputEntity(
+    /**
+     * Serves as a foreign key for [TxEntity.uuid] to connect [TxOutputEntity] with its parent.
+     */
     var parentTxUUID: String,
     var amount: Double,
     var address: String
