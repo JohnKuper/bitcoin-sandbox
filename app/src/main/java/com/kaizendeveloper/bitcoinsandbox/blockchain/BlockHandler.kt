@@ -3,6 +3,7 @@ package com.kaizendeveloper.bitcoinsandbox.blockchain
 import com.kaizendeveloper.bitcoinsandbox.db.repository.BlockchainRepository
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionHandler
 import io.reactivex.Completable
+import io.reactivex.Single
 import javax.inject.Inject
 
 class BlockHandler @Inject constructor(
@@ -11,13 +12,12 @@ class BlockHandler @Inject constructor(
 ) {
 
     fun handleBlock(block: Block): Completable {
-        return blockchainRepo
-            .getLastHash()
-            .filter { it.contentEquals(block.prevBlockHash) }
+        return Single.just(block)
+            .filter { it.prevBlockHash.contentEquals(blockchainRepo.getLastHash().blockingGet()) }
             .flatMapCompletable {
                 txHandler
-                    .handle(block.transactions.single { it.isCoinbase })
-                    .andThen(blockchainRepo.insert(block))
+                    .handle(it.transactions.single { it.isCoinbase })
+                    .andThen(blockchainRepo.insert(it))
             }
     }
 }

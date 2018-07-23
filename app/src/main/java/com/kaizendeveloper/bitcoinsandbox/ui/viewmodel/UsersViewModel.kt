@@ -9,6 +9,7 @@ import com.kaizendeveloper.bitcoinsandbox.db.repository.UsersRepository
 import com.kaizendeveloper.bitcoinsandbox.transaction.TransactionOutput
 import com.kaizendeveloper.bitcoinsandbox.transaction.UTXO
 import com.kaizendeveloper.bitcoinsandbox.util.requireValue
+import io.reactivex.Completable
 import javax.inject.Inject
 
 class UsersViewModel @Inject constructor(
@@ -46,14 +47,13 @@ class UsersViewModel @Inject constructor(
 
     fun createUserIfAbsent(name: String) = usersRepo.createIfAbsent(name)
 
-    fun updateCurrentUserIfNeeded(newCurrent: User) {
-        val oldUser = currentUser.value
-        if (oldUser != null && oldUser != newCurrent) {
-            usersRepo.updateCurrent(oldUser, newCurrent).subscribe()
-        }
+    fun updateCurrentUserIfNeeded(newCurrent: User): Completable {
+        return usersRepo.updateCurrent(currentUser.requireValue(), newCurrent)
     }
 
-    fun calculateBalance(user: User, utxoPool: List<TransactionOutput>): Double {
+    fun getUserByAddress(address: String): User = users.requireValue().single { it.address == address }
+
+    private fun calculateBalance(user: User, utxoPool: List<TransactionOutput>): Double {
         return utxoPool.fold(0.0) { balance, output ->
             if (output.address == user.address) {
                 balance + output.amount
@@ -62,6 +62,4 @@ class UsersViewModel @Inject constructor(
             }
         }
     }
-
-    fun getUserByAddress(address: String): User = users.requireValue().single { it.address == address }
 }

@@ -56,8 +56,7 @@ class Miner @Inject constructor(
             mempoolRepo
                 .getAllUnconfirmed()
                 .filter { it.isNotEmpty() }
-                .toSingle()
-                .flatMap { Single.just(it.plus(coinbaseTx)) }
+                .flatMapSingle { Single.just(it.plus(coinbaseTx)) }
         }
     }
 

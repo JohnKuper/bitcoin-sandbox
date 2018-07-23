@@ -69,7 +69,7 @@ class UsersFragment : UsersViewModelFragment() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val view = inflater.inflate(R.layout.item_user, parent, false)
-            return ViewHolder(view) { usersViewModel.updateCurrentUserIfNeeded(users[it]) }
+            return ViewHolder(view) { usersViewModel.updateCurrentUserIfNeeded(users[it]).subscribe() }
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
