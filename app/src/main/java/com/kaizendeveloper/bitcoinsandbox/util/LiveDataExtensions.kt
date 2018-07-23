@@ -5,15 +5,6 @@ import android.arch.lifecycle.Observer
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-fun <T> LiveData<T>.observeOnce(block: (T?) -> Unit) {
-    observeForever(object : Observer<T> {
-        override fun onChanged(t: T?) {
-            block(t)
-            removeObserver(this)
-        }
-    })
-}
-
 fun <T> LiveData<T>.requireValue(): T {
     val data = arrayOfNulls<Any>(1)
     val latch = CountDownLatch(1)

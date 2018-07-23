@@ -5,7 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import com.kaizendeveloper.bitcoinsandbox.db.entity.User
 import com.kaizendeveloper.bitcoinsandbox.ui.viewmodel.UsersViewModel
-import com.kaizendeveloper.bitcoinsandbox.util.observeOnce
+import com.kaizendeveloper.bitcoinsandbox.util.requireValue
 
 open class UsersViewModelFragment : BaseFragment() {
 
@@ -23,11 +23,7 @@ open class UsersViewModelFragment : BaseFragment() {
         })
     }
 
-    protected fun withCurrentUser(block: (User) -> Unit) {
-        usersViewModel.currentUser.observeOnce {
-            block(it!!)
-        }
-    }
+    protected fun requireCurrentUser() = usersViewModel.currentUser.requireValue()
 
     protected open fun onCurrentUserChanged(user: User) {}
 

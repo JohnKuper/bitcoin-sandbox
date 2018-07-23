@@ -59,16 +59,14 @@ class TransferFragment : UsersViewModelFragment() {
     }
 
     private fun sendCoins() {
-        withCurrentUser { user ->
-            if (transferAmount > 0) {
-                fab.isEnabled = false
-                transactionsViewModel.sendCoins(transferAmount, user, recipient)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        { showSuccessTransfer() },
-                        { amount.error = "Not enough coins!" }
-                    )
-            }
+        if (transferAmount > 0) {
+            fab.isEnabled = false
+            transactionsViewModel.sendCoins(transferAmount, requireCurrentUser(), recipient)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { showSuccessTransfer() },
+                    { amount.error = "Not enough coins!" }
+                )
         }
     }
 
